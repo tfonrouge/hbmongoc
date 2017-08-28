@@ -279,6 +279,7 @@ HB_FUNC( MONGOC_CLIENT_GET_DATABASE )
 /*
  mongoc_client_set_appname
  */
+#if MONGOC_CHECK_VERSION( 1, 5, 0 )
 HB_FUNC( MONGOC_CLIENT_SET_APPNAME )
 {
     PHB_MONGOC pMongoc_client = hbmongoc_param( 1, _hb_client_t_ );
@@ -291,6 +292,7 @@ HB_FUNC( MONGOC_CLIENT_SET_APPNAME )
         MONGOC_ERR_ARGS();
     }
 }
+#endif
 
 /*
  mongoc_collection_command_simple
