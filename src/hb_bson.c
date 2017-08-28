@@ -87,6 +87,7 @@ HB_FUNC( BSON_AS_JSON )
     }
 }
 
+#if BSON_CHECK_VERSION( 1, 7, 0 )
 HB_FUNC( BSON_AS_CANONICAL_EXTENDED_JSON )
 {
     PHB_BSON pBson = hbbson_param( 1, _hb_bson_t_ );
@@ -101,3 +102,4 @@ HB_FUNC( BSON_AS_CANONICAL_EXTENDED_JSON )
         BSON_ERR_ARGS();
     }
 }
+#endif
