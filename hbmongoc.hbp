@@ -17,9 +17,11 @@
 -depincpath=libmongoc:/usr/include
 -depincpath=libmongoc:/usr/local/include
 -depincpath=libmongoc:/usr/local/include/libmongoc-1.0
+-depincpath=libmongoc:/usr/include/libmongoc-1.0
 
 -depkeyhead=libbson:bson.h
 -depincpath=libbson:/usr/local/include/libbson-1.0
+-depincpath=libbson:/usr/include/libbson-1.0
 
 -hbx=${hb_name}
 
