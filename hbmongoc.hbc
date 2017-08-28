@@ -1,0 +1,15 @@
+description=mongo-c-driver wrapper (Harbour client for MongoDb)
+
+prgflags=-w3 -es2
+
+incpaths=.
+
+headers=${hb_name}.ch
+
+libs=${_HB_DYNPREF}${hb_name}${_HB_DYNSUFF}
+
+libs=mongoc-1.0
+libs=bson-1.0
+
+libpaths=lib/${hb_plat}/${hb_comp}
+{darwin}libpaths=/usr/local/lib
