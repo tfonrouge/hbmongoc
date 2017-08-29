@@ -45,21 +45,23 @@ static const HB_GC_FUNCS s_gc_bson_funcs = {
     hb_gcDummyMark
 };
 
-PHB_BSON hbbson_param( int iParam, hbbson_t_ type )
+bson_t * bson_param( int iParam )
 {
-    PHB_BSON pBson = NULL;
-
     if ( HB_ISPOINTER( iParam ) ) {
-        pBson = hb_parptrGC( &s_gc_bson_funcs, iParam );
+        PHB_BSON phBson = hb_parptrGC( &s_gc_bson_funcs, iParam );
+        if ( phBson && phBson->p && phBson->type_t == _hb_bson_t_ ) {
+            return phBson->p;
+        }
     } else {
         if( HB_ISCHAR( iParam ) ) {
             const char * szJSON = hb_parc( iParam );
             bson_t * bson = bson_new_from_json( ( const uint8_t * ) szJSON, -1, NULL );
-            pBson = hbbson_new_dataContainer( _hb_bson_t_, bson );
+            if ( bson ) {
+                return bson;
+            }
         }
     }
-
-    return pBson && pBson->type_t == type && pBson->p ? pBson : NULL;
+    return NULL;
 }
 
 PHB_BSON hbbson_new_dataContainer( hbbson_t_ type, void * p )
@@ -74,13 +76,14 @@ PHB_BSON hbbson_new_dataContainer( hbbson_t_ type, void * p )
 
 HB_FUNC( BSON_AS_JSON )
 {
-    PHB_BSON pBson = hbbson_param( 1, _hb_bson_t_ );
-
-    if ( pBson ) {
-        char * szJSON = bson_as_json( ( bson_t * ) pBson->p, NULL );
-        if( szJSON ) {
-            hb_retc( szJSON );
-            bson_free( szJSON );
+    if ( HB_ISPOINTER( 1 ) ) {
+        bson_t * bson = bson_param( 1 );
+        if ( bson ) {
+            char * szJSON = bson_as_json( bson, NULL );
+            if( szJSON ) {
+                hb_retc( szJSON );
+                bson_free( szJSON );
+            }
         }
     } else {
         BSON_ERR_ARGS();
@@ -90,15 +93,17 @@ HB_FUNC( BSON_AS_JSON )
 #if BSON_CHECK_VERSION( 1, 7, 0 )
 HB_FUNC( BSON_AS_CANONICAL_EXTENDED_JSON )
 {
-    PHB_BSON pBson = hbbson_param( 1, _hb_bson_t_ );
-
-    if ( pBson ) {
-        char * szJSON = bson_as_canonical_extended_json( ( bson_t * ) pBson->p, NULL );
-        if ( szJSON ) {
-            hb_retc( szJSON );
-            bson_free( szJSON );
+    if ( HB_ISPOINTER( 1 ) ) {
+        bson_t * bson = bson_param( 1 );
+        if ( bson ) {
+            char * szJSON = bson_as_canonical_extended_json( bson, NULL );
+            if ( szJSON ) {
+                hb_retc( szJSON );
+                bson_free( szJSON );
+            }
         }
-    } else {
+    }
+    else {
         BSON_ERR_ARGS();
     }
 }
