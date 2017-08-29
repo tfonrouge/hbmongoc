@@ -11,8 +11,6 @@
 
 #include "hbmongoc.ch"
 
-#define MONGOC_BSON_RETURN_TYPE 1
-
 PROCEDURE main()
     LOCAL client
     LOCAL database
@@ -26,9 +24,8 @@ PROCEDURE main()
 
     mongoc_init()
 
-#if MONGOC_BSON_RETURN_TYPE
-    hbmongoc_setReturnValueType("bson")
-#endif
+    // uncomment following line to return bson_t type from hbmongoc funcs
+    hbmongoc_setReturnValueType("BSON")
 
     client := mongoc_client_new("mongodb://localhost:27017")
 
@@ -51,11 +48,13 @@ PROCEDURE main()
         ? "error"
     ENDIF
 
-#if MONGOC_BSON_RETURN_TYPE
-    ? "reply: ", reply, bson_as_json( reply )
-#else
-    ? "reply: ", reply
-#endif
+    IF hbmongoc_setReturnValueType() == "BSON"
+        ? "reply: ", reply, bson_as_json( reply )
+    ENDIF
+
+    IF hbmongoc_setReturnValueType() == "JSON"
+        ? "reply: ", reply
+    ENDIF
 
     FOR i := 1 TO 10
 
