@@ -11,7 +11,7 @@
 
 #include "hbmongoc.ch"
 
-#define NUM_REGS    10
+#define NUM_REGS    1000000
 
 PROCEDURE main()
     LOCAL client
