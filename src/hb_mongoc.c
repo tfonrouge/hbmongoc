@@ -19,7 +19,7 @@
 
 #include <mongoc.h>
 
-#define MONGOC_ERR_ARGS()  ( hb_errRT_BASE_SubstR( EG_ARG, 3012, NULL, HB_ERR_FUNCNAME, HB_ERR_ARGS_BASEPARAMS ) )
+#define HBMONGOC_ERR_ARGS()  ( hb_errRT_BASE_SubstR( EG_ARG, 3012, NULL, HB_ERR_FUNCNAME, HB_ERR_ARGS_BASEPARAMS ) )
 
 static bool s_mongoc_inited = false;
 static char * s_hbmongoc_returnValueType = "J";
@@ -125,7 +125,7 @@ HB_FUNC( HBMONGOC_SETRETURNVALUETYPE )
         } else if ( hb_stricmp( hb_parc( 1 ), "BSON" ) == 0 ) {
             s_hbmongoc_returnValueType = "B";
         } else {
-            MONGOC_ERR_ARGS();
+            HBMONGOC_ERR_ARGS();
         }
     }
     switch (s_hbmongoc_returnValueType[0]) {
@@ -156,7 +156,7 @@ HB_FUNC( MONGOC_CLEANUP )
 HB_FUNC( MONGOC_CLIENT_COMMAND_SIMPLE )
 {
     PHB_MONGOC client = hbmongoc_param( 1, _hb_client_t_ );
-    bson_t * command = bson_param( 3 );
+    bson_t * command = bson_param( 3, HB_IT_POINTER | HB_IT_STRING );
 
     if ( client && command ) {
         const char *db_name = hb_parc( 2 );
@@ -165,10 +165,6 @@ HB_FUNC( MONGOC_CLIENT_COMMAND_SIMPLE )
         bson_error_t error;
 
         bool result = mongoc_client_command_simple( client->p, db_name, command, read_prefs, reply, &error);
-
-        if ( HB_ISCHAR( 3 ) ) {
-            bson_destroy( command );
-        }
 
         if ( result && HB_ISBYREF( 5 ) ) {
             hbmongoc_return_byref_bson( 5, reply );
@@ -187,7 +183,11 @@ HB_FUNC( MONGOC_CLIENT_COMMAND_SIMPLE )
         hb_retl( result );
 
     } else {
-        MONGOC_ERR_ARGS();
+        HBMONGOC_ERR_ARGS();
+    }
+
+    if ( command && HB_ISCHAR( 3 ) ) {
+        bson_destroy( command );
     }
 }
 
@@ -202,7 +202,7 @@ HB_FUNC( MONGOC_CLIENT_DESTROY )
         mongoc_client_destroy( client->p );
         client->p = NULL;
     } else {
-        MONGOC_ERR_ARGS();
+        HBMONGOC_ERR_ARGS();
     }
 }
 
@@ -220,7 +220,7 @@ HB_FUNC( MONGOC_CLIENT_GET_COLLECTION )
         PHB_MONGOC pMongoCollection = hbmongoc_new_dataContainer( _hb_collection_t_, collection );
         hb_retptrGC( pMongoCollection );
     } else {
-        MONGOC_ERR_ARGS();
+        HBMONGOC_ERR_ARGS();
     }
 }
 
@@ -237,7 +237,7 @@ HB_FUNC( MONGOC_CLIENT_GET_DATABASE )
         PHB_MONGOC pMongoDatabase = hbmongoc_new_dataContainer( _hb_database_t_, database );
         hb_retptrGC( pMongoDatabase );
     } else {
-        MONGOC_ERR_ARGS();
+        HBMONGOC_ERR_ARGS();
     }
 }
 
@@ -256,7 +256,7 @@ HB_FUNC( MONGOC_CLIENT_NEW )
             hb_ret();
         }
     } else {
-        MONGOC_ERR_ARGS();
+        HBMONGOC_ERR_ARGS();
     }
 }
 
@@ -273,7 +273,7 @@ HB_FUNC( MONGOC_CLIENT_SET_APPNAME )
         bool result = mongoc_client_set_appname( pMongoc_client->p, appname );
         hb_retl( result );
     } else {
-        MONGOC_ERR_ARGS();
+        HBMONGOC_ERR_ARGS();
     }
 }
 #endif
@@ -284,7 +284,7 @@ HB_FUNC( MONGOC_CLIENT_SET_APPNAME )
 HB_FUNC( MONGOC_COLLECTION_COMMAND_SIMPLE )
 {
     PHB_MONGOC collection = hbmongoc_param( 1, _hb_collection_t_ );
-    bson_t * command = bson_param( 2 );
+    bson_t * command = bson_param( 2, HB_IT_POINTER | HB_IT_STRING );
 
     if ( collection && command ) {
         
@@ -293,10 +293,6 @@ HB_FUNC( MONGOC_COLLECTION_COMMAND_SIMPLE )
         bson_error_t error;
 
         bool result = mongoc_collection_command_simple( collection->p, command, read_prefs, reply, &error);
-
-        if ( HB_ISCHAR( 2 ) ) {
-            bson_destroy( command );
-        }
 
         if ( result && HB_ISBYREF( 4 ) ) {
             hbmongoc_return_byref_bson( 4, reply );
@@ -315,7 +311,11 @@ HB_FUNC( MONGOC_COLLECTION_COMMAND_SIMPLE )
         hb_retl( result );
 
     } else {
-        MONGOC_ERR_ARGS();
+        HBMONGOC_ERR_ARGS();
+    }
+
+    if ( command && HB_ISCHAR( 2 ) ) {
+        bson_destroy( command );
     }
 }
 
@@ -330,7 +330,7 @@ HB_FUNC( MONGOC_COLLECTION_DESTROY )
         mongoc_collection_destroy( collection->p );
         collection->p = NULL;
     } else {
-        MONGOC_ERR_ARGS();
+        HBMONGOC_ERR_ARGS();
     }
 }
 
@@ -340,7 +340,7 @@ HB_FUNC( MONGOC_COLLECTION_DESTROY )
 HB_FUNC( MONGOC_COLLECTION_INSERT )
 {
     PHB_MONGOC collection = hbmongoc_param( 1, _hb_collection_t_ );
-    bson_t * document = bson_param( 3 );
+    bson_t * document = bson_param( 3, HB_IT_POINTER | HB_IT_STRING );
     bool result = false;
 
     if ( collection && document ) {
@@ -358,10 +358,6 @@ HB_FUNC( MONGOC_COLLECTION_INSERT )
 
         result = mongoc_collection_insert( collection->p, flags, document, write_concern, &error );
 
-        if ( HB_ISCHAR( 3 ) ) {
-            bson_destroy( document );
-        }
-
         if ( HB_ISBYREF( 5 ) ) {
             if ( result ) {
                 hb_stor( 5 );
@@ -374,9 +370,11 @@ HB_FUNC( MONGOC_COLLECTION_INSERT )
         hb_retl( result );
 
     } else {
+        HBMONGOC_ERR_ARGS();
+    }
 
-        MONGOC_ERR_ARGS();
-
+    if ( document && HB_ISCHAR( 3 ) ) {
+        bson_destroy( document );
     }
 }
 
@@ -391,7 +389,7 @@ HB_FUNC( MONGOC_DATABASE_DESTROY )
         mongoc_database_destroy( database->p );
         database->p = NULL;
     } else {
-        MONGOC_ERR_ARGS();
+        HBMONGOC_ERR_ARGS();
     }
 }
 

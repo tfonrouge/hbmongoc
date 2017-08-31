@@ -11,6 +11,8 @@
 
 #include "hbmongoc.ch"
 
+#define NUM_REGS    10
+
 PROCEDURE main()
     LOCAL client
     LOCAL database
@@ -20,7 +22,13 @@ PROCEDURE main()
     LOCAL error
     LOCAL reply
     LOCAL insert
+    LOCAL name
+    LOCAL lastMiddle
     LOCAL i
+    LOCAL bool
+    LOCAL secs
+
+    CLS
 
     mongoc_init()
 
@@ -56,17 +64,61 @@ PROCEDURE main()
         ? "reply: ", reply
     ENDIF
 
-    FOR i := 1 TO 10
+    bool := .T.
 
-        insert := hb_jsonEncode( { "hello" => "world", "year" => year( date() ), "time" => time(), "seconds" => seconds() } )
+    WAIT
 
-        IF ! mongoc_collection_insert( collection, MONGOC_INSERT_NONE, insert, nil, @error )
-            ? "Error:", error
-        ELSE
-            ? "document inserted..."
+    ?
+    ? "Inserting " + hb_ntos( NUM_REGS ) + " documents..."
+
+    secs := seconds()
+
+    FOR i := 1 TO NUM_REGS
+
+        insert = bson_new()
+
+        BSON_APPEND_UTF8( insert, "time", time() )
+        BSON_APPEND_DATE_TIME( insert, "dateTime", hb_dateTime() )
+        BSON_APPEND_BOOL( insert, "bool", bool := ! bool )
+        BSON_APPEND_DOUBLE( insert, "seconds", seconds() )
+        BSON_APPEND_INT32( insert, "int32", 2 ^ 31 - 1 )
+        BSON_APPEND_INT64( insert, "int64", 2 ^ 62 - 1 )
+        BSON_APPEND_BINARY( insert, "binary", e"\000\001\0020123456789" )
+
+        IF BSON_APPEND_DOCUMENT_BEGIN( insert, "name", @name )
+            BSON_APPEND_UTF8( name, "first", "Juana" )
+            IF BSON_APPEND_DOCUMENT_BEGIN( name, "lastMiddle", @lastMiddle )
+                BSON_APPEND_UTF8( lastMiddle, "last", "La Cubana" )
+                BSON_APPEND_UTF8( lastMiddle, "middle", "Navajas" )
+                bson_append_document_end( name, lastMiddle )
+            ENDIF
+            IF BSON_APPEND_DOCUMENT_BEGIN( name, "parents", @lastMiddle )
+                BSON_APPEND_UTF8( lastMiddle, "father", "M" )
+                BSON_APPEND_UTF8( lastMiddle, "mother", "F" )
+                bson_append_document_end( name, lastMiddle )
+            ENDIF
+            bson_append_document_end( insert, name )
         ENDIF
 
+        BSON_APPEND_DOCUMENT( insert, "childs",  hb_jsonEncode( {"1"=>"Arel","2"=>"Moises","3"=>"Israel","4"=>"Avril","5"=>"Lucy","6"=>"Nathalie","7"=>"Michal" } ) )
+
+        IF ! mongoc_collection_insert( collection, MONGOC_INSERT_NONE, insert, nil, @error )
+//            ? "Error: " + error
+        ELSE
+//            ? "#", i
+        ENDIF
+
+//        bson_destroy( insert )
+//        bson_destroy( name )
+//        insert := nil
+//        child := nil
+
+//        inkey( 0 )
+
     NEXT
+
+    ?? seconds() - secs, "seconds"
+    ?
 
     WAIT
 
