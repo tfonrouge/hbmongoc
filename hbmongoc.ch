@@ -9,6 +9,8 @@
 #ifndef hbmongoc_ch
 #define hbmongoc_ch
 
+#include "hbbson.ch"
+
 #define     MONGOC_INSERT_NONE  0
 
 /* bson macros */
