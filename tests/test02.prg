@@ -3,6 +3,8 @@
  * execute command example : get stats from collection
  */
 
+#include "hbmongoc.ch"
+
 PROCEDURE main()
     LOCAL client
     LOCAL collection

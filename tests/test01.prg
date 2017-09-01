@@ -10,7 +10,6 @@
  */
 
 #include "hbmongoc.ch"
-#include "hbbson.ch"
 
 #define NUM_REGS    1000000
 
