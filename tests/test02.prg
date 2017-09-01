@@ -23,7 +23,10 @@ PROCEDURE main()
     IF mongoc_collection_command_simple ( collection, command, nil, @reply, @error )
         ? "Server reply:", reply
         IF hbmongoc_setReturnValueType() == "BSON"
+            ? "bson_as_json( reply, nil ):", bson_as_json( reply, nil )
+#if BSON_CHECK_VERSION( 1, 7, 0 )
             ? "bson_as_canonical_extended_json( reply, nil ):", bson_as_canonical_extended_json( reply, nil )
+#endif
         ENDIF
     ELSE
         ? "Failed to run command:", error

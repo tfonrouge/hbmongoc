@@ -139,7 +139,7 @@ PROCEDURE main()
 
         IF printOne
             outStd( e"\nBSON_AS_JSON:\n", bson_as_json( insert ) )
-#if BSON_CHECK_VERSION( 1, 5, 0 )
+#if BSON_CHECK_VERSION( 1, 7, 0 )
             outStd( e"\nBSON_AS_CANONICAL_EXTENDED_JSON:\n", bson_as_canonical_extended_json( insert ) )
 #endif
             printOne := .F.
