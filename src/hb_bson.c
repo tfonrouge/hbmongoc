@@ -436,6 +436,15 @@ HB_FUNC( BSON_AS_CANONICAL_EXTENDED_JSON )
 }
 #endif
 
+HB_FUNC( BSON_CHECK_VERSION )
+{
+    if ( HB_ISNUM( 1 ) && HB_ISNUM( 2 ) && HB_ISNUM( 3 ) ) {
+        hb_retl( bson_check_version( hb_parni( 1 ), hb_parni( 2 ), hb_parni( 3 ) ) );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
 HB_FUNC( BSON_DECIMAL128_FROM_STRING )
 {
     const char * string = hb_parc( 1 );
@@ -477,6 +486,26 @@ HB_FUNC( BSON_DESTROY )
     } else {
         HBBSON_ERR_ARGS();
     }
+}
+
+HB_FUNC( BSON_GET_MAJOR_VERSION )
+{
+    hb_retni( bson_get_major_version() );
+}
+
+HB_FUNC( BSON_GET_MICRO_VERSION )
+{
+    hb_retni( bson_get_micro_version() );
+}
+
+HB_FUNC( BSON_GET_MINOR_VERSION )
+{
+    hb_retni( bson_get_minor_version() );
+}
+
+HB_FUNC( BSON_GET_VERSION )
+{
+    hb_retc( bson_get_version() );
 }
 
 HB_FUNC( BSON_NEW )
