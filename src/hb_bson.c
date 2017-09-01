@@ -40,12 +40,14 @@ static HB_GARBAGE_FUNC( hbbson_gc_func )
                     pBson->bson = NULL;
                 }
                 break;
+#if BSON_CHECK_VERSION( 1, 5, 0 )
             case _hbbson_decimal128_t_:
                 if ( pBson->bson_128 ) {
                     hb_xfree( pBson->bson_128 );
                     pBson->bson_128 = NULL;
                 }
                 break;
+#endif
         }
     }
 }
@@ -108,9 +110,11 @@ PHB_BSON hbbson_new_dataContainer( hbbson_t_ hbbson_type, void * p )
         case _hbbson_t_:
             phBson->bson = p;
             break;
+#if BSON_CHECK_VERSION( 1, 5, 0 )
         case _hbbson_decimal128_t_:
             phBson->bson_128 = p;
             break;
+#endif
     }
 
     return phBson;
@@ -127,11 +131,13 @@ PHB_BSON hbbson_param( int iParam, hbbson_t_ hbbson_type )
                         return phBson;
                     }
                     break;
+#if BSON_CHECK_VERSION( 1, 5, 0 )
                 case _hbbson_decimal128_t_:
                     if ( phBson->bson_128 ) {
                         return phBson;
                     }
                     break;
+#endif
             }
         }
     }
