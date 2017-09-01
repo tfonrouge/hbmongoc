@@ -13,7 +13,7 @@
 
 #define NUM_REGS    1000000
 
-PROCEDURE main()
+PROCEDURE main( serverConn )
     LOCAL client
     LOCAL database
     LOCAL collection
@@ -37,12 +37,16 @@ PROCEDURE main()
 
     mongoc_init()
 
-    // uncomment following line to return bson_t type from hbmongoc funcs
-    hbmongoc_setReturnValueType("BSON")
+    // uncomment following line to NOT return bson_t type from hbmongoc funcs
+    // hbmongoc_setReturnValueType("JSON")
 
-    ? "libbson version:", bson_get_version()
+    IF serverConn = nil
+        serverConn := "mongodb://localhost:27017"
+    ENDIF
 
-    client := mongoc_client_new("mongodb://localhost:27017")
+    client := mongoc_client_new( serverConn )
+
+    ? "Server:", serverConn
 
     ? "mongoc_client_new():", client
 
