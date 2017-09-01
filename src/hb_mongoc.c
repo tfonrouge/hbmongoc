@@ -103,7 +103,7 @@ void hbmongoc_return_byref_bson( int iParam, bson_t * bson )
             bson_destroy( bson );
             break;
         case 'B':
-            pBson = hbbson_new_dataContainer( _hb_bson_t_, bson );
+            pBson = hbbson_new_dataContainer( _hbbson_t_, bson );
             hb_storptrGC( pBson, iParam );
             break;
         default:
@@ -156,7 +156,7 @@ HB_FUNC( MONGOC_CLEANUP )
 HB_FUNC( MONGOC_CLIENT_COMMAND_SIMPLE )
 {
     PHB_MONGOC client = hbmongoc_param( 1, _hb_client_t_ );
-    bson_t * command = bson_param( 3, HB_IT_POINTER | HB_IT_STRING );
+    bson_t * command = bson_hbparam( 3, HB_IT_POINTER | HB_IT_STRING );
 
     if ( client && command ) {
         const char *db_name = hb_parc( 2 );
@@ -284,7 +284,7 @@ HB_FUNC( MONGOC_CLIENT_SET_APPNAME )
 HB_FUNC( MONGOC_COLLECTION_COMMAND_SIMPLE )
 {
     PHB_MONGOC collection = hbmongoc_param( 1, _hb_collection_t_ );
-    bson_t * command = bson_param( 2, HB_IT_POINTER | HB_IT_STRING );
+    bson_t * command = bson_hbparam( 2, HB_IT_POINTER | HB_IT_STRING );
 
     if ( collection && command ) {
         
@@ -340,7 +340,7 @@ HB_FUNC( MONGOC_COLLECTION_DESTROY )
 HB_FUNC( MONGOC_COLLECTION_INSERT )
 {
     PHB_MONGOC collection = hbmongoc_param( 1, _hb_collection_t_ );
-    bson_t * document = bson_param( 3, HB_IT_POINTER | HB_IT_STRING );
+    bson_t * document = bson_hbparam( 3, HB_IT_POINTER | HB_IT_STRING );
     bool result = false;
 
     if ( collection && document ) {

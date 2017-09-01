@@ -12,17 +12,19 @@
 #include <stdio.h>
 #include <bson.h>
 
-typedef enum { _hb_bson_t_ } hbbson_t_;
+typedef enum { _hbbson_t_, _hbbson_decimal128_t_ } hbbson_t_;
 
 typedef struct _HB_BSON_
 {
-    hbbson_t_ type_t;
+    hbbson_t_ hbbson_type;
     bson_t * bson;
+    bson_decimal128_t * bson_128;
     int documentLevel;
 } HB_BSON, * PHB_BSON;
 
-bson_t *    bson_param( int iParam, int type );
-PHB_BSON    hbbson_param( int iParam );
-PHB_BSON    hbbson_new_dataContainer( hbbson_t_ type, void * p );
+bson_decimal128_t * bson_decimal128_hbparam( int iParam );
+bson_t *            bson_hbparam( int iParam, int hb_type );
+PHB_BSON            hbbson_new_dataContainer( hbbson_t_ hbbson_type, void * p );
+PHB_BSON            hbbson_param( int iParam, hbbson_t_ hbbson_type );
 
 #endif /* hb_bson_h */

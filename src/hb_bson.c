@@ -33,14 +33,20 @@ static HB_GARBAGE_FUNC( hbbson_gc_func )
     PHB_BSON pBson = Cargo;
 
     if ( pBson ) {
-        switch (pBson->type_t) {
-            case _hb_bson_t_:
+        switch (pBson->hbbson_type) {
+            case _hbbson_t_:
                 if (pBson->bson) {
                     bson_destroy( ( bson_t * ) pBson->bson );
+                    pBson->bson = NULL;
+                }
+                break;
+            case _hbbson_decimal128_t_:
+                if ( pBson->bson_128 ) {
+                    hb_xfree( pBson->bson_128 );
+                    pBson->bson_128 = NULL;
                 }
                 break;
         }
-        pBson->bson = NULL;
     }
 }
 
@@ -52,10 +58,20 @@ static const HB_GC_FUNCS s_gc_bson_funcs = {
     hb_gcDummyMark
 };
 
-bson_t * bson_param( int iParam, int type )
+bson_decimal128_t * bson_decimal128_hbparam( int iParam )
+{
+    PHB_BSON phBson = hbbson_param( iParam, _hbbson_decimal128_t_ );
+
+    if ( phBson ) {
+        return phBson->bson_128;
+    }
+    return NULL;
+}
+
+bson_t * bson_hbparam( int iParam, int type )
 {
     if ( hb_param( iParam, type ) ) {
-        PHB_BSON phBson = hbbson_param( iParam );
+        PHB_BSON phBson = hbbson_param( iParam, _hbbson_t_ );
         if ( phBson ) {
             return phBson->bson;
         } else {
@@ -80,37 +96,70 @@ static uint64_t hbbson_dateTimeToUnix( int iParam ) {
     return (lJulian - 2440588) * 86400000 + lMillis;
 }
 
-PHB_BSON hbbson_param( int iParam )
-{
-    if ( HB_ISPOINTER( iParam ) ) {
-        PHB_BSON phBson = hb_parptrGC( &s_gc_bson_funcs, iParam );
-        if ( phBson && phBson->bson && phBson->type_t == _hb_bson_t_ && ( documentLevel == 0 || ( documentLevel == phBson->documentLevel ) ) ) {
-            return phBson;
-        }
-    }
-    return NULL;
-}
-
-PHB_BSON hbbson_new_dataContainer( hbbson_t_ type, void * p )
+PHB_BSON hbbson_new_dataContainer( hbbson_t_ hbbson_type, void * p )
 {
     PHB_BSON phBson = hb_gcAllocate( sizeof( HB_BSON ), &s_gc_bson_funcs );
 
-    phBson->type_t = type;
+    phBson->hbbson_type = hbbson_type;
     phBson->documentLevel = 0;
-    switch ( type ) {
-        case _hb_bson_t_:
+    switch ( hbbson_type ) {
+        case _hbbson_t_:
             phBson->bson = p;
+            break;
+        case _hbbson_decimal128_t_:
+            phBson->bson_128 = p;
             break;
     }
 
     return phBson;
 }
 
+PHB_BSON hbbson_param( int iParam, hbbson_t_ hbbson_type )
+{
+    if ( HB_ISPOINTER( iParam ) ) {
+        PHB_BSON phBson = hb_parptrGC( &s_gc_bson_funcs, iParam );
+        if ( phBson && phBson->hbbson_type == hbbson_type ) {
+            switch ( hbbson_type ) {
+                case _hbbson_t_:
+                    if ( phBson->bson && ( documentLevel == 0 || ( documentLevel == phBson->documentLevel ) ) ) {
+                        return phBson;
+                    }
+                    break;
+                case _hbbson_decimal128_t_:
+                    if ( phBson->bson_128 ) {
+                        return phBson;
+                    }
+                    break;
+            }
+        }
+    }
+    return NULL;
+}
+
 /* Harbour api */
+
+HB_FUNC( BSON_APPEND_ARRAY )
+{
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
+    const char * key = hb_parc( 2 );
+    bson_t * array = bson_hbparam( 4 , HB_IT_POINTER | HB_IT_STRING );
+
+    if ( bson && key && array ) {
+        int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
+        bool result = bson_append_array( bson, key, key_length, array );
+        hb_retl( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+
+    if ( array && HB_ISCHAR( 4 ) ) {
+        bson_destroy( array );
+    }
+}
 
 HB_FUNC( BSON_APPEND_BINARY )
 {
-    bson_t * bson = bson_param( 1, HB_IT_POINTER );
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
     const char * key = hb_parc( 2 );
     const char * binary = hb_parc( 5 );
 
@@ -127,7 +176,7 @@ HB_FUNC( BSON_APPEND_BINARY )
 
 HB_FUNC( BSON_APPEND_BOOL )
 {
-    bson_t * bson = bson_param( 1, HB_IT_POINTER );
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
     const char * key = hb_parc( 2 );
 
     if ( bson && key ) {
@@ -140,9 +189,44 @@ HB_FUNC( BSON_APPEND_BOOL )
     }
 }
 
+HB_FUNC( BSON_APPEND_CODE )
+{
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
+    const char * key = hb_parc( 2 );
+    const char * javascript = hb_parc( 4 );
+
+    if ( bson && key && javascript ) {
+        int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
+        bool result = bson_append_code( bson, key, key_length, javascript );
+        hb_retl( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_APPEND_CODE_WITH_SCOPE )
+{
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
+    const char * key = hb_parc( 2 );
+    const char * javascript = hb_parc( 4 );
+    bson_t * scope = bson_hbparam( 5 , HB_IT_POINTER | HB_IT_STRING );
+
+    if ( bson && key && javascript ) {
+        int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
+        bool result = bson_append_code_with_scope( bson, key, key_length, javascript, scope );
+        hb_retl( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+
+    if ( scope && HB_ISCHAR( 5 ) ) {
+        bson_destroy( scope );
+    }
+}
+
 HB_FUNC( BSON_APPEND_DATE_TIME )
 {
-    bson_t * bson = bson_param( 1, HB_IT_POINTER );
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
     const char * key = hb_parc( 2 );
 
     if ( bson && key && HB_ISTIMESTAMP( 4 ) ) {
@@ -155,11 +239,27 @@ HB_FUNC( BSON_APPEND_DATE_TIME )
     }
 }
 
+HB_FUNC( BSON_APPEND_DECIMAL128 )
+{
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
+    const char * key = hb_parc( 2 );
+    bson_decimal128_t * dec = bson_decimal128_hbparam( 4 );
+
+    if ( bson && key && dec ) {
+        int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
+        bool result = bson_append_decimal128( bson, key, key_length, dec );
+        hb_retl( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+
+}
+
 HB_FUNC( BSON_APPEND_DOCUMENT )
 {
-    bson_t * bson = bson_param( 1, HB_IT_POINTER );
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
     const char * key = hb_parc( 2 );
-    bson_t * child = bson_param( 4, HB_IT_POINTER | HB_IT_STRING );
+    bson_t * child = bson_hbparam( 4, HB_IT_POINTER | HB_IT_STRING );
 
     if ( bson && key && child ) {
         int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
@@ -176,14 +276,14 @@ HB_FUNC( BSON_APPEND_DOCUMENT )
 
 HB_FUNC( BSON_APPEND_DOCUMENT_BEGIN )
 {
-    bson_t * parent = bson_param( 1, HB_IT_POINTER );
+    bson_t * parent = bson_hbparam( 1, HB_IT_POINTER );
     const char * key = hb_parc( 2 );
 
     if ( parent && key && HB_ISBYREF( 4 ) && documentLevel <= HBMONGOC_MAX_DOCUMENT_LEVEL ) {
         int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
         bson_t * child = &s_bson[ documentLevel++ ];
         bool result = bson_append_document_begin( parent, key, key_length, child );
-        PHB_BSON phBson = hbbson_new_dataContainer( _hb_bson_t_, child );
+        PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_t_, child );
         phBson->documentLevel = documentLevel;
         hb_storptrGC( phBson, 4 );
         hb_retl( result );
@@ -196,10 +296,10 @@ HB_FUNC( BSON_APPEND_DOCUMENT_END )
 {
     if ( documentLevel > 0 ) {
         --documentLevel;
-        bson_t * parent = bson_param( 1, HB_IT_POINTER );
+        bson_t * parent = bson_hbparam( 1, HB_IT_POINTER );
         if ( parent ) {
             ++documentLevel;
-            bson_t * child = bson_param( 2, HB_IT_POINTER );
+            bson_t * child = bson_hbparam( 2, HB_IT_POINTER );
             if ( child ) {
                 --documentLevel;
                 bool result = bson_append_document_end( parent, child );
@@ -213,7 +313,7 @@ HB_FUNC( BSON_APPEND_DOCUMENT_END )
 
 HB_FUNC( BSON_APPEND_DOUBLE )
 {
-    bson_t * bson = bson_param( 1, HB_IT_POINTER );
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
     const char * key = hb_parc( 2 );
 
     if ( bson && key && HB_ISNUM( 4 ) ) {
@@ -228,7 +328,7 @@ HB_FUNC( BSON_APPEND_DOUBLE )
 
 HB_FUNC( BSON_APPEND_INT32 )
 {
-    bson_t * bson = bson_param( 1, HB_IT_POINTER );
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
     const char * key = hb_parc( 2 );
 
     if ( bson && key && HB_ISNUM( 4 ) ) {
@@ -243,7 +343,7 @@ HB_FUNC( BSON_APPEND_INT32 )
 
 HB_FUNC( BSON_APPEND_INT64 )
 {
-    bson_t * bson = bson_param( 1, HB_IT_POINTER );
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
     const char * key = hb_parc( 2 );
 
     if ( bson && key && HB_ISNUM( 4 ) ) {
@@ -258,7 +358,7 @@ HB_FUNC( BSON_APPEND_INT64 )
 
 HB_FUNC( BSON_APPEND_NULL )
 {
-    bson_t * bson = bson_param( 1, HB_IT_POINTER );
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
     const char * key = hb_parc( 2 );
 
     if ( bson && key ) {
@@ -269,9 +369,27 @@ HB_FUNC( BSON_APPEND_NULL )
         HBBSON_ERR_ARGS();
     }
 }
+
+HB_FUNC( BSON_APPEND_REGEX )
+{
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
+    const char * key = hb_parc( 2 );
+    const char * regex = hb_parc( 4 );
+
+    if( bson && key && regex ) {
+        int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
+        const char * options = hb_parc( 5 );
+        bool result = bson_append_regex( bson, key, key_length, regex, options );
+        hb_retl( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+
+}
+
 HB_FUNC( BSON_APPEND_UTF8 )
 {
-    bson_t * bson = bson_param( 1, HB_IT_POINTER );
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
     const char * key = hb_parc( 2 );
     const char * value = hb_parc( 4 );
 
@@ -287,7 +405,7 @@ HB_FUNC( BSON_APPEND_UTF8 )
 
 HB_FUNC( BSON_AS_JSON )
 {
-    bson_t * bson = bson_param( 1, HB_IT_POINTER );
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
 
     if ( bson ) {
         char * szJSON = bson_as_json( bson, NULL );
@@ -303,7 +421,7 @@ HB_FUNC( BSON_AS_JSON )
 #if BSON_CHECK_VERSION( 1, 7, 0 )
 HB_FUNC( BSON_AS_CANONICAL_EXTENDED_JSON )
 {
-    bson_t * bson = bson_param( 1, HB_IT_POINTER );
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
 
     if ( bson ) {
         char * szJSON = bson_as_canonical_extended_json( bson, NULL );
@@ -318,9 +436,40 @@ HB_FUNC( BSON_AS_CANONICAL_EXTENDED_JSON )
 }
 #endif
 
+HB_FUNC( BSON_DECIMAL128_FROM_STRING )
+{
+    const char * string = hb_parc( 1 );
+
+    if ( string && HB_ISBYREF( 2 ) ) {
+        bson_decimal128_t * dec = hb_xgrab( sizeof( bson_decimal128_t ) );
+        bool result = bson_decimal128_from_string( string, dec );
+        PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_decimal128_t_, dec );
+        hb_storptrGC( phBson, 2 );
+        hb_retl( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_DECIMAL128_TO_STRING )
+{
+    const bson_decimal128_t * dec = bson_decimal128_hbparam( 1 );
+
+    if ( dec ) {
+        char string[ BSON_DECIMAL128_STRING ];
+        bson_decimal128_to_string( dec, string );
+        if ( HB_ISBYREF( 2 ) ) {
+            hb_storc( string, 2 );
+        }
+        hb_retc( string );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
 HB_FUNC( BSON_DESTROY )
 {
-    PHB_BSON phBson = hbbson_param( 1 );
+    PHB_BSON phBson = hbbson_param( 1, _hbbson_t_ );
 
     if ( phBson ) {
         bson_destroy( phBson->bson );
@@ -335,10 +484,15 @@ HB_FUNC( BSON_NEW )
     if ( hb_pcount() == 0 ) {
         bson_t * bson = bson_new();
         if ( bson ) {
-            PHB_BSON phBson = hbbson_new_dataContainer( _hb_bson_t_, bson );
+            PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_t_, bson );
             hb_retptrGC( phBson );
         }
     } else {
         HBBSON_ERR_ARGS();
     }
+}
+
+HB_FUNC( BSON_VALIDATE )
+{
+
 }

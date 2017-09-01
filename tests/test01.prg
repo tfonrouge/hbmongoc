@@ -27,6 +27,9 @@ PROCEDURE main()
     LOCAL i
     LOCAL bool
     LOCAL secs
+    LOCAL dec
+    LOCAL array,item1, item2
+    LOCAL printOne := .t.
 
     CLS
 
@@ -75,7 +78,7 @@ PROCEDURE main()
 
     FOR i := 1 TO NUM_REGS
 
-        insert = bson_new()
+        insert := bson_new()
 
         BSON_APPEND_UTF8( insert, "time", time() )
         BSON_APPEND_DATE_TIME( insert, "dateTime", hb_dateTime() )
@@ -84,6 +87,31 @@ PROCEDURE main()
         BSON_APPEND_INT32( insert, "int32", 2 ^ 31 - 1 )
         BSON_APPEND_INT64( insert, "int64", 2 ^ 62 - 1 )
         BSON_APPEND_BINARY( insert, "binary", e"\000\001\0020123456789" )
+        BSON_APPEND_NULL( insert, "null" )
+        BSON_APPEND_REGEX( insert, "regex", "\bJohn\b", "i" )
+
+        bson_decimal128_from_string( "100.00", @dec )
+        BSON_APPEND_DECIMAL128( insert, "decimal128", dec )
+
+        BSON_APPEND_CODE( insert, "javascript", e"return \"any javaScript code\"" )
+
+        BSON_APPEND_ARRAY( insert, "array1", hb_jsonEncode({1,2,3,4}) )
+        BSON_APPEND_ARRAY( insert, "array2", hb_jsonEncode({"one","two"}) )
+
+        item1 := bson_new()
+        BSON_APPEND_UTF8( item1, "name", "John" )
+        BSON_APPEND_UTF8( item1, "age", "41" )
+        BSON_APPEND_UTF8( item1, "genre", "male" )
+
+        item2 := bson_new()
+        BSON_APPEND_UTF8( item2, "name", "Mary" )
+        BSON_APPEND_UTF8( item2, "age", "31" )
+        BSON_APPEND_UTF8( item2, "genre", "female" )
+
+        array = bson_new()
+        BSON_APPEND_DOCUMENT( array, "0", item1 )   /* key MUST start with "0" */
+        BSON_APPEND_DOCUMENT( array, "1", item2 )   /* ..."n" */
+        BSON_APPEND_ARRAY( insert, "array3", array )
 
         IF BSON_APPEND_DOCUMENT_BEGIN( insert, "name", @name )
             BSON_APPEND_UTF8( name, "first", "Juana" )
@@ -100,24 +128,22 @@ PROCEDURE main()
             bson_append_document_end( insert, name )
         ENDIF
 
+        IF printOne
+            outStd( e"\nBSON_AS_JSON:\n", bson_as_json( insert ) )
+            outStd( e"\nBSON_AS_CANONICAL_EXTENDED_JSON:\n", bson_as_canonical_extended_json( insert ) )
+            printOne := .F.
+        ENDIF
+
         BSON_APPEND_DOCUMENT( insert, "childs",  hb_jsonEncode( {"1"=>"Arel","2"=>"Moises","3"=>"Israel","4"=>"Avril","5"=>"Lucy","6"=>"Nathalie","7"=>"Michal" } ) )
 
         IF ! mongoc_collection_insert( collection, MONGOC_INSERT_NONE, insert, nil, @error )
-//            ? "Error: " + error
-        ELSE
-//            ? "#", i
+            outErr( e"\nError:", error )
         ENDIF
-
-//        bson_destroy( insert )
-//        bson_destroy( name )
-//        insert := nil
-//        child := nil
-
-//        inkey( 0 )
 
     NEXT
 
-    ?? seconds() - secs, "seconds"
+    ?
+    ? seconds() - secs, "seconds"
     ?
 
     WAIT
