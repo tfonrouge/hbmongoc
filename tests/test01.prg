@@ -10,6 +10,7 @@
  */
 
 #include "hbmongoc.ch"
+#include "hbbson.ch"
 
 #define NUM_REGS    1000000
 
@@ -27,7 +28,9 @@ PROCEDURE main()
     LOCAL i
     LOCAL bool
     LOCAL secs
+#if BSON_CHECK_VERSION( 1, 5, 0 )
     LOCAL dec
+#endif
     LOCAL array,item1, item2
     LOCAL printOne := .t.
 
@@ -44,7 +47,9 @@ PROCEDURE main()
 
     ? "mongoc_client_new():", client
 
+#if BSON_CHECK_VERSION( 1, 5, 0 )
     ? "mongoc_client_set_appname():", mongoc_client_set_appname(client, "connect-example")
+#endif
 
     database := mongoc_client_get_database(client, "db_name")
 
@@ -92,8 +97,10 @@ PROCEDURE main()
         BSON_APPEND_NULL( insert, "null" )
         BSON_APPEND_REGEX( insert, "regex", "\bJohn\b", "i" )
 
+#if BSON_CHECK_VERSION( 1, 5, 0 )
         bson_decimal128_from_string( "100.00", @dec )
         BSON_APPEND_DECIMAL128( insert, "decimal128", dec )
+#endif
 
         BSON_APPEND_CODE( insert, "javascript", e"return \"any javaScript code\"" )
 
@@ -132,7 +139,9 @@ PROCEDURE main()
 
         IF printOne
             outStd( e"\nBSON_AS_JSON:\n", bson_as_json( insert ) )
+#if BSON_CHECK_VERSION( 1, 5, 0 )
             outStd( e"\nBSON_AS_CANONICAL_EXTENDED_JSON:\n", bson_as_canonical_extended_json( insert ) )
+#endif
             printOne := .F.
         ENDIF
 
