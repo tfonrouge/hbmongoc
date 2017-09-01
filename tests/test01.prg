@@ -38,6 +38,8 @@ PROCEDURE main()
     // uncomment following line to return bson_t type from hbmongoc funcs
     hbmongoc_setReturnValueType("BSON")
 
+    ? "libbson version:", bson_get_version()
+
     client := mongoc_client_new("mongodb://localhost:27017")
 
     ? "mongoc_client_new():", client
