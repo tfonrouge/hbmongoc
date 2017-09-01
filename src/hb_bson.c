@@ -58,6 +58,7 @@ static const HB_GC_FUNCS s_gc_bson_funcs = {
     hb_gcDummyMark
 };
 
+#if BSON_CHECK_VERSION( 1, 5, 0 )
 bson_decimal128_t * bson_decimal128_hbparam( int iParam )
 {
     PHB_BSON phBson = hbbson_param( iParam, _hbbson_decimal128_t_ );
@@ -67,6 +68,7 @@ bson_decimal128_t * bson_decimal128_hbparam( int iParam )
     }
     return NULL;
 }
+#endif
 
 bson_t * bson_hbparam( int iParam, int type )
 {
@@ -239,6 +241,7 @@ HB_FUNC( BSON_APPEND_DATE_TIME )
     }
 }
 
+#if BSON_CHECK_VERSION( 1, 5, 0 )
 HB_FUNC( BSON_APPEND_DECIMAL128 )
 {
     bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
@@ -254,6 +257,7 @@ HB_FUNC( BSON_APPEND_DECIMAL128 )
     }
 
 }
+#endif
 
 HB_FUNC( BSON_APPEND_DOCUMENT )
 {
@@ -445,6 +449,7 @@ HB_FUNC( BSON_CHECK_VERSION )
     }
 }
 
+#if BSON_CHECK_VERSION( 1, 5, 0 )
 HB_FUNC( BSON_DECIMAL128_FROM_STRING )
 {
     const char * string = hb_parc( 1 );
@@ -459,7 +464,9 @@ HB_FUNC( BSON_DECIMAL128_FROM_STRING )
         HBBSON_ERR_ARGS();
     }
 }
+#endif
 
+#if BSON_CHECK_VERSION( 1, 5, 0 )
 HB_FUNC( BSON_DECIMAL128_TO_STRING )
 {
     const bson_decimal128_t * dec = bson_decimal128_hbparam( 1 );
@@ -475,6 +482,7 @@ HB_FUNC( BSON_DECIMAL128_TO_STRING )
         HBBSON_ERR_ARGS();
     }
 }
+#endif
 
 HB_FUNC( BSON_DESTROY )
 {
