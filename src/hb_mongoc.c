@@ -21,8 +21,13 @@
 
 #define HBMONGOC_ERR_ARGS()  ( hb_errRT_BASE_SubstR( EG_ARG, 3012, NULL, HB_ERR_FUNCNAME, HB_ERR_ARGS_BASEPARAMS ) )
 
+enum hb_return_value_type { _HBRETVAL_BSON_, _HBRETVAL_JSON_ };
+
 static bool s_mongoc_inited = false;
-static char * s_hbmongoc_returnValueType = "J";
+static enum hb_return_value_type s_hbmongoc_returnValueType = _HBRETVAL_BSON_;
+
+static const char * _STR_BSON_ = "BSON";
+static const char * _STR_JSON_ = "JSON";
 
 /*
  hbmongoc_client_destroy
@@ -95,18 +100,16 @@ void hbmongoc_return_byref_bson( int iParam, bson_t * bson )
     PHB_BSON pBson;
     char * szJson;
 
-    switch ( s_hbmongoc_returnValueType[ 0 ] ) {
-        case 'H':
+    switch ( s_hbmongoc_returnValueType ) {
+        case _HBRETVAL_JSON_:
             szJson = bson_as_json( bson, NULL );
             hb_storc( szJson, iParam );
             bson_free( szJson );
             bson_destroy( bson );
             break;
-        case 'B':
+        case _HBRETVAL_BSON_:
             pBson = hbbson_new_dataContainer( _hbbson_t_, bson );
             hb_storptrGC( pBson, iParam );
-            break;
-        default:
             break;
     }
 }
@@ -120,22 +123,20 @@ void hbmongoc_return_byref_bson( int iParam, bson_t * bson )
 HB_FUNC( HBMONGOC_SETRETURNVALUETYPE )
 {
     if ( hb_pcount() > 0 ) {
-        if ( hb_stricmp( hb_parc( 1 ), "JSON" ) == 0 ) {
-            s_hbmongoc_returnValueType = "J";
-        } else if ( hb_stricmp( hb_parc( 1 ), "BSON" ) == 0 ) {
-            s_hbmongoc_returnValueType = "B";
+        if ( hb_stricmp( hb_parc( 1 ), _STR_JSON_ ) == 0 ) {
+            s_hbmongoc_returnValueType = _HBRETVAL_JSON_;
+        } else if ( hb_stricmp( hb_parc( 1 ), _STR_BSON_ ) == 0 ) {
+            s_hbmongoc_returnValueType = _HBRETVAL_BSON_;
         } else {
             HBMONGOC_ERR_ARGS();
         }
     }
-    switch (s_hbmongoc_returnValueType[0]) {
-        case 'H':
-            hb_retc( "JSON" );
+    switch ( s_hbmongoc_returnValueType ) {
+        case _HBRETVAL_JSON_:
+            hb_retc( _STR_JSON_ );
             break;
-        case 'B':
-            hb_retc( "BSON" );
-            break;
-        default:
+        case _HBRETVAL_BSON_:
+            hb_retc( _STR_BSON_ );
             break;
     }
 }
