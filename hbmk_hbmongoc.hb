@@ -4,7 +4,6 @@
 #if defined( __HBSCRIPT__HBMK_PLUGIN )
 
 FUNCTION hbmk_plugin_hbmongoc( hbmk )
-    LOCAL aInc
     LOCAL itm
     LOCAL libbsonIncPath
     LOCAL buffer
@@ -17,12 +16,7 @@ FUNCTION hbmk_plugin_hbmongoc( hbmk )
     CASE "pre_c"
         EXIT
     CASE "post_all"
-        aInc := hb_hValueAt( hbmk, len( hbmk ) )[ 26 ]
-        FOR EACH itm IN aInc
-            IF "libbson-1.0" $ itm
-                libbsonIncPath := itm
-            ENDIF
-        NEXT
+        libbsonIncPath := GetEnv( "HBMK_DIR_LIBBSON" )
         IF ! empty( libbsonIncPath )
             a := { "#define BSON_MAJOR_VERSION", "#define BSON_MINOR_VERSION", "#define BSON_MICRO_VERSION" }
             buffer := hb_memoRead( libbsonIncPath + "/bson-version.h" )
@@ -36,6 +30,7 @@ FUNCTION hbmk_plugin_hbmongoc( hbmk )
                     NEXT
                 NEXT
             ENDIF
+
 #pragma __stream | buffer := %s
 //
 //  hbmongoc.ch
