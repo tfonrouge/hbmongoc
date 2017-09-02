@@ -23,7 +23,7 @@ PROCEDURE main( serverConn )
     LOCAL reply
     LOCAL insert
     LOCAL name
-    LOCAL lastMiddle
+//    LOCAL lastMiddle
     LOCAL i
     LOCAL bool
     LOCAL secs
@@ -61,7 +61,7 @@ PROCEDURE main( serverConn )
     ? "mongoc_client_get_collection():", collection := mongoc_client_get_collection(client, "db_name", "coll_name")
 
     //command := e"{\"ping\":1}"
-    command := hb_jsonEncode( { "ping" => 1 } )
+    command := { "ping" => 1 }
 
     ? "mongoc_client_command_simple():", retval := mongoc_client_command_simple( client, "admin", command, nil, @reply )
 
@@ -107,8 +107,8 @@ PROCEDURE main( serverConn )
 
         BSON_APPEND_CODE( insert, "javascript", e"return \"any javaScript code\"" )
 
-        BSON_APPEND_ARRAY( insert, "array1", hb_jsonEncode({1,2,3,4}) )
-        BSON_APPEND_ARRAY( insert, "array2", hb_jsonEncode({"one","two"}) )
+        BSON_APPEND_ARRAY( insert, "array1", {1,2,3,4} )
+        BSON_APPEND_ARRAY( insert, "array2", {"one","two"} )
 
         item1 := bson_new()
         BSON_APPEND_UTF8( item1, "name", "John" )
@@ -125,6 +125,12 @@ PROCEDURE main( serverConn )
         BSON_APPEND_DOCUMENT( array, "1", item2 )   /* ..."n" */
         BSON_APPEND_ARRAY( insert, "array3", array )
 
+        BSON_APPEND_DOCUMENT_BEGIN( insert, "name", @name )
+            BSON_APPEND_UTF8( name, "first", "Juana" )
+            BSON_APPEND_UTF8( name, "last", "La Cubana" )
+        bson_append_document_end( insert, @name )
+
+        /*
         IF BSON_APPEND_DOCUMENT_BEGIN( insert, "name", @name )
             BSON_APPEND_UTF8( name, "first", "Juana" )
             IF BSON_APPEND_DOCUMENT_BEGIN( name, "lastMiddle", @lastMiddle )
@@ -139,19 +145,20 @@ PROCEDURE main( serverConn )
             ENDIF
             bson_append_document_end( insert, name )
         ENDIF
+         */
 
         IF printOne
-            outStd( e"\nBSON_AS_JSON:\n", bson_as_json( insert ) )
-#if BSON_CHECK_VERSION( 1, 7, 0 )
-            outStd( e"\nBSON_AS_CANONICAL_EXTENDED_JSON:\n", bson_as_canonical_extended_json( insert ) )
+            ? e"BSON_AS_JSON:\n", bson_as_json( insert )
+#if BSON_CHECK_VERSION( 1, 5, 0 )
+            ? e"BSON_AS_CANONICAL_EXTENDED_JSON:\n", bson_as_canonical_extended_json( insert )
 #endif
             printOne := .F.
         ENDIF
 
-        BSON_APPEND_DOCUMENT( insert, "childs",  hb_jsonEncode( {"1"=>"Arel","2"=>"Moises","3"=>"Israel","4"=>"Avril","5"=>"Lucy","6"=>"Nathalie","7"=>"Michal" } ) )
+        BSON_APPEND_DOCUMENT( insert, "childs",  {"1"=>"Arel","2"=>"Moises","3"=>"Israel","4"=>"Avril","5"=>"Lucy","6"=>"Nathalie","7"=>"Michal" } )
 
         IF ! mongoc_collection_insert( collection, MONGOC_INSERT_NONE, insert, nil, @error )
-            outErr( e"\nError:", error )
+            ? e"\nError:", error
         ENDIF
 
     NEXT
