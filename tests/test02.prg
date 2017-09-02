@@ -12,6 +12,7 @@ PROCEDURE main()
     LOCAL reply
     LOCAL error
 
+    /* REQUIRED to initialize mongoc internals */
     mongoc_init()
 
     // uncomment following line to return bson_t type from hbmongoc funcs
@@ -36,6 +37,7 @@ PROCEDURE main()
 
     WAIT
 
+    /* REQUIRED to cleanup mongoc internals */
     mongoc_cleanup()
 
 RETURN

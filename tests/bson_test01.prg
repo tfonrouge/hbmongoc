@@ -17,6 +17,9 @@ PROCEDURE main()
     LOCAL error
     LOCAL o
 
+    /* REQUIRED to initialize mongoc internals */
+    mongoc_init()
+
     CLS
 
     /* bson from simple Harbour hash */
@@ -62,6 +65,9 @@ PROCEDURE main()
     ? "Result:", iif( bson != nil, bson_as_json( bson ), nil )
 
     WAIT
+
+    /* REQUIRED to cleanup mongoc internals */
+    mongoc_cleanup()
 
 RETURN
 

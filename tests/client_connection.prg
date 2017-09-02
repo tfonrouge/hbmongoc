@@ -19,9 +19,10 @@ PROCEDURE main()
     LOCAL error
     LOCAL i
 
-    CLS
-
+    /* REQUIRED to initialize mongoc internals */
     mongoc_init()
+
+    CLS
 
     uriString := "mongodb://localhost:27017"
 
@@ -57,6 +58,7 @@ PROCEDURE main()
 
     WAIT
 
+    /* REQUIRED to cleanup mongoc internals */
     mongoc_cleanup()
 
 RETURN

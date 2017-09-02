@@ -33,9 +33,10 @@ PROCEDURE main( serverConn )
     LOCAL array,item1, item2
     LOCAL printOne := .t.
 
-    CLS
-
+    /* REQUIRED to initialize mongoc internals */
     mongoc_init()
+
+    CLS
 
     // uncomment following line to NOT return bson_t type from hbmongoc funcs
     // hbmongoc_setReturnValueType("JSON")
@@ -169,6 +170,7 @@ PROCEDURE main( serverConn )
 
     WAIT
 
+    /* REQUIRED to cleanup mongoc internals */
     mongoc_cleanup()
 
 RETURN
