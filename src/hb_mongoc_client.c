@@ -12,17 +12,17 @@
 HB_FUNC( MONGOC_CLIENT_COMMAND_SIMPLE )
 {
     PHB_MONGOC client = hbmongoc_param( 1, _hb_client_t_ );
-    bson_t * command = bson_hbparam( 3, HB_IT_POINTER | HB_IT_STRING );
-    const char *db_name = hb_parc( 2 );
+    bson_t * command = bson_hbparam( 3, HB_IT_POINTER | HB_IT_STRING | HB_IT_HASH );
+    const char * db_name = hb_parc( 2 );
 
     if ( client && db_name && command && HB_ISBYREF( 5 ) ) {
-        const mongoc_read_prefs_t *read_prefs = NULL;
-        bson_t * reply = bson_new();
+        const mongoc_read_prefs_t * read_prefs = NULL;
+        bson_t reply;
         bson_error_t error;
 
-        bool result = mongoc_client_command_simple( client->p, db_name, command, read_prefs, reply, &error);
+        bool result = mongoc_client_command_simple( client->p, db_name, command, read_prefs, &reply, &error);
 
-        hbmongoc_return_byref_bson( 5, reply );
+        hbmongoc_return_byref_bson( 5, bson_copy( &reply ) );
 
         if ( HB_ISBYREF( 6 ) ) {
             if ( result ) {
@@ -38,7 +38,7 @@ HB_FUNC( MONGOC_CLIENT_COMMAND_SIMPLE )
         HBMONGOC_ERR_ARGS();
     }
 
-    if ( command && HB_ISCHAR( 3 ) ) {
+    if ( command && ! HB_ISPOINTER( 3 ) ) {
         bson_destroy( command );
     }
 }

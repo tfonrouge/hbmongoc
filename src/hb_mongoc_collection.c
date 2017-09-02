@@ -12,17 +12,17 @@
 HB_FUNC( MONGOC_COLLECTION_COMMAND_SIMPLE )
 {
     PHB_MONGOC collection = hbmongoc_param( 1, _hb_collection_t_ );
-    bson_t * command = bson_hbparam( 2, HB_IT_POINTER | HB_IT_STRING );
+    bson_t * command = bson_hbparam( 2, HB_IT_POINTER | HB_IT_STRING | HB_IT_HASH );
 
     if ( collection && command && HB_ISBYREF( 4 ) ) {
 
         const mongoc_read_prefs_t *read_prefs = NULL;
-        bson_t * reply = bson_new();
+        bson_t reply;
         bson_error_t error;
 
-        bool result = mongoc_collection_command_simple( collection->p, command, read_prefs, reply, &error);
+        bool result = mongoc_collection_command_simple( collection->p, command, read_prefs, &reply, &error);
 
-        hbmongoc_return_byref_bson( 4, reply );
+        hbmongoc_return_byref_bson( 4, bson_copy( &reply ) );
 
         if ( HB_ISBYREF( 5 ) ) {
             if ( result ) {
@@ -38,7 +38,7 @@ HB_FUNC( MONGOC_COLLECTION_COMMAND_SIMPLE )
         HBMONGOC_ERR_ARGS();
     }
 
-    if ( command && HB_ISCHAR( 2 ) ) {
+    if ( command && ! HB_ISPOINTER( 2 ) ) {
         bson_destroy( command );
     }
 }
@@ -58,7 +58,7 @@ HB_FUNC( MONGOC_COLLECTION_DESTROY )
 HB_FUNC( MONGOC_COLLECTION_INSERT )
 {
     PHB_MONGOC collection = hbmongoc_param( 1, _hb_collection_t_ );
-    bson_t * document = bson_hbparam( 3, HB_IT_POINTER | HB_IT_STRING );
+    bson_t * document = bson_hbparam( 3, HB_IT_POINTER | HB_IT_STRING | HB_IT_HASH );
     bool result = false;
 
     if ( collection && document ) {
@@ -91,7 +91,7 @@ HB_FUNC( MONGOC_COLLECTION_INSERT )
         HBMONGOC_ERR_ARGS();
     }
     
-    if ( document && HB_ISCHAR( 3 ) ) {
+    if ( document && ! HB_ISPOINTER( 3 ) ) {
         bson_destroy( document );
     }
 }
