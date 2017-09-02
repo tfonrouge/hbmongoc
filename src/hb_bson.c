@@ -7,6 +7,7 @@
 //
 
 #include "hb_bson.h"
+#include "hbjson.h"
 
 #define HBMONGOC_MAX_DOCUMENT_LEVEL 100
 
@@ -63,13 +64,19 @@ bson_t * bson_hbparam( int iParam, int type )
         PHB_BSON phBson = hbbson_param( iParam, _hbbson_t_ );
         if ( phBson ) {
             return phBson->bson;
-        } else {
-            if( HB_ISCHAR( iParam ) ) {
-                const char * szJSON = hb_parc( iParam );
-                bson_t * bson = bson_new_from_json( ( const uint8_t * ) szJSON, -1, NULL );
-                if ( bson ) {
-                    return bson;
-                }
+        } else if ( HB_ISCHAR( iParam ) ) {
+            const char * szJSON = NULL;
+            szJSON = hb_parc( iParam );
+            bson_t * bson = bson_new_from_json( ( const uint8_t * ) szJSON, -1, NULL );
+            if ( bson ) {
+                return bson;
+            }
+        } else if ( HB_ISHASH( iParam ) || HB_ISARRAY( iParam ) ) {
+            char * szJSON = hb_jsonEncode( hb_param( iParam, HB_IT_HASH | HB_IT_ARRAY ), NULL, false );
+            bson_t * bson = bson_new_from_json( ( const uint8_t * ) szJSON, -1, NULL );
+            hb_xfree( szJSON );
+            if ( bson ) {
+                return bson;
             }
         }
     }
@@ -135,7 +142,7 @@ HB_FUNC( BSON_APPEND_ARRAY )
 {
     bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
     const char * key = hb_parc( 2 );
-    bson_t * array = bson_hbparam( 4 , HB_IT_POINTER | HB_IT_STRING );
+    bson_t * array = bson_hbparam( 4 , HB_IT_ANY );
 
     if ( bson && key && array ) {
         int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
@@ -145,7 +152,7 @@ HB_FUNC( BSON_APPEND_ARRAY )
         HBBSON_ERR_ARGS();
     }
 
-    if ( array && HB_ISCHAR( 4 ) ) {
+    if ( array && ! HB_ISPOINTER( 4 ) ) {
         bson_destroy( array );
     }
 }
@@ -202,7 +209,7 @@ HB_FUNC( BSON_APPEND_CODE_WITH_SCOPE )
     bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
     const char * key = hb_parc( 2 );
     const char * javascript = hb_parc( 4 );
-    bson_t * scope = bson_hbparam( 5 , HB_IT_POINTER | HB_IT_STRING );
+    bson_t * scope = bson_hbparam( 5 , HB_IT_ANY );
 
     if ( bson && key && javascript ) {
         int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
@@ -212,7 +219,7 @@ HB_FUNC( BSON_APPEND_CODE_WITH_SCOPE )
         HBBSON_ERR_ARGS();
     }
 
-    if ( scope && HB_ISCHAR( 5 ) ) {
+    if ( scope && ! HB_ISPOINTER( 5 ) ) {
         bson_destroy( scope );
     }
 }
@@ -254,7 +261,7 @@ HB_FUNC( BSON_APPEND_DOCUMENT )
 {
     bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
     const char * key = hb_parc( 2 );
-    bson_t * child = bson_hbparam( 4, HB_IT_POINTER | HB_IT_STRING );
+    bson_t * child = bson_hbparam( 4, HB_IT_ANY );
 
     if ( bson && key && child ) {
         int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
@@ -264,7 +271,7 @@ HB_FUNC( BSON_APPEND_DOCUMENT )
         HBBSON_ERR_ARGS();
     }
 
-    if ( child && HB_ISCHAR( 4 ) ) {
+    if ( child && ! HB_ISPOINTER( 4 ) ) {
         bson_destroy( child );
     }
 }
