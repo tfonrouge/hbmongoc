@@ -9,10 +9,13 @@
 #include "hb_bson.h"
 #include "hbjson.h"
 
-#define HBMONGOC_MAX_DOCUMENT_LEVEL 100
+#define HBMONGOC_MAX_ARRAYDOCUMENT_LEVEL 100
 
-static bson_t s_bson[ HBMONGOC_MAX_DOCUMENT_LEVEL ];
+static bson_t s_bson_documentStack[ HBMONGOC_MAX_ARRAYDOCUMENT_LEVEL ];
 static int documentLevel = 0;
+
+static bson_t s_bson_arrayStack[ HBMONGOC_MAX_ARRAYDOCUMENT_LEVEL ];
+static int arrayLevel = 0;
 
 /*
  hbbson_destroy
@@ -97,7 +100,7 @@ PHB_BSON hbbson_new_dataContainer( hbbson_t_ hbbson_type, void * p )
     PHB_BSON phBson = hb_gcAllocate( sizeof( HB_BSON ), &s_gc_bson_funcs );
 
     phBson->hbbson_type = hbbson_type;
-    phBson->documentLevel = 0;
+
     switch ( hbbson_type ) {
         case _hbbson_t_:
             phBson->bson = p;
@@ -119,7 +122,7 @@ PHB_BSON hbbson_param( int iParam, hbbson_t_ hbbson_type )
         if ( phBson && phBson->hbbson_type == hbbson_type ) {
             switch ( hbbson_type ) {
                 case _hbbson_t_:
-                    if ( phBson->bson && ( documentLevel == 0 || ( documentLevel == phBson->documentLevel ) ) ) {
+                    if ( phBson->bson ) {
                         return phBson;
                     }
                     break;
@@ -154,6 +157,39 @@ HB_FUNC( BSON_APPEND_ARRAY )
 
     if ( array && ! HB_ISPOINTER( 4 ) ) {
         bson_destroy( array );
+    }
+}
+
+HB_FUNC( BSON_APPEND_ARRAY_BEGIN )
+{
+    bson_t * parent = bson_hbparam( 1, HB_IT_POINTER );
+    const char * key = hb_parc( 2 );
+
+    if ( parent && key && HB_ISBYREF( 4 ) && arrayLevel <= HBMONGOC_MAX_ARRAYDOCUMENT_LEVEL ) {
+        int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
+        bson_t * child = &s_bson_arrayStack[ arrayLevel++ ];
+        bool result = bson_append_array_begin( parent, key, key_length, child );
+        PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_t_, child );
+        hb_storptrGC( phBson, 4 );
+        hb_retl( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_APPEND_ARRAY_END )
+{
+    bson_t * parent = bson_hbparam( 1, HB_IT_POINTER );
+    bson_t * child = bson_hbparam( 2, HB_IT_POINTER );
+
+    if ( parent && child ) {
+        bool result = bson_append_array_end( parent, child );
+        if ( result ) {
+            --arrayLevel;
+        }
+        hb_retl( result );
+    } else {
+        HBBSON_ERR_ARGS();
     }
 }
 
@@ -281,12 +317,11 @@ HB_FUNC( BSON_APPEND_DOCUMENT_BEGIN )
     bson_t * parent = bson_hbparam( 1, HB_IT_POINTER );
     const char * key = hb_parc( 2 );
 
-    if ( parent && key && HB_ISBYREF( 4 ) && documentLevel <= HBMONGOC_MAX_DOCUMENT_LEVEL ) {
+    if ( parent && key && HB_ISBYREF( 4 ) && documentLevel <= HBMONGOC_MAX_ARRAYDOCUMENT_LEVEL ) {
         int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
-        bson_t * child = &s_bson[ documentLevel++ ];
+        bson_t * child = &s_bson_documentStack[ documentLevel++ ];
         bool result = bson_append_document_begin( parent, key, key_length, child );
         PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_t_, child );
-        phBson->documentLevel = documentLevel;
         hb_storptrGC( phBson, 4 );
         hb_retl( result );
     } else {
@@ -296,21 +331,18 @@ HB_FUNC( BSON_APPEND_DOCUMENT_BEGIN )
 
 HB_FUNC( BSON_APPEND_DOCUMENT_END )
 {
-    if ( documentLevel > 0 ) {
-        --documentLevel;
-        bson_t * parent = bson_hbparam( 1, HB_IT_POINTER );
-        if ( parent ) {
-            ++documentLevel;
-            bson_t * child = bson_hbparam( 2, HB_IT_POINTER );
-            if ( child ) {
-                --documentLevel;
-                bool result = bson_append_document_end( parent, child );
-                hb_retl( result );
-                return;
-            }
+    bson_t * parent = bson_hbparam( 1, HB_IT_POINTER );
+    bson_t * child = bson_hbparam( 2, HB_IT_POINTER );
+
+    if ( parent && child ) {
+        bool result = bson_append_document_end( parent, child );
+        if ( result ) {
+            --documentLevel;
         }
+        hb_retl( result );
+    } else {
+        HBBSON_ERR_ARGS();
     }
-    HBBSON_ERR_ARGS();
 }
 
 HB_FUNC( BSON_APPEND_DOUBLE )

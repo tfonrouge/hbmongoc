@@ -15,6 +15,7 @@
 
 /* bson macros */
 #xtranslate BSON_APPEND_ARRAY( <document>, <key>, <array> ) => bson_append_array( <document>, <key>, -1, <array> )
+#xtranslate BSON_APPEND_ARRAY_BEGIN( <document>, <key>, <child> ) => bson_append_array_begin( <document>, <key>, -1, <child> )
 #xtranslate BSON_APPEND_BINARY( <document>, <key>, <binData> ) => bson_append_binary ( <document>, <key>, -1, nil, <binData>, nil )
 #xtranslate BSON_APPEND_BOOL( <document>, <key>, <value> ) => bson_append_bool( <document>, <key>, -1, <value> )
 #xtranslate BSON_APPEND_CODE( <document>, <key>, <code> ) => bson_append_code( <document>, <key>, -1, <code> )
