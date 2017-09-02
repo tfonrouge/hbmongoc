@@ -527,7 +527,41 @@ HB_FUNC( BSON_NEW )
     }
 }
 
+HB_FUNC( BSON_NEW_FROM_JSON )
+{
+    bson_t * bson = NULL;
+    bson_error_t error;
+
+    if ( HB_ISCHAR( 1 ) ) {
+        const char * data = hb_parc( 1 );
+        int len = HB_ISNUM( 2 ) ? hb_parni( 2 ) : ( int ) hb_parclen( 1 );
+        bson = bson_new_from_json( ( const uint8_t * ) data, len, &error );
+    } else if ( HB_ISHASH( 1 ) || HB_ISARRAY( 1 ) ) {
+        char * szJSON = hb_jsonEncode( hb_param( 1, HB_IT_HASH | HB_IT_ARRAY ), NULL, false );
+        bson = bson_new_from_json( ( const uint8_t * ) szJSON, -1, &error );
+        hb_xfree( szJSON );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+
+    if ( bson ) {
+        if ( HB_ISBYREF( 3 ) ) {
+            hb_stor( 3 );
+        }
+        PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_t_, bson );
+        hb_retptrGC( phBson );
+    } else {
+        if ( HB_ISBYREF( 3 ) ) {
+            hb_storc( error.message, 3 );
+        }
+        hb_ret();
+    }
+}
+
 HB_FUNC( BSON_VALIDATE )
 {
 
 }
+
+
+
