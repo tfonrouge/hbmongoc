@@ -56,11 +56,10 @@ PHB_MONGOC hbmongoc_new_dataContainer( void * p, hbmongoc_t_ type )
 
 static void hbmongoc_check_inited()
 {
-    if( ! s_mongoc_inited )
-        {
+    if ( ! s_mongoc_inited ) {
         mongoc_init();
         s_mongoc_inited = true;
-        }
+    }
 }
 
 PHB_MONGOC hbmongoc_param( int iParam, hbmongoc_t_ type )
@@ -92,6 +91,7 @@ void hbmongoc_return_byref_bson( int iParam, bson_t * bson )
 void * mongoc_hbparam( int iParam, hbmongoc_t_ type )
 {
     PHB_MONGOC phMongoc = hbmongoc_param( iParam, type );
+
     if ( phMongoc && phMongoc->p ) {
         return phMongoc->p;
     }
