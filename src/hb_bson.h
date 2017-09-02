@@ -9,8 +9,17 @@
 #ifndef hb_bson_h
 #define hb_bson_h
 
-#include <stdio.h>
+#include "hbapi.h"
+#include "hbapiitm.h"
+#include "hbapierr.h"
+#include "hbapifs.h"
+#include "hbapistr.h"
+#include "hbstack.h"
+#include "hbvm.h"
+
 #include <bson.h>
+
+#define HBBSON_ERR_ARGS()  ( hb_errRT_BASE_SubstR( EG_ARG, 3012, NULL, HB_ERR_FUNCNAME, HB_ERR_ARGS_BASEPARAMS ) )
 
 typedef enum { _hbbson_t_, _hbbson_decimal128_t_ } hbbson_t_;
 

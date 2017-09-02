@@ -8,18 +8,6 @@
 
 #include "hb_bson.h"
 
-#include "hbapi.h"
-#include "hbapiitm.h"
-#include "hbapierr.h"
-#include "hbapifs.h"
-#include "hbapistr.h"
-#include "hbstack.h"
-#include "hbvm.h"
-
-#include <bson.h>
-
-#define HBBSON_ERR_ARGS()  ( hb_errRT_BASE_SubstR( EG_ARG, 3012, NULL, HB_ERR_FUNCNAME, HB_ERR_ARGS_BASEPARAMS ) )
-
 #define HBMONGOC_MAX_DOCUMENT_LEVEL 100
 
 static bson_t s_bson[ HBMONGOC_MAX_DOCUMENT_LEVEL ];
@@ -52,9 +40,6 @@ static HB_GARBAGE_FUNC( hbbson_gc_func )
     }
 }
 
-/*
- s_gc_mongoc_client_t
- */
 static const HB_GC_FUNCS s_gc_bson_funcs = {
     hbbson_gc_func,
     hb_gcDummyMark

@@ -27,8 +27,7 @@
 
 -hbx=${hb_name}
 
-src/hb_mongoc.c
-src/hb_bson.c
+src/*.c
 
 $hb_pkg_dynlib.hbm
 $hb_pkg_install.hbm
