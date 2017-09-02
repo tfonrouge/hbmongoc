@@ -158,20 +158,16 @@ HB_FUNC( MONGOC_CLIENT_COMMAND_SIMPLE )
 {
     PHB_MONGOC client = hbmongoc_param( 1, _hb_client_t_ );
     bson_t * command = bson_hbparam( 3, HB_IT_POINTER | HB_IT_STRING );
+    const char *db_name = hb_parc( 2 );
 
-    if ( client && command ) {
-        const char *db_name = hb_parc( 2 );
+    if ( client && db_name && command && HB_ISBYREF( 5 ) ) {
         const mongoc_read_prefs_t *read_prefs = NULL;
         bson_t * reply = bson_new();
         bson_error_t error;
 
         bool result = mongoc_client_command_simple( client->p, db_name, command, read_prefs, reply, &error);
 
-        if ( result && HB_ISBYREF( 5 ) ) {
-            hbmongoc_return_byref_bson( 5, reply );
-        } else {
-            bson_destroy( reply );
-        }
+        hbmongoc_return_byref_bson( 5, reply );
 
         if ( HB_ISBYREF( 6 ) ) {
             if ( result ) {
@@ -213,10 +209,10 @@ HB_FUNC( MONGOC_CLIENT_DESTROY )
 HB_FUNC( MONGOC_CLIENT_GET_COLLECTION )
 {
     PHB_MONGOC client = hbmongoc_param( 1, _hb_client_t_ );
+    const char * db = hb_parc( 2 );
+    const char * szCollection = hb_parc( 3 );
 
-    if ( client && HB_ISCHAR( 2 ) && HB_ISCHAR( 3 ) ) {
-        const char *db = hb_parc( 2 );
-        const char *szCollection = hb_parc( 3 );
+    if ( client && db && szCollection ) {
         mongoc_collection_t * collection = mongoc_client_get_collection( client->p, db, szCollection);
         PHB_MONGOC pMongoCollection = hbmongoc_new_dataContainer( _hb_collection_t_, collection );
         hb_retptrGC( pMongoCollection );
@@ -231,9 +227,9 @@ HB_FUNC( MONGOC_CLIENT_GET_COLLECTION )
 HB_FUNC( MONGOC_CLIENT_GET_DATABASE )
 {
     PHB_MONGOC client = hbmongoc_param( 1, _hb_client_t_ );
+    const char * name = hb_parc( 2 );
 
-    if ( client && HB_ISCHAR( 2 ) ) {
-        const char *name = hb_parc( 2 );
+    if ( client && name ) {
         mongoc_database_t * database = mongoc_client_get_database( client->p, name );
         PHB_MONGOC pMongoDatabase = hbmongoc_new_dataContainer( _hb_database_t_, database );
         hb_retptrGC( pMongoDatabase );
@@ -247,8 +243,9 @@ HB_FUNC( MONGOC_CLIENT_GET_DATABASE )
  */
 HB_FUNC( MONGOC_CLIENT_NEW )
 {
-    if ( HB_ISCHAR( 1 ) ) {
-        const char *uri_string = hb_parc( 1 );
+    const char *uri_string = hb_parc( 1 );
+
+    if ( uri_string ) {
         mongoc_client_t * client = mongoc_client_new( uri_string );
         if ( client ) {
             PHB_MONGOC pMongoc = hbmongoc_new_dataContainer( _hb_client_t_, client );
@@ -268,9 +265,9 @@ HB_FUNC( MONGOC_CLIENT_NEW )
 HB_FUNC( MONGOC_CLIENT_SET_APPNAME )
 {
     PHB_MONGOC pMongoc_client = hbmongoc_param( 1, _hb_client_t_ );
+    const char * appname = hb_parc( 2 );
 
-    if ( pMongoc_client && HB_ISCHAR( 2 ) ) {
-        const char *appname = hb_parc( 2 );
+    if ( pMongoc_client && appname ) {
         bool result = mongoc_client_set_appname( pMongoc_client->p, appname );
         hb_retl( result );
     } else {
@@ -287,7 +284,7 @@ HB_FUNC( MONGOC_COLLECTION_COMMAND_SIMPLE )
     PHB_MONGOC collection = hbmongoc_param( 1, _hb_collection_t_ );
     bson_t * command = bson_hbparam( 2, HB_IT_POINTER | HB_IT_STRING );
 
-    if ( collection && command ) {
+    if ( collection && command && HB_ISBYREF( 4 ) ) {
         
         const mongoc_read_prefs_t *read_prefs = NULL;
         bson_t * reply = bson_new();
@@ -295,11 +292,7 @@ HB_FUNC( MONGOC_COLLECTION_COMMAND_SIMPLE )
 
         bool result = mongoc_collection_command_simple( collection->p, command, read_prefs, reply, &error);
 
-        if ( result && HB_ISBYREF( 4 ) ) {
-            hbmongoc_return_byref_bson( 4, reply );
-        } else {
-            bson_destroy( reply );
-        }
+        hbmongoc_return_byref_bson( 4, reply );
 
         if ( HB_ISBYREF( 5 ) ) {
             if ( result ) {
