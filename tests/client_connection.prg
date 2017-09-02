@@ -1,5 +1,10 @@
 /*
  * test: client_connection
+ *
+ * creates a bson_uri_t value
+ * creates a bson_client_t value from bson_uri_t
+ * ping server in a loop
+ *
  */
 
 #include "hbmongoc.ch"
@@ -43,7 +48,6 @@ PROCEDURE main()
 
         IF retVal
             ? "Server reply:", i, bson_as_json( reply )
-//            ? "Server reply:", i, ( reply )
         ELSE
             ? "Server error:", error
             EXIT
