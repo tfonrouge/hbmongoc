@@ -6,8 +6,10 @@
 //  Copyright © 2017 Teo Fonrouge. All rights reserved.
 //
 
-#include "hb_bson.h"
 #include "hbjson.h"
+#include "hb_bson.h"
+
+static PHB_BSON hbbson_hbparam( PHB_ITEM pItem, hbbson_t_ hbbson_type );
 
 #define HBMONGOC_MAX_ARRAYDOCUMENT_LEVEL 100
 
@@ -61,21 +63,23 @@ bson_decimal128_t * bson_decimal128_hbparam( int iParam )
 }
 #endif
 
-bson_t * bson_hbparam( int iParam, int type )
+bson_t * bson_hbparam( int iParam, long lMask )
 {
-    if ( hb_param( iParam, type ) ) {
-        PHB_BSON phBson = hbbson_param( iParam, _hbbson_t_ );
-        if ( phBson ) {
+    PHB_ITEM pItem = hb_param( iParam, lMask );
+
+    if ( pItem ) {
+        if ( hb_itemType( pItem ) & HB_IT_POINTER ) {
+            PHB_BSON phBson = hbbson_hbparam( pItem, _hbbson_t_ );
             return phBson->bson;
-        } else if ( HB_ISCHAR( iParam ) ) {
+        } else if ( hb_itemType( pItem ) & HB_IT_STRING ) {
             const char * szJSON = NULL;
-            szJSON = hb_parc( iParam );
+            szJSON = hb_itemGetC( pItem );
             bson_t * bson = bson_new_from_json( ( const uint8_t * ) szJSON, -1, NULL );
             if ( bson ) {
                 return bson;
             }
-        } else if ( HB_ISHASH( iParam ) || HB_ISARRAY( iParam ) ) {
-            char * szJSON = hb_jsonEncode( hb_param( iParam, HB_IT_HASH | HB_IT_ARRAY ), NULL, false );
+        } else if ( hb_itemType( pItem ) & ( HB_IT_HASH | HB_IT_ARRAY ) ) {
+            char * szJSON = hb_jsonEncode( pItem, NULL, false );
             bson_t * bson = bson_new_from_json( ( const uint8_t * ) szJSON, -1, NULL );
             hb_xfree( szJSON );
             if ( bson ) {
@@ -93,6 +97,13 @@ static uint64_t hbbson_dateTimeToUnix( int iParam ) {
     hb_partdt( &lJulian, &lMillis, iParam );
 
     return (lJulian - 2440588) * 86400000 + lMillis;
+}
+
+static PHB_BSON hbbson_hbparam( PHB_ITEM pItem, hbbson_t_ hbbson_type )
+{
+    PHB_BSON phBson = hb_itemGetPtrGC( pItem, &s_gc_bson_funcs );
+
+    return phBson && phBson->hbbson_type == hbbson_type ? phBson : NULL;
 }
 
 PHB_BSON hbbson_new_dataContainer( hbbson_t_ hbbson_type, void * p )
@@ -117,8 +128,10 @@ PHB_BSON hbbson_new_dataContainer( hbbson_t_ hbbson_type, void * p )
 
 PHB_BSON hbbson_param( int iParam, hbbson_t_ hbbson_type )
 {
-    if ( HB_ISPOINTER( iParam ) ) {
-        PHB_BSON phBson = hb_parptrGC( &s_gc_bson_funcs, iParam );
+    PHB_ITEM pItem = hb_param( iParam, HB_IT_POINTER );
+
+    if ( pItem ) {
+        PHB_BSON phBson = hbbson_hbparam( pItem, hbbson_type );
         if ( phBson && phBson->hbbson_type == hbbson_type ) {
             switch ( hbbson_type ) {
                 case _hbbson_t_:
@@ -561,15 +574,16 @@ HB_FUNC( BSON_NEW )
 
 HB_FUNC( BSON_NEW_FROM_JSON )
 {
+    PHB_ITEM pItem = hb_param( 1, HB_IT_ANY );
     bson_t * bson = NULL;
     bson_error_t error;
 
-    if ( HB_ISCHAR( 1 ) ) {
+    if ( hb_itemType( pItem ) & HB_IT_STRING ) {
         const char * data = hb_parc( 1 );
         int len = HB_ISNUM( 2 ) ? hb_parni( 2 ) : ( int ) hb_parclen( 1 );
         bson = bson_new_from_json( ( const uint8_t * ) data, len, &error );
-    } else if ( HB_ISHASH( 1 ) || HB_ISARRAY( 1 ) ) {
-        char * szJSON = hb_jsonEncode( hb_param( 1, HB_IT_HASH | HB_IT_ARRAY ), NULL, false );
+    } else if ( hb_itemType( pItem ) & ( HB_IT_HASH | HB_IT_ARRAY ) ) {
+        char * szJSON = hb_jsonEncode( pItem, NULL, false );
         bson = bson_new_from_json( ( const uint8_t * ) szJSON, -1, &error );
         hb_xfree( szJSON );
     } else {

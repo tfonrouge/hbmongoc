@@ -12,7 +12,7 @@
 HB_FUNC( MONGOC_COLLECTION_COMMAND_SIMPLE )
 {
     PHB_MONGOC collection = hbmongoc_param( 1, _hb_collection_t_ );
-    bson_t * command = bson_hbparam( 2, HB_IT_POINTER | HB_IT_STRING | HB_IT_HASH );
+    bson_t * command = bson_hbparam( 2, HB_IT_ANY );
 
     if ( collection && command && HB_ISBYREF( 4 ) ) {
 
@@ -58,7 +58,7 @@ HB_FUNC( MONGOC_COLLECTION_DESTROY )
 HB_FUNC( MONGOC_COLLECTION_INSERT )
 {
     PHB_MONGOC collection = hbmongoc_param( 1, _hb_collection_t_ );
-    bson_t * document = bson_hbparam( 3, HB_IT_POINTER | HB_IT_STRING | HB_IT_HASH );
+    bson_t * document = bson_hbparam( 3, HB_IT_ANY );
     bool result = false;
 
     if ( collection && document ) {

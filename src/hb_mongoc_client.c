@@ -12,7 +12,7 @@
 HB_FUNC( MONGOC_CLIENT_COMMAND_SIMPLE )
 {
     PHB_MONGOC client = hbmongoc_param( 1, _hb_client_t_ );
-    bson_t * command = bson_hbparam( 3, HB_IT_POINTER | HB_IT_STRING | HB_IT_HASH );
+    bson_t * command = bson_hbparam( 3, HB_IT_ANY );
     const char * db_name = hb_parc( 2 );
 
     if ( client && db_name && command && HB_ISBYREF( 5 ) ) {
