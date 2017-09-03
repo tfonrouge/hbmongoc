@@ -6,8 +6,8 @@
 //  Copyright © 2017 Teo Fonrouge. All rights reserved.
 //
 
-#include "hbjson.h"
 #include "hb_bson.h"
+#include "hbjson.h"
 
 #define HBMONGOC_MAX_ARRAYDOCUMENT_LEVEL 100
 
