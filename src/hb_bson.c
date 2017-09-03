@@ -9,9 +9,9 @@
 #include "hbjson.h"
 #include "hb_bson.h"
 
-static PHB_BSON hbbson_hbparam( PHB_ITEM pItem, hbbson_t_ hbbson_type );
-
 #define HBMONGOC_MAX_ARRAYDOCUMENT_LEVEL 100
+
+static PHB_BSON hbbson_hbparam( PHB_ITEM pItem, hbbson_t_ hbbson_type );
 
 static bson_t s_bson_documentStack[ HBMONGOC_MAX_ARRAYDOCUMENT_LEVEL ];
 static int documentLevel = 0;
