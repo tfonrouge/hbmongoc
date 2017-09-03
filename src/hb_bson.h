@@ -21,7 +21,13 @@
 
 #define HBBSON_ERR_ARGS()  ( hb_errRT_BASE_SubstR( EG_ARG, 3012, NULL, HB_ERR_FUNCNAME, HB_ERR_ARGS_BASEPARAMS ) )
 
-typedef enum { _hbbson_t_, _hbbson_decimal128_t_ } hbbson_t_;
+typedef enum
+    {
+#if BSON_CHECK_VERSION( 1, 5, 0 )
+        _hbbson_decimal128_t_,
+#endif
+        _hbbson_t_
+    } hbbson_t_;
 
 typedef struct _HB_BSON_
 {
