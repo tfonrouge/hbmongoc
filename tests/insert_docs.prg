@@ -4,8 +4,6 @@
 PROCEDURE main( uri )
     LOCAL client
     LOCAL collection
-    LOCAL command
-    LOCAL reply
     LOCAL error
     LOCAL bson
 
@@ -21,21 +19,6 @@ PROCEDURE main( uri )
     ? "Server:", uri
 
     client := mongoc_client_new( uri )
-
-    /* bson document can be represented as a Harbour hash */
-    command := { "ping" => 1 }
-
-    ?
-    ? "sending ping to server.."
-
-    IF ! mongoc_client_command_simple( client, "admin", command, nil, @reply )
-        alert("Error sending command to server...")
-        QUIT
-    ENDIF
-
-    ? "Server response:", bson_as_json( reply )
-
-    ?
 
     WAIT "press any key to insert document..."
 
