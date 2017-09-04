@@ -9,6 +9,7 @@ FUNCTION hbmk_plugin_hbmongoc( hbmk )
     LOCAL buffer
     LOCAL a
     LOCAL v
+    LOCAL hbbson_inc_name
 
     SWITCH hbmk[ "cSTATE" ]
     CASE "pre_all"
@@ -17,6 +18,7 @@ FUNCTION hbmk_plugin_hbmongoc( hbmk )
         EXIT
     CASE "post_all"
         libbsonIncPath := GetEnv( "HBMK_DIR_LIBBSON" )
+        hbbson_inc_name := "hbbson.ch"
         IF ! empty( libbsonIncPath )
             a := { "#define BSON_MAJOR_VERSION", "#define BSON_MINOR_VERSION", "#define BSON_MICRO_VERSION" }
             buffer := hb_memoRead( libbsonIncPath + "/bson-version.h" )
@@ -29,14 +31,12 @@ FUNCTION hbmk_plugin_hbmongoc( hbmk )
                         ENDIF
                     NEXT
                 NEXT
-            ENDIF
-
 #pragma __stream | buffer := %s
 //
 //  hbmongoc.ch
 //  hbmongoc
 //
-//  Automatically Created by Teo Fonrouge on 8/26/17.
+//  Automatically Created for the hbmongoc library
 //  Copyright © 2017 Teo Fonrouge. All rights reserved.
 //
 
@@ -44,19 +44,20 @@ FUNCTION hbmk_plugin_hbmongoc( hbmk )
 #define hbbson_ch
 
 ENDTEXT
-            FOR EACH v IN libbsonIncPath
-                buffer += v + e"\n"
-            NEXT
+                FOR EACH v IN libbsonIncPath
+                    buffer += v + e"\n"
+                NEXT
 #pragma __stream | buffer += %s
 
 #define BSON_CHECK_VERSION(major,minor,micro)   (BSON_MAJOR_VERSION > (major) .OR. (BSON_MAJOR_VERSION == (major) .AND. BSON_MINOR_VERSION > (minor)) .OR. (BSON_MAJOR_VERSION == (major) .AND. BSON_MINOR_VERSION == (minor) .AND. BSON_MICRO_VERSION >= (micro)))
 
 #endif /* hbbson_ch */
-
 ENDTEXT
-            hb_memoWrit( "hbbson.ch", buffer )
-        ELSE
-            hbmk_OutErr( hbmk, "libbson-1.0 include dir not found..." )
+                hb_memoWrit( hbbson_inc_name, buffer )
+            ENDIF
+        ENDIF
+        IF empty( libbsonIncPath )
+            hbmk_OutErr( hbmk, e"Error: can't build \"" + hbbson_inc_name + e"\"..." )
         ENDIF
         EXIT
     ENDSWITCH
