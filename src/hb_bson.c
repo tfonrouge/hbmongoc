@@ -139,8 +139,8 @@ PHB_BSON hbbson_param( int iParam, hbbson_t_ hbbson_type )
                         return phBson;
                     }
                     break;
-                case _hbbson_decimal128_t_:
 #if BSON_CHECK_VERSION( 1, 5, 0 )
+                case _hbbson_decimal128_t_:
                     if ( phBson->bson_128 ) {
                         return phBson;
                     }
