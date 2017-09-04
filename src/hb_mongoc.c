@@ -76,7 +76,11 @@ void hbmongoc_return_byref_bson( int iParam, bson_t * bson )
 
     switch ( s_hbmongoc_returnValueType ) {
         case _HBRETVAL_JSON_:
+#if BSON_CHECK_VERSION( 1, 7, 0 )
+            szJson = bson_as_canonical_extended_json( bson, NULL );
+#else
             szJson = bson_as_json( bson, NULL );
+#endif
             hb_storc( szJson, iParam );
             bson_free( szJson );
             bson_destroy( bson );
