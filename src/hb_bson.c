@@ -483,6 +483,24 @@ HB_FUNC( BSON_AS_CANONICAL_EXTENDED_JSON )
 }
 #endif
 
+#if BSON_CHECK_VERSION( 1, 7, 0 )
+HB_FUNC( BSON_AS_RELAXED_EXTENDED_JSON )
+{
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
+
+    if ( bson ) {
+        char * szJSON = bson_as_relaxed_extended_json( bson, NULL );
+        if ( szJSON ) {
+            hb_retc( szJSON );
+            bson_free( szJSON );
+        }
+    }
+    else {
+        HBBSON_ERR_ARGS();
+    }
+}
+#endif
+
 HB_FUNC( BSON_CHECK_VERSION )
 {
     if ( HB_ISNUM( 1 ) && HB_ISNUM( 2 ) && HB_ISNUM( 3 ) ) {
