@@ -8,10 +8,6 @@
 #include "hbclass.ch"
 #include "hbmongoc.ch"
 
-#if BSON_CHECK_VERSION( 1, 7, 0 )
-    #xtranslate bson_as_json( <json> ) => bson_as_canonical_extended_json( <json> )
-#endif
-
 PROCEDURE main()
     LOCAL bson
     LOCAL error

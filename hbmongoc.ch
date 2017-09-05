@@ -9,8 +9,6 @@
 #ifndef hbmongoc_ch
 #define hbmongoc_ch
 
-#include "hbbson.ch"
-
 #define     MONGOC_INSERT_NONE                  0
 #define     MONGOC_INSERT_CONTINUE_ON_ERROR     hb_bitShift( 1, 0 )
 #define     MONGOC_INSERT_NO_VALIDATE           hb_bitShift( 1, 31)

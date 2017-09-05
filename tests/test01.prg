@@ -27,9 +27,7 @@ PROCEDURE main( serverConn )
     LOCAL i
     LOCAL bool
     LOCAL secs
-#if BSON_CHECK_VERSION( 1, 5, 0 )
     LOCAL dec
-#endif
     LOCAL array,item1, item2
     LOCAL printOne := .t.
 
@@ -51,9 +49,9 @@ PROCEDURE main( serverConn )
 
     ? "mongoc_client_new():", client
 
-#if BSON_CHECK_VERSION( 1, 5, 0 )
-    ? "mongoc_client_set_appname():", mongoc_client_set_appname(client, "connect-example")
-#endif
+    IF BSON_CHECK_VERSION( 1, 5, 0 )
+        ? "mongoc_client_set_appname():", mongoc_client_set_appname(client, "connect-example")
+    ENDIF
 
     database := mongoc_client_get_database(client, "db_name")
 
@@ -107,10 +105,10 @@ PROCEDURE main( serverConn )
         BSON_APPEND_NULL( insert, "null" )
         BSON_APPEND_REGEX( insert, "regex", "\bJohn\b", "i" )
 
-#if BSON_CHECK_VERSION( 1, 5, 0 )
-        bson_decimal128_from_string( "100.00", @dec )
-        BSON_APPEND_DECIMAL128( insert, "decimal128", dec )
-#endif
+        IF BSON_CHECK_VERSION( 1, 5, 0 )
+            bson_decimal128_from_string( "100.00", @dec )
+            BSON_APPEND_DECIMAL128( insert, "decimal128", dec )
+        ENDIF
 
         BSON_APPEND_CODE( insert, "javascript", e"return \"any javaScript code\"" )
 
@@ -156,9 +154,7 @@ PROCEDURE main( serverConn )
 
         IF printOne
             ? e"BSON_AS_JSON:\n", bson_as_json( insert )
-#if BSON_CHECK_VERSION( 1, 7, 0 )
             ? e"BSON_AS_CANONICAL_EXTENDED_JSON:\n", bson_as_canonical_extended_json( insert )
-#endif
             printOne := .F.
         ENDIF
 

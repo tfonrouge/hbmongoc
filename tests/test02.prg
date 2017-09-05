@@ -12,6 +12,11 @@ PROCEDURE main()
     LOCAL reply
     LOCAL error
 
+    LOCAL v1, v2, v3
+
+    hb_bson_version( @v1, @v2, @v3 )
+    ? hb_ntos( v1 ) + "." + hb_ntos( v2 ) + "." + hb_ntos( v3 )
+
     /* REQUIRED to initialize mongoc internals */
     mongoc_init()
 
@@ -27,9 +32,7 @@ PROCEDURE main()
         ? "Server reply:", reply
         IF hbmongoc_set_return_bson_value_type() == "BSON"
             ? "bson_as_json( reply, nil ):", bson_as_json( reply, nil )
-#if BSON_CHECK_VERSION( 1, 7, 0 )
             ? "bson_as_canonical_extended_json( reply, nil ):", bson_as_canonical_extended_json( reply, nil )
-#endif
         ENDIF
     ELSE
         ? "Failed to run command:", error
