@@ -1,0 +1,77 @@
+/* --------------------------------------------------------------------
+ * NOTE: You can add manual override which functions to include or
+ *       exclude from automatically generated EXTERNAL/DYNAMIC list.
+ *          Syntax: // HB_FUNC_INCLUDE <func>
+ *                  // HB_FUNC_EXCLUDE <func>
+ */
+
+/* --------------------------------------------------------------------
+ * WARNING: Automatically generated code below. DO NOT EDIT! (except casing)
+ *          Regenerate using hbmk2 '-hbx=' option.
+ */
+
+#ifndef __HBEXTERN_CH__HBMONGOC__
+#define __HBEXTERN_CH__HBMONGOC__
+
+#if defined( __HBEXTREQ__ ) .OR. defined( __HBEXTERN__HBMONGOC__ANNOUNCE )
+   ANNOUNCE __HBEXTERN__HBMONGOC__
+#endif
+
+#if defined( __HBEXTREQ__ ) .OR. defined( __HBEXTERN__HBMONGOC__REQUEST )
+   #command DYNAMIC <fncs,...> => EXTERNAL <fncs>
+#endif
+
+DYNAMIC bson_append_array
+DYNAMIC bson_append_array_begin
+DYNAMIC bson_append_array_end
+DYNAMIC bson_append_binary
+DYNAMIC bson_append_bool
+DYNAMIC bson_append_code
+DYNAMIC bson_append_code_with_scope
+DYNAMIC bson_append_date_time
+DYNAMIC bson_append_decimal128
+DYNAMIC bson_append_document
+DYNAMIC bson_append_document_begin
+DYNAMIC bson_append_document_end
+DYNAMIC bson_append_double
+DYNAMIC bson_append_int32
+DYNAMIC bson_append_int64
+DYNAMIC bson_append_null
+DYNAMIC bson_append_regex
+DYNAMIC bson_append_utf8
+DYNAMIC bson_as_canonical_extended_json
+DYNAMIC bson_as_json
+DYNAMIC bson_as_relaxed_extended_json
+DYNAMIC bson_check_version
+DYNAMIC bson_decimal128_from_string
+DYNAMIC bson_decimal128_to_string
+DYNAMIC bson_destroy
+DYNAMIC bson_get_major_version
+DYNAMIC bson_get_micro_version
+DYNAMIC bson_get_minor_version
+DYNAMIC bson_get_version
+DYNAMIC bson_new
+DYNAMIC bson_new_from_json
+DYNAMIC bson_validate
+DYNAMIC hb_bson_version
+DYNAMIC hbmongoc_set_return_bson_value_type
+DYNAMIC mongoc_cleanup
+DYNAMIC mongoc_client_command_simple
+DYNAMIC mongoc_client_destroy
+DYNAMIC mongoc_client_get_collection
+DYNAMIC mongoc_client_get_database
+DYNAMIC mongoc_client_new
+DYNAMIC mongoc_client_new_from_uri
+DYNAMIC mongoc_client_set_appname
+DYNAMIC mongoc_collection_command_simple
+DYNAMIC mongoc_collection_destroy
+DYNAMIC mongoc_collection_insert
+DYNAMIC mongoc_database_destroy
+DYNAMIC mongoc_init
+DYNAMIC mongoc_uri_new
+
+#if defined( __HBEXTREQ__ ) .OR. defined( __HBEXTERN__HBMONGOC__REQUEST )
+   #uncommand DYNAMIC <fncs,...> => EXTERNAL <fncs>
+#endif
+
+#endif
