@@ -503,13 +503,6 @@ HB_FUNC( BSON_AS_RELAXED_EXTENDED_JSON )
 #endif
 }
 
-HB_FUNC( HB_BSON_VERSION )
-{
-    hb_storni( BSON_MAJOR_VERSION, 1 );
-    hb_storni( BSON_MINOR_VERSION, 2 );
-    hb_storni( BSON_MICRO_VERSION, 3 );
-}
-
 HB_FUNC( BSON_CHECK_VERSION )
 {
     if ( HB_ISNUM( 1 ) && HB_ISNUM( 2 ) && HB_ISNUM( 3 ) ) {
@@ -634,4 +627,11 @@ HB_FUNC( BSON_NEW_FROM_JSON )
 HB_FUNC( BSON_VALIDATE )
 {
 
+}
+
+HB_FUNC( HB_BSON_VERSION )
+{
+    hb_storni( BSON_MAJOR_VERSION, 1 );
+    hb_storni( BSON_MINOR_VERSION, 2 );
+    hb_storni( BSON_MICRO_VERSION, 3 );
 }
