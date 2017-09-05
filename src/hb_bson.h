@@ -23,10 +23,10 @@
 
 typedef enum
     {
+        _hbbson_t_,
 #if BSON_CHECK_VERSION( 1, 5, 0 )
-        _hbbson_decimal128_t_,
+        _hbbson_decimal128_t_
 #endif
-        _hbbson_t_
     } hbbson_t_;
 
 typedef struct _HB_BSON_

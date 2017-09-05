@@ -40,8 +40,8 @@ static HB_GARBAGE_FUNC( hbbson_gc_func )
                     hb_xfree( pBson->bson_128 );
                     pBson->bson_128 = NULL;
                 }
-#endif
                 break;
+#endif
         }
     }
 }
@@ -119,8 +119,8 @@ PHB_BSON hbbson_new_dataContainer( hbbson_t_ hbbson_type, void * p )
 #if BSON_CHECK_VERSION( 1, 5, 0 )
         case _hbbson_decimal128_t_:
             phBson->bson_128 = p;
-#endif
             break;
+#endif
     }
 
     return phBson;
@@ -144,8 +144,8 @@ PHB_BSON hbbson_param( int iParam, hbbson_t_ hbbson_type )
                     if ( phBson->bson_128 ) {
                         return phBson;
                     }
-#endif
                     break;
+#endif
             }
         }
     }
@@ -288,9 +288,9 @@ HB_FUNC( BSON_APPEND_DATE_TIME )
     }
 }
 
-#if BSON_CHECK_VERSION( 1, 5, 0 )
 HB_FUNC( BSON_APPEND_DECIMAL128 )
 {
+#if BSON_CHECK_VERSION( 1, 5, 0 )
     bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
     const char * key = hb_parc( 2 );
     bson_decimal128_t * dec = bson_decimal128_hbparam( 4 );
@@ -302,9 +302,8 @@ HB_FUNC( BSON_APPEND_DECIMAL128 )
     } else {
         HBBSON_ERR_ARGS();
     }
-
-}
 #endif
+}
 
 HB_FUNC( BSON_APPEND_DOCUMENT )
 {
@@ -465,27 +464,28 @@ HB_FUNC( BSON_AS_JSON )
     }
 }
 
-#if BSON_CHECK_VERSION( 1, 7, 0 )
 HB_FUNC( BSON_AS_CANONICAL_EXTENDED_JSON )
 {
     bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
 
     if ( bson ) {
+#if BSON_CHECK_VERSION( 1, 7, 0 )
         char * szJSON = bson_as_canonical_extended_json( bson, NULL );
-        if ( szJSON ) {
+#else
+        char * szJSON = bson_as_json( bson, NULL );
+#endif
+        if( szJSON ) {
             hb_retc( szJSON );
             bson_free( szJSON );
         }
-    }
-    else {
+    } else {
         HBBSON_ERR_ARGS();
     }
 }
-#endif
 
-#if BSON_CHECK_VERSION( 1, 7, 0 )
 HB_FUNC( BSON_AS_RELAXED_EXTENDED_JSON )
 {
+#if BSON_CHECK_VERSION( 1, 7, 0 )
     bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
 
     if ( bson ) {
@@ -498,8 +498,15 @@ HB_FUNC( BSON_AS_RELAXED_EXTENDED_JSON )
     else {
         HBBSON_ERR_ARGS();
     }
-}
 #endif
+}
+
+HB_FUNC( HB_BSON_VERSION )
+{
+    hb_storni( BSON_MAJOR_VERSION, 1 );
+    hb_storni( BSON_MINOR_VERSION, 2 );
+    hb_storni( BSON_MICRO_VERSION, 3 );
+}
 
 HB_FUNC( BSON_CHECK_VERSION )
 {
@@ -510,9 +517,9 @@ HB_FUNC( BSON_CHECK_VERSION )
     }
 }
 
-#if BSON_CHECK_VERSION( 1, 5, 0 )
 HB_FUNC( BSON_DECIMAL128_FROM_STRING )
 {
+#if BSON_CHECK_VERSION( 1, 5, 0 )
     const char * string = hb_parc( 1 );
 
     if ( string && HB_ISBYREF( 2 ) ) {
@@ -524,12 +531,12 @@ HB_FUNC( BSON_DECIMAL128_FROM_STRING )
     } else {
         HBBSON_ERR_ARGS();
     }
-}
 #endif
+}
 
-#if BSON_CHECK_VERSION( 1, 5, 0 )
 HB_FUNC( BSON_DECIMAL128_TO_STRING )
 {
+#if BSON_CHECK_VERSION( 1, 5, 0 )
     const bson_decimal128_t * dec = bson_decimal128_hbparam( 1 );
 
     if ( dec ) {
@@ -542,8 +549,8 @@ HB_FUNC( BSON_DECIMAL128_TO_STRING )
     } else {
         HBBSON_ERR_ARGS();
     }
-}
 #endif
+}
 
 HB_FUNC( BSON_DESTROY )
 {
@@ -626,6 +633,3 @@ HB_FUNC( BSON_VALIDATE )
 {
 
 }
-
-
-

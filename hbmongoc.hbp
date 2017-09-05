@@ -8,8 +8,6 @@
 
 -w3 -es2
 
--plugin=hbmk_hbmongoc.hb
-
 -deppkgname=libmongoc:libmongoc-dev{deb}
 #-deppkgname=libmongoc:file-libs{rpm}
 -deppkgname=libmongoc:mongo-c-driver{homebrew}
