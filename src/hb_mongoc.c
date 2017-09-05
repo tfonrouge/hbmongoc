@@ -7,14 +7,16 @@
 //
 
 #include "hb_mongoc.h"
+#include "hbjson.h"
 
-enum hb_return_value_type { _HBRETVAL_BSON_, _HBRETVAL_JSON_ };
+enum hb_return_bson_value_type { _HBRETVAL_BSON_, _HBRETVAL_JSON_, _HBRETVAL_HASH_ };
 
 static bool s_mongoc_inited = false;
-static enum hb_return_value_type s_hbmongoc_returnValueType = _HBRETVAL_BSON_;
+static enum hb_return_bson_value_type s_hbmongoc_return_bson_value_type = _HBRETVAL_BSON_;
 
 static const char * _STR_BSON_ = "BSON";
 static const char * _STR_JSON_ = "JSON";
+static const char * _STR_HASH_ = "HASH";
 
 static HB_GARBAGE_FUNC( hbmongoc_funcs_destroy )
 {
@@ -74,7 +76,7 @@ void hbmongoc_return_byref_bson( int iParam, bson_t * bson )
     PHB_BSON pBson;
     char * szJson;
 
-    switch ( s_hbmongoc_returnValueType ) {
+    switch ( s_hbmongoc_return_bson_value_type ) {
         case _HBRETVAL_JSON_:
 #if BSON_CHECK_VERSION( 1, 7, 0 )
             szJson = bson_as_canonical_extended_json( bson, NULL );
@@ -88,6 +90,19 @@ void hbmongoc_return_byref_bson( int iParam, bson_t * bson )
         case _HBRETVAL_BSON_:
             pBson = hbbson_new_dataContainer( _hbbson_t_, bson );
             hb_storptrGC( pBson, iParam );
+            break;
+        case _HBRETVAL_HASH_:
+#if BSON_CHECK_VERSION( 1, 7, 0 )
+            szJson = bson_as_canonical_extended_json( bson, NULL );
+#else
+            szJson = bson_as_json( bson, NULL );
+#endif
+            PHB_ITEM pItem = hb_itemNew( NULL );
+            hb_jsonDecode( szJson, pItem );
+            bson_free( szJson );
+            bson_destroy( bson );
+            hb_itemParamStoreForward( iParam, pItem );
+            hb_itemRelease( pItem );
             break;
     }
 }
@@ -105,23 +120,28 @@ void * mongoc_hbparam( int iParam, hbmongoc_t_ type )
 
 /* Harbour API */
 
-HB_FUNC( HBMONGOC_SETRETURNVALUETYPE )
+HB_FUNC( HBMONGOC_SET_RETURN_BSON_VALUE_TYPE )
 {
     if ( hb_pcount() > 0 ) {
         if ( hb_stricmp( hb_parc( 1 ), _STR_JSON_ ) == 0 ) {
-            s_hbmongoc_returnValueType = _HBRETVAL_JSON_;
+            s_hbmongoc_return_bson_value_type = _HBRETVAL_JSON_;
         } else if ( hb_stricmp( hb_parc( 1 ), _STR_BSON_ ) == 0 ) {
-            s_hbmongoc_returnValueType = _HBRETVAL_BSON_;
+            s_hbmongoc_return_bson_value_type = _HBRETVAL_BSON_;
+        } else if ( hb_stricmp( hb_parc( 1 ), _STR_HASH_ ) == 0 ) {
+            s_hbmongoc_return_bson_value_type = _HBRETVAL_HASH_;
         } else {
             HBMONGOC_ERR_ARGS();
         }
     }
-    switch ( s_hbmongoc_returnValueType ) {
+    switch ( s_hbmongoc_return_bson_value_type ) {
         case _HBRETVAL_JSON_:
             hb_retc( _STR_JSON_ );
             break;
         case _HBRETVAL_BSON_:
             hb_retc( _STR_BSON_ );
+            break;
+        case _HBRETVAL_HASH_:
+            hb_retc( _STR_HASH_ );
             break;
     }
 }
