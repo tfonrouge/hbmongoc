@@ -16,7 +16,7 @@ PROCEDURE main()
     mongoc_init()
 
     // uncomment following line to return bson_t type from hbmongoc funcs
-    hbmongoc_setReturnValueType("BSON")
+    hbmongoc_set_return_bson_value_type("BSON")
 
     client := mongoc_client_new ( "mongodb://localhost:27017/?appname=executing-example" )
     collection := mongoc_client_get_collection( client, "db_name", "coll_name" )
@@ -25,7 +25,7 @@ PROCEDURE main()
 
     IF mongoc_collection_command_simple ( collection, command, nil, @reply, @error )
         ? "Server reply:", reply
-        IF hbmongoc_setReturnValueType() == "BSON"
+        IF hbmongoc_set_return_bson_value_type() == "BSON"
             ? "bson_as_json( reply, nil ):", bson_as_json( reply, nil )
 #if BSON_CHECK_VERSION( 1, 7, 0 )
             ? "bson_as_canonical_extended_json( reply, nil ):", bson_as_canonical_extended_json( reply, nil )

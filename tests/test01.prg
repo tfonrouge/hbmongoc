@@ -39,7 +39,7 @@ PROCEDURE main( serverConn )
     CLS
 
     // uncomment following line to NOT return bson_t type from hbmongoc funcs
-    // hbmongoc_setReturnValueType("JSON")
+    // hbmongoc_set_return_bson_value_type("JSON")
 
     IF serverConn = nil
         serverConn := "mongodb://localhost:27017"
@@ -70,13 +70,19 @@ PROCEDURE main( serverConn )
         ? "error"
     ENDIF
 
-    IF hbmongoc_setReturnValueType() == "BSON"
-        ? "reply: ", reply, bson_as_json( reply )
-    ENDIF
+    altD()
 
-    IF hbmongoc_setReturnValueType() == "JSON"
-        ? "reply: ", reply
-    ENDIF
+    SWITCH hbmongoc_set_return_bson_value_type()
+    CASE "BSON"
+        ? "reply: ", reply, bson_as_json( reply )
+        EXIT
+    CASE "JSON"
+        ? "reply: ", reply, reply
+        EXIT
+    CASE "HASH"
+        ? "reply: ", reply, hb_jsonEncode( reply )
+        EXIT
+    ENDSWITCH
 
     bool := .T.
 

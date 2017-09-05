@@ -10,6 +10,8 @@ PROCEDURE main( uri )
     /* REQUIRED to initialize mongoc internals */
     mongoc_init()
 
+    hbmongoc_set_return_bson_value_type("HASH")
+
     CLS
 
     IF empty( uri )
@@ -35,6 +37,7 @@ PROCEDURE main( uri )
             QUIT
         ENDIF
 
+        AltD()
         ?? "Server response:", bson_as_json( reply )
 
         hb_idleSleep( 1 )
