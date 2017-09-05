@@ -10,7 +10,7 @@ PROCEDURE main( uri )
     /* REQUIRED to initialize mongoc internals */
     mongoc_init()
 
-    hbmongoc_set_return_bson_value_type("JSON")
+    hb_mongoc_set_return_bson_value_type("JSON")
 
     CLS
 

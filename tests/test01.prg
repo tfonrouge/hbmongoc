@@ -37,8 +37,14 @@ PROCEDURE main( serverConn )
 
     CLS
 
-    // uncomment following line to NOT return bson_t type from hbmongoc funcs
-    // hbmongoc_set_return_bson_value_type("JSON")
+    // uncomment following line to return by ref bson_t type as a BSON (native libbson bson_t ) from hbmongoc funcs
+    // hb_mongoc_set_return_bson_value_type("BSON") // DEFAULT
+
+    // uncomment following line to return by ref bson_t type as a JSON (Harbour string) from hbmongoc funcs
+    // hb_mongoc_set_return_bson_value_type("JSON")
+
+    // uncomment following line to return by ref bson_t type as a HASH (Harbour hash) from hbmongoc funcs
+    // hb_mongoc_set_return_bson_value_type("HASH")
 
     IF serverConn = nil
         serverConn := "mongodb://localhost:27017"
@@ -71,7 +77,7 @@ PROCEDURE main( serverConn )
 
     altD()
 
-    SWITCH hbmongoc_set_return_bson_value_type()
+    SWITCH hb_mongoc_set_return_bson_value_type()
     CASE "BSON"
         ? "reply: ", reply, bson_as_json( reply )
         EXIT

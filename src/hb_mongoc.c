@@ -120,7 +120,7 @@ void * mongoc_hbparam( int iParam, hbmongoc_t_ type )
 
 /* Harbour API */
 
-HB_FUNC( HBMONGOC_SET_RETURN_BSON_VALUE_TYPE )
+HB_FUNC( HB_MONGOC_SET_RETURN_BSON_VALUE_TYPE )
 {
     if ( hb_pcount() > 0 ) {
         if ( hb_stricmp( hb_parc( 1 ), _STR_JSON_ ) == 0 ) {
