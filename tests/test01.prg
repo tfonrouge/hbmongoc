@@ -1,5 +1,6 @@
 /*
- * hbmongoc : test
+ * stress test : memory consumption
+ *
  * connect to server at localhost:27017
  * set app name
  * get database

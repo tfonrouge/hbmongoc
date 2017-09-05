@@ -53,8 +53,8 @@ DYNAMIC bson_get_version
 DYNAMIC bson_new
 DYNAMIC bson_new_from_json
 DYNAMIC bson_validate
-DYNAMIC hb_bson_version
 DYNAMIC hbmongoc_set_return_bson_value_type
+DYNAMIC hb_bson_version
 DYNAMIC mongoc_cleanup
 DYNAMIC mongoc_client_command_simple
 DYNAMIC mongoc_client_destroy

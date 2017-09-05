@@ -1,9 +1,9 @@
 /*
- * test: client_connection
+ * stress test : memory consumption
  *
  * creates a bson_uri_t value
  * creates a bson_client_t value from bson_uri_t
- * ping server in a loop
+ * ping server 1000000 times
  *
  */
 
@@ -41,10 +41,12 @@ PROCEDURE main()
 
 //    commandPing := { "ping" => 1 }
 //    commandPing := hb_jsonEncode( { "ping" => 1 } )
-    commandPing := bson_new()
-    BSON_APPEND_INT32( commandPing, "ping", 1 )
 
     FOR i := 1 TO 1000000
+
+        commandPing := bson_new()
+        BSON_APPEND_INT32( commandPing, "ping", 1 )
+
         retVal := mongoc_client_command_simple( client, "admin", commandPing, nil, @reply, @error )
 
         IF retVal
