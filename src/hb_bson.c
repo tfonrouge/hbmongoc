@@ -70,7 +70,9 @@ bson_t * bson_hbparam( int iParam, long lMask )
     if ( pItem ) {
         if ( hb_itemType( pItem ) & HB_IT_POINTER ) {
             PHB_BSON phBson = hbbson_hbparam( pItem, _hbbson_t_ );
-            return phBson->bson;
+            if ( phBson ) {
+                return phBson->bson;
+            }
         } else if ( hb_itemType( pItem ) & HB_IT_STRING ) {
             const char * szJSON = NULL;
             szJSON = hb_itemGetC( pItem );
