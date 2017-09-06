@@ -74,7 +74,7 @@ PHB_MONGOC hbmongoc_param( int iParam, hbmongoc_t_ type )
     return phMongo && phMongo->type == type ? phMongo : NULL;
 }
 
-PHB_BSON hbmongoc_return_byref_bson( int iParam, bson_t * bson, bool disposable )
+PHB_BSON hbmongoc_return_byref_bson( int iParam, bson_t * bson )
 {
     PHB_BSON phBson = NULL;
     char * szJson;
@@ -88,12 +88,10 @@ PHB_BSON hbmongoc_return_byref_bson( int iParam, bson_t * bson, bool disposable 
 #endif
             hb_storc( szJson, iParam );
             bson_free( szJson );
-            if ( disposable )
-                bson_destroy( bson );
+            bson_destroy( bson );
             break;
         case _HBRETVAL_BSON_:
             phBson = hbbson_new_dataContainer( _hbbson_t_, bson );
-            phBson->disposable = disposable;
             hb_storptrGC( phBson, iParam );
             break;
         case _HBRETVAL_HASH_:
@@ -105,8 +103,7 @@ PHB_BSON hbmongoc_return_byref_bson( int iParam, bson_t * bson, bool disposable 
             PHB_ITEM pItem = hb_itemNew( NULL );
             hb_jsonDecode( szJson, pItem );
             bson_free( szJson );
-            if ( disposable )
-                bson_destroy( bson );
+            bson_destroy( bson );
             hb_itemParamStoreForward( iParam, pItem );
             hb_itemRelease( pItem );
             break;

@@ -22,7 +22,14 @@ HB_FUNC( MONGOC_CURSOR_NEXT )
 
         /* TODO: solve cast warning  */
         /* TODO: solve return json/hash */
-        hbmongoc_return_byref_bson( 2, ( void * ) doc, false );
+        //hbmongoc_return_byref_bson( 2, ( void * ) doc, false );
+
+        if ( result ) {
+            bson_t * bson = bson_copy( doc );
+            hbmongoc_return_byref_bson( 2, bson );
+        } else {
+            hb_stor( 2 );
+        }
 
         hb_retl( result );
     } else {

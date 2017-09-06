@@ -33,7 +33,7 @@ typedef struct _HB_MONGOC_
 
 PHB_MONGOC  hbmongoc_param( int iParam, hbmongoc_t_ type );
 PHB_MONGOC  hbmongoc_new_dataContainer( void * p, hbmongoc_t_ type );
-PHB_BSON    hbmongoc_return_byref_bson( int iParam, bson_t * bson, bool disposable );
+PHB_BSON    hbmongoc_return_byref_bson( int iParam, bson_t * bson );
 void *      mongoc_hbparam( int iParam, hbmongoc_t_ type );
 
 #define HBMONGOC_ERR_ARGS()  ( hb_errRT_BASE_SubstR( EG_ARG, 3012, NULL, HB_ERR_FUNCNAME, HB_ERR_ARGS_BASEPARAMS ) )

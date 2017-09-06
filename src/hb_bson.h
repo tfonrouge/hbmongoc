@@ -33,7 +33,6 @@ typedef struct _HB_BSON_
 {
     hbbson_t_ hbbson_type;
     void * p;
-    bool disposable;
 } HB_BSON, * PHB_BSON;
 
 #if BSON_CHECK_VERSION( 1, 5, 0 )

@@ -26,7 +26,7 @@ static HB_GARBAGE_FUNC( hbbson_gc_func )
 {
     PHB_BSON phBson = Cargo;
 
-    if ( phBson && phBson->disposable ) {
+    if ( phBson ) {
         switch (phBson->hbbson_type) {
             case _hbbson_t_:
                 if (phBson->p) {
@@ -111,7 +111,6 @@ static PHB_BSON hbbson_hbparam( PHB_ITEM pItem, hbbson_t_ hbbson_type )
 PHB_BSON hbbson_new_dataContainer( hbbson_t_ hbbson_type, void * p )
 {
     PHB_BSON phBson = hb_gcAllocate( sizeof( HB_BSON ), &s_gc_bson_funcs );
-    phBson->disposable = true;
 
     phBson->hbbson_type = hbbson_type;
 

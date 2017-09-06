@@ -22,7 +22,7 @@ HB_FUNC( MONGOC_COLLECTION_COMMAND_SIMPLE )
 
         bool result = mongoc_collection_command_simple( collection, command, read_prefs, &reply, &error);
 
-        hbmongoc_return_byref_bson( 4, bson_copy( &reply ), true );
+        hbmongoc_return_byref_bson( 4, bson_copy( &reply ) );
 
         if ( HB_ISBYREF( 5 ) ) {
             if ( result ) {
