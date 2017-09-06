@@ -44,16 +44,17 @@ PROCEDURE main()
         BSON_APPEND_INT32( filter, "_id", hb_randomInt( 10 ) )
 
         ?
-        ? i, "Find:", bson_as_json( filter )
+        ? i, "Find:", bson_as_json( filter ), "->", ""
 
         cursor := mongoc_collection_find_with_opts( collection, filter, opts )
 
         IF mongoc_cursor_next( cursor, @doc )
             /* TODO: solve */
             // ? i, doc["_id"], doc["name"]["first"], doc["name"]["last"]
-            ? "FOUND:", bson_as_json( doc )
+            ?? "FOUND:"
+            ? bson_as_json( doc )
         ELSE
-            ? "NOT FOUND"
+            ?? "NOT FOUND"
         ENDIF
 
     NEXT
