@@ -8,7 +8,7 @@
 
 #define coll_name "bios_test"
 
-#define numRegs 10
+#define numRegs 100000
 
 PROCEDURE main()
     LOCAL client
@@ -24,7 +24,8 @@ PROCEDURE main()
     /* REQUIRED to initialize mongoc internals */
     mongoc_init()
 
-    /* TODO: solve */
+//    hb_mongoc_set_return_bson_value_type("BSON")
+//    hb_mongoc_set_return_bson_value_type("JSON")
     hb_mongoc_set_return_bson_value_type("HASH")
 
     client := mongoc_client_new( "mongodb://localhost" )
@@ -48,16 +49,27 @@ PROCEDURE main()
         filter := bson_new()
         BSON_APPEND_INT32( filter, "_id", hb_randomInt( 10 ) )
 
-        ? hb_milliSeconds()
         ? i, "Find:", bson_as_json( filter ), "->", ""
 
         cursor := mongoc_collection_find_with_opts( collection, filter, opts )
 
         IF mongoc_cursor_next( cursor, @doc )
+
             ?? "FOUND:"
-            //? bson_as_json( doc )
-            /* TODO: solve */
-            ? i, doc["_id"], doc["name"]["first"], doc["name"]["last"]
+
+            SWITCH hb_mongoc_set_return_bson_value_type()
+            CASE "BSON"
+                ? bson_as_json( doc )
+                EXIT
+            CASE "JSON"
+                ? doc
+                EXIT
+            CASE "HASH"
+                ? i, doc["_id"], doc["name"]["first"], doc["name"]["last"]
+                ?
+                EXIT
+            ENDSWITCH
+
         ELSE
             ?? "NOT FOUND"
         ENDIF
