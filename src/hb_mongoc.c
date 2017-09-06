@@ -36,6 +36,9 @@ static HB_GARBAGE_FUNC( hbmongoc_funcs_destroy )
             case _hb_uri_t_:
                 mongoc_uri_destroy( ( mongoc_uri_t * ) phMongoc->p );
                 break;
+            case _hb_cursor_t_:
+                mongoc_cursor_destroy( (mongoc_cursor_t * ) phMongoc->p );
+                break;
         }
         phMongoc->p = NULL;
     }

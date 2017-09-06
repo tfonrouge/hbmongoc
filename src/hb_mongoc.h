@@ -22,7 +22,7 @@
 #include <mongoc.h>
 #include <bson.h>
 
-typedef enum { _hb_client_t_, _hb_database_t_, _hb_collection_t_, _hb_uri_t_ } hbmongoc_t_;
+typedef enum { _hb_client_t_, _hb_database_t_, _hb_collection_t_, _hb_uri_t_, _hb_cursor_t_ } hbmongoc_t_;
 
 typedef struct _HB_MONGOC_
 {

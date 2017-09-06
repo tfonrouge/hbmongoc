@@ -11,7 +11,7 @@
 
 HB_FUNC( MONGOC_COLLECTION_COMMAND_SIMPLE )
 {
-    PHB_MONGOC collection = hbmongoc_param( 1, _hb_collection_t_ );
+    mongoc_collection_t * collection = mongoc_hbparam( 1, _hb_collection_t_ );
     bson_t * command = bson_hbparam( 2, HB_IT_ANY );
 
     if ( collection && command && HB_ISBYREF( 4 ) ) {
@@ -20,7 +20,7 @@ HB_FUNC( MONGOC_COLLECTION_COMMAND_SIMPLE )
         bson_t reply;
         bson_error_t error;
 
-        bool result = mongoc_collection_command_simple( collection->p, command, read_prefs, &reply, &error);
+        bool result = mongoc_collection_command_simple( collection, command, read_prefs, &reply, &error);
 
         hbmongoc_return_byref_bson( 4, bson_copy( &reply ) );
 
@@ -55,9 +55,25 @@ HB_FUNC( MONGOC_COLLECTION_DESTROY )
     }
 }
 
+HB_FUNC( MONGOC_COLLECTION_FIND_WITH_OPTS )
+{
+    mongoc_collection_t * collection = mongoc_hbparam( 1, _hb_collection_t_ );
+    bson_t * filter = bson_hbparam( 2, HB_IT_ANY );
+
+    if ( collection && filter ) {
+        bson_t * opts = bson_hbparam( 3, HB_IT_ANY );
+        const mongoc_read_prefs_t *read_prefs = NULL;
+        mongoc_cursor_t * cursor = mongoc_collection_find_with_opts( collection, filter, opts, read_prefs );
+        PHB_MONGOC phCursor = hbmongoc_new_dataContainer( cursor, _hb_cursor_t_ );
+        hb_retptrGC( phCursor );
+    } else {
+        HBMONGOC_ERR_ARGS();
+    }
+}
+
 HB_FUNC( MONGOC_COLLECTION_INSERT )
 {
-    PHB_MONGOC collection = hbmongoc_param( 1, _hb_collection_t_ );
+    mongoc_collection_t * collection = mongoc_hbparam( 1, _hb_collection_t_ );
     bson_t * document = bson_hbparam( 3, HB_IT_ANY );
     bool result = false;
 
@@ -74,7 +90,7 @@ HB_FUNC( MONGOC_COLLECTION_INSERT )
         const mongoc_write_concern_t * write_concern = NULL;
         bson_error_t error;
 
-        result = mongoc_collection_insert( collection->p, flags, document, write_concern, &error );
+        result = mongoc_collection_insert( collection, flags, document, write_concern, &error );
 
         if ( HB_ISBYREF( 5 ) ) {
             if ( result ) {
