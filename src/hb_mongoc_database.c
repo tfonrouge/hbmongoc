@@ -20,3 +20,21 @@ HB_FUNC( MONGOC_DATABASE_DESTROY )
         HBMONGOC_ERR_ARGS();
     }
 }
+
+HB_FUNC( MONGOC_DATABASE_GET_COLLECTION )
+{
+    mongoc_database_t * database = mongoc_hbparam( 1, _hb_database_t_ );
+    const char * name = hb_parc( 2 );
+
+    if ( database && name ) {
+        mongoc_collection_t * collection = mongoc_database_get_collection( database, name );
+        if ( collection ) {
+            PHB_MONGOC phCollection = hbmongoc_new_dataContainer( collection, _hb_collection_t_ );
+            hb_retptrGC( phCollection );
+        } else {
+            hb_ret();
+        }
+    } else {
+        HBMONGOC_ERR_ARGS();
+    }
+}

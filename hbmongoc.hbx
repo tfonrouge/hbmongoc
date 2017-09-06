@@ -65,8 +65,14 @@ DYNAMIC mongoc_client_new_from_uri
 DYNAMIC mongoc_client_set_appname
 DYNAMIC mongoc_collection_command_simple
 DYNAMIC mongoc_collection_destroy
+DYNAMIC MONGOC_COLLECTION_DROP
+DYNAMIC MONGOC_COLLECTION_DROP_WITH_OPTS
+DYNAMIC MONGOC_COLLECTION_FIND_WITH_OPTS
 DYNAMIC mongoc_collection_insert
+DYNAMIC MONGOC_COLLECTION_REMOVE
+DYNAMIC MONGOC_CURSOR_NEXT
 DYNAMIC mongoc_database_destroy
+DYNAMIC MONGOC_DATABASE_GET_COLLECTION
 DYNAMIC mongoc_init
 DYNAMIC mongoc_uri_new
 

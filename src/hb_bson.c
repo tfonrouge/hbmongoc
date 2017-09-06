@@ -24,21 +24,21 @@ static int arrayLevel = 0;
  */
 static HB_GARBAGE_FUNC( hbbson_gc_func )
 {
-    PHB_BSON pBson = Cargo;
+    PHB_BSON phBson = Cargo;
 
-    if ( pBson ) {
-        switch (pBson->hbbson_type) {
+    if ( phBson && phBson->disposable ) {
+        switch (phBson->hbbson_type) {
             case _hbbson_t_:
-                if (pBson->bson) {
-                    bson_destroy( ( bson_t * ) pBson->bson );
-                    pBson->bson = NULL;
+                if (phBson->bson) {
+                    bson_destroy( ( bson_t * ) phBson->bson );
+                    phBson->bson = NULL;
                 }
                 break;
 #if BSON_CHECK_VERSION( 1, 5, 0 )
             case _hbbson_decimal128_t_:
-                if ( pBson->bson_128 ) {
-                    hb_xfree( pBson->bson_128 );
-                    pBson->bson_128 = NULL;
+                if ( phBson->bson_128 ) {
+                    hb_xfree( phBson->bson_128 );
+                    phBson->bson_128 = NULL;
                 }
                 break;
 #endif
@@ -111,6 +111,7 @@ static PHB_BSON hbbson_hbparam( PHB_ITEM pItem, hbbson_t_ hbbson_type )
 PHB_BSON hbbson_new_dataContainer( hbbson_t_ hbbson_type, void * p )
 {
     PHB_BSON phBson = hb_gcAllocate( sizeof( HB_BSON ), &s_gc_bson_funcs );
+    phBson->disposable = true;
 
     phBson->hbbson_type = hbbson_type;
 

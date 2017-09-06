@@ -36,6 +36,7 @@ typedef struct _HB_BSON_
 #if BSON_CHECK_VERSION( 1, 5, 0 )
     bson_decimal128_t * bson_128;
 #endif
+    bool disposable;
 } HB_BSON, * PHB_BSON;
 
 #if BSON_CHECK_VERSION( 1, 5, 0 )
