@@ -170,6 +170,7 @@ PROCEDURE main( serverConn )
         IF ! mongoc_collection_insert( collection, MONGOC_INSERT_NONE, insert, nil, @error )
             ? e"\nError:", error
         ENDIF
+        HB_SYMBOL_UNUSED( collection )
 
     NEXT
 
