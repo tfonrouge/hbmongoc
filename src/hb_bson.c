@@ -29,16 +29,16 @@ static HB_GARBAGE_FUNC( hbbson_gc_func )
     if ( phBson && phBson->disposable ) {
         switch (phBson->hbbson_type) {
             case _hbbson_t_:
-                if (phBson->bson) {
-                    bson_destroy( ( bson_t * ) phBson->bson );
-                    phBson->bson = NULL;
+                if (phBson->p) {
+                    bson_destroy( ( bson_t * ) phBson->p );
+                    phBson->p = NULL;
                 }
                 break;
 #if BSON_CHECK_VERSION( 1, 5, 0 )
             case _hbbson_decimal128_t_:
-                if ( phBson->bson_128 ) {
-                    hb_xfree( phBson->bson_128 );
-                    phBson->bson_128 = NULL;
+                if ( phBson->p ) {
+                    hb_xfree( phBson->p );
+                    phBson->p = NULL;
                 }
                 break;
 #endif
@@ -57,7 +57,7 @@ bson_decimal128_t * bson_decimal128_hbparam( int iParam )
     PHB_BSON phBson = hbbson_param( iParam, _hbbson_decimal128_t_ );
 
     if ( phBson ) {
-        return phBson->bson_128;
+        return phBson->p;
     }
     return NULL;
 }
@@ -71,7 +71,7 @@ bson_t * bson_hbparam( int iParam, long lMask )
         if ( hb_itemType( pItem ) & HB_IT_POINTER ) {
             PHB_BSON phBson = hbbson_hbparam( pItem, _hbbson_t_ );
             if ( phBson ) {
-                return phBson->bson;
+                return phBson->p;
             }
         } else if ( hb_itemType( pItem ) & HB_IT_STRING ) {
             const char * szJSON = NULL;
@@ -117,11 +117,11 @@ PHB_BSON hbbson_new_dataContainer( hbbson_t_ hbbson_type, void * p )
 
     switch ( hbbson_type ) {
         case _hbbson_t_:
-            phBson->bson = p;
+            phBson->p = p;
             break;
 #if BSON_CHECK_VERSION( 1, 5, 0 )
         case _hbbson_decimal128_t_:
-            phBson->bson_128 = p;
+            phBson->p = p;
             break;
 #endif
     }
@@ -138,13 +138,13 @@ PHB_BSON hbbson_param( int iParam, hbbson_t_ hbbson_type )
         if ( phBson && phBson->hbbson_type == hbbson_type ) {
             switch ( hbbson_type ) {
                 case _hbbson_t_:
-                    if ( phBson->bson ) {
+                    if ( phBson->p ) {
                         return phBson;
                     }
                     break;
 #if BSON_CHECK_VERSION( 1, 5, 0 )
                 case _hbbson_decimal128_t_:
-                    if ( phBson->bson_128 ) {
+                    if ( phBson->p ) {
                         return phBson;
                     }
                     break;
@@ -553,8 +553,8 @@ HB_FUNC( BSON_DESTROY )
     PHB_BSON phBson = hbbson_param( 1, _hbbson_t_ );
 
     if ( phBson ) {
-        bson_destroy( phBson->bson );
-        phBson->bson = NULL;
+        bson_destroy( phBson->p );
+        phBson->p = NULL;
     } else {
         HBBSON_ERR_ARGS();
     }

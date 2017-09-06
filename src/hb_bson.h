@@ -32,10 +32,7 @@ typedef enum
 typedef struct _HB_BSON_
 {
     hbbson_t_ hbbson_type;
-    bson_t * bson;
-#if BSON_CHECK_VERSION( 1, 5, 0 )
-    bson_decimal128_t * bson_128;
-#endif
+    void * p;
     bool disposable;
 } HB_BSON, * PHB_BSON;
 
