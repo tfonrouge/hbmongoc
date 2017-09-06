@@ -8,6 +8,8 @@
 
 #define coll_name "bios_test"
 
+#define numRegs 10
+
 PROCEDURE main()
     LOCAL client
     LOCAL database
@@ -17,6 +19,7 @@ PROCEDURE main()
     LOCAL cursor
     LOCAL doc
     LOCAL i
+    LOCAL millis
 
     /* REQUIRED to initialize mongoc internals */
     mongoc_init()
@@ -38,12 +41,14 @@ PROCEDURE main()
 
     WAIT "press any key to display result set..."
 
-    FOR i := 1 TO 10
+    millis := hb_milliSeconds()
+
+    FOR i := 1 TO numRegs
 
         filter := bson_new()
         BSON_APPEND_INT32( filter, "_id", hb_randomInt( 10 ) )
 
-        ?
+        ? hb_milliSeconds()
         ? i, "Find:", bson_as_json( filter ), "->", ""
 
         cursor := mongoc_collection_find_with_opts( collection, filter, opts )
@@ -52,14 +57,14 @@ PROCEDURE main()
             /* TODO: solve */
             // ? i, doc["_id"], doc["name"]["first"], doc["name"]["last"]
             ?? "FOUND:"
-            ? bson_as_json( doc )
+            //? bson_as_json( doc )
         ELSE
             ?? "NOT FOUND"
         ENDIF
 
     NEXT
 
-    ? cursor
+    ? "finded", hb_ntos( numRegs ), " records in ", hb_ntos( hb_milliSeconds() - millis ), "milliseconds"
 
     /* REQUIRED to cleanup mongoc internals */
     mongoc_cleanup()
