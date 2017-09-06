@@ -25,7 +25,7 @@ PROCEDURE main()
     mongoc_init()
 
     /* TODO: solve */
-    //hb_mongoc_set_return_bson_value_type("HASH")
+    hb_mongoc_set_return_bson_value_type("HASH")
 
     client := mongoc_client_new( "mongodb://localhost" )
 
@@ -54,10 +54,10 @@ PROCEDURE main()
         cursor := mongoc_collection_find_with_opts( collection, filter, opts )
 
         IF mongoc_cursor_next( cursor, @doc )
-            /* TODO: solve */
-            // ? i, doc["_id"], doc["name"]["first"], doc["name"]["last"]
             ?? "FOUND:"
             //? bson_as_json( doc )
+            /* TODO: solve */
+            ? i, doc["_id"], doc["name"]["first"], doc["name"]["last"]
         ELSE
             ?? "NOT FOUND"
         ENDIF
