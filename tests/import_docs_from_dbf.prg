@@ -40,17 +40,17 @@ PROCEDURE main()
 
     WAIT
 
-    WAIT "press any key to show ALL docs in collection..."
-
     filter := bson_new()
+    WAIT "press any key to show ALL docs in collection... filter: " + bson_as_json( filter )
+
     displayDocs( collection, filter )
 
     WAIT
 
-    WAIT "press any key to show only docs with 'John' as NAME in collection..."
-
     filter := bson_new()
     BSON_APPEND_UTF8( filter, "FIRST", "John" )
+    WAIT "press any key to show only docs with 'John' as NAME in collection... filter: " + bson_as_json( filter )
+
 
     displayDocs( collection, filter )
 
