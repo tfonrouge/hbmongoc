@@ -105,6 +105,7 @@ HB_FUNC( MONGOC_CLIENT_NEW )
             hb_ret();
         }
     } else {
+//        HBMONGOC_ERR_NOFUNC();
         HBMONGOC_ERR_ARGS();
     }
 }
@@ -126,8 +127,8 @@ HB_FUNC( MONGOC_CLIENT_NEW_FROM_URI )
     }
 }
 
-#if MONGOC_CHECK_VERSION( 1, 5, 0 )
 HB_FUNC( MONGOC_CLIENT_SET_APPNAME )
+#if MONGOC_CHECK_VERSION( 1, 5, 0 )
 {
     mongoc_client_t * client = mongoc_hbparam( 1, _hb_client_t_ );
     const char * appname = hb_parc( 2 );
@@ -138,5 +139,9 @@ HB_FUNC( MONGOC_CLIENT_SET_APPNAME )
     } else {
         HBMONGOC_ERR_ARGS();
     }
+}
+#else
+{
+    HBMONGOC_ERR_NOFUNC();
 }
 #endif

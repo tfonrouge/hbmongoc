@@ -291,8 +291,8 @@ HB_FUNC( BSON_APPEND_DATE_TIME )
 }
 
 HB_FUNC( BSON_APPEND_DECIMAL128 )
-{
 #if BSON_CHECK_VERSION( 1, 5, 0 )
+{
     bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
     const char * key = hb_parc( 2 );
     bson_decimal128_t * dec = bson_decimal128_hbparam( 4 );
@@ -304,8 +304,12 @@ HB_FUNC( BSON_APPEND_DECIMAL128 )
     } else {
         HBBSON_ERR_ARGS();
     }
-#endif
 }
+#else
+{
+    HBBSON_ERR_NOFUNC();
+}
+#endif
 
 HB_FUNC( BSON_APPEND_DOCUMENT )
 {
@@ -467,15 +471,12 @@ HB_FUNC( BSON_AS_JSON )
 }
 
 HB_FUNC( BSON_AS_CANONICAL_EXTENDED_JSON )
+#if BSON_CHECK_VERSION( 1, 7, 0 )
 {
     bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
 
     if ( bson ) {
-#if BSON_CHECK_VERSION( 1, 7, 0 )
-        char * szJSON = bson_as_canonical_extended_json( bson, NULL );
-#else
         char * szJSON = bson_as_json( bson, NULL );
-#endif
         if( szJSON ) {
             hb_retc( szJSON );
             bson_free( szJSON );
@@ -484,10 +485,15 @@ HB_FUNC( BSON_AS_CANONICAL_EXTENDED_JSON )
         HBBSON_ERR_ARGS();
     }
 }
+#else
+{
+    HBBSON_ERR_NOFUNC();
+}
+#endif
 
 HB_FUNC( BSON_AS_RELAXED_EXTENDED_JSON )
-{
 #if BSON_CHECK_VERSION( 1, 7, 0 )
+{
     bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
 
     if ( bson ) {
@@ -500,8 +506,12 @@ HB_FUNC( BSON_AS_RELAXED_EXTENDED_JSON )
     else {
         HBBSON_ERR_ARGS();
     }
-#endif
 }
+#else
+{
+    HBBSON_ERR_NOFUNC();
+}
+#endif
 
 HB_FUNC( BSON_CHECK_VERSION )
 {
@@ -513,8 +523,8 @@ HB_FUNC( BSON_CHECK_VERSION )
 }
 
 HB_FUNC( BSON_DECIMAL128_FROM_STRING )
-{
 #if BSON_CHECK_VERSION( 1, 5, 0 )
+{
     const char * string = hb_parc( 1 );
 
     if ( string && HB_ISBYREF( 2 ) ) {
@@ -526,12 +536,16 @@ HB_FUNC( BSON_DECIMAL128_FROM_STRING )
     } else {
         HBBSON_ERR_ARGS();
     }
-#endif
 }
+#else
+{
+    HBBSON_ERR_NOFUNC();
+}
+#endif
 
 HB_FUNC( BSON_DECIMAL128_TO_STRING )
-{
 #if BSON_CHECK_VERSION( 1, 5, 0 )
+{
     const bson_decimal128_t * dec = bson_decimal128_hbparam( 1 );
 
     if ( dec ) {
@@ -544,8 +558,12 @@ HB_FUNC( BSON_DECIMAL128_TO_STRING )
     } else {
         HBBSON_ERR_ARGS();
     }
-#endif
 }
+#else
+{
+    HBBSON_ERR_NOFUNC();
+}
+#endif
 
 HB_FUNC( BSON_DESTROY )
 {
