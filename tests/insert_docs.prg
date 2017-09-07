@@ -32,7 +32,7 @@ PROCEDURE main( uri )
     ?
 
     IF ! mongoc_collection_insert( collection, MONGOC_INSERT_NONE, bson, nil, @error )
-        ? "insert error:", HBBSON_ERROR_MESSAGE( error )
+        ? "insert error:", HB_BSON_ERROR_MESSAGE( error )
     ELSE
         ? "document inserted ok."
     ENDIF

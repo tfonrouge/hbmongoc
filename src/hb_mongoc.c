@@ -24,20 +24,26 @@ static HB_GARBAGE_FUNC( hbmongoc_funcs_destroy )
 
     if ( phMongoc && phMongoc->p ) {
         switch (phMongoc->type) {
-            case _hb_client_t_:
+            case _hbmongoc_client_t_:
                 mongoc_client_destroy( ( mongoc_client_t * ) phMongoc->p );
                 break;
-            case _hb_database_t_:
+            case _hbmongoc_database_t_:
                 mongoc_database_destroy( ( mongoc_database_t * ) phMongoc->p );
                 break;
-            case _hb_collection_t_:
+            case _hbmongoc_collection_t_:
                 mongoc_collection_destroy( ( mongoc_collection_t * ) phMongoc->p );
                 break;
-            case _hb_uri_t_:
+            case _hbmongoc_uri_t_:
                 mongoc_uri_destroy( ( mongoc_uri_t * ) phMongoc->p );
                 break;
-            case _hb_cursor_t_:
-                mongoc_cursor_destroy( (mongoc_cursor_t * ) phMongoc->p );
+            case _hbmongoc_cursor_t_:
+                mongoc_cursor_destroy( ( mongoc_cursor_t * ) phMongoc->p );
+                break;
+            case _hbmongoc_write_concern_t_:
+                mongoc_write_concern_destroy( ( mongoc_write_concern_t * ) phMongoc->p );
+                break;
+            case _hbmongoc_read_prefs_t_:
+                mongoc_read_prefs_destroy( ( mongoc_read_prefs_t * ) phMongoc->p );
                 break;
         }
         phMongoc->p = NULL;
@@ -49,14 +55,19 @@ static const HB_GC_FUNCS s_gc_mongoc_funcs = {
     hb_gcDummyMark
 };
 
-PHB_MONGOC hbmongoc_new_dataContainer( void * p, hbmongoc_t_ type )
+PHB_MONGOC hbmongoc_new_dataContainer( hbmongoc_t_ type, void * p )
 {
-    PHB_MONGOC phMongo = hb_gcAllocate( sizeof( HB_MONGOC ), &s_gc_mongoc_funcs );
+    if ( p ) {
+        PHB_MONGOC phMongo = hb_gcAllocate( sizeof( HB_MONGOC ), &s_gc_mongoc_funcs );
 
-    phMongo->type = type;
-    phMongo->p = p;
+        phMongo->type = type;
+        phMongo->p = p;
 
-    return phMongo;
+        return phMongo;
+    } else {
+        HBMONGOC_ERR_ARGS();
+    }
+    return NULL;
 }
 
 static void hbmongoc_check_inited()
@@ -91,7 +102,7 @@ PHB_BSON hbmongoc_return_byref_bson( int iParam, bson_t * bson )
             bson_destroy( bson );
             break;
         case _HBRETVAL_BSON_:
-            phBson = hbbson_new_dataContainer( _hbbson_t_, bson );
+            phBson = hbbson_new_dataContainer( _hbbson_bson_t_, bson );
             hb_storptrGC( phBson, iParam );
             break;
         case _HBRETVAL_HASH_:

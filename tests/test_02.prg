@@ -35,7 +35,7 @@ PROCEDURE main()
             ? "bson_as_canonical_extended_json( reply, nil ):", bson_as_canonical_extended_json( reply, nil )
         ENDIF
     ELSE
-        ? "Failed to run command:", HBBSON_ERROR_MESSAGE( error )
+        ? "Failed to run command:", HB_BSON_ERROR_MESSAGE( error )
     ENDIF
 
     WAIT

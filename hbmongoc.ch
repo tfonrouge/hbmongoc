@@ -9,12 +9,19 @@
 #ifndef hbmongoc_ch
 #define hbmongoc_ch
 
-#define     MONGOC_INSERT_NONE                  0
-#define     MONGOC_INSERT_CONTINUE_ON_ERROR     hb_bitShift( 1, 0 )
-#define     MONGOC_INSERT_NO_VALIDATE           hb_bitShift( 1, 31)
+#define MONGOC_INSERT_NONE                  0
+#define MONGOC_INSERT_CONTINUE_ON_ERROR     hb_bitShift( 1, 0 )
+#define MONGOC_INSERT_NO_VALIDATE           hb_bitShift( 1, 31)
 
-#define     MONGOC_REMOVE_NONE                  0
-#define     MONGOC_REMOVE_SINGLE_REMOVE         hb_bitShift( 1, 0 )
+#define MONGOC_REMOVE_NONE                  0
+#define MONGOC_REMOVE_SINGLE_REMOVE         hb_bitShift( 1, 0 )
+
+/* mongoc_read_mode_t */
+#define MONGOC_READ_PRIMARY                 hb_bitShift( 1, 0 )
+#define MONGOC_READ_SECONDARY               hb_bitShift( 1, 1 )
+#define MONGOC_READ_PRIMARY_PREFERRED       hb_bitShift( 1, 2 ) .OR. MONGOC_READ_PRIMARY
+#define MONGOC_READ_SECONDARY_PREFERRED     hb_bitShift( 1, 2 ) .OR. MONGOC_READ_SECONDARY
+#define MONGOC_READ_NEAREST                 hb_bitShift( 1, 3 ) .OR. MONGOC_READ_SECONDARY
 
 /* bson macros */
 #xtranslate BSON_APPEND_ARRAY( <document>, <key>, <array> ) => bson_append_array( <document>, <key>, -1, <array> )
@@ -34,8 +41,8 @@
 #xtranslate BSON_APPEND_UTF8( <document>, <key>, <value> ) => bson_append_utf8( <document>, <key>, -1, <value>, -1 )
 
 /* bson_error_t */
-#xtranslate HBBSON_ERROR_DOMAIN( <error> ) => iif( <error> = nil, nil, <error>\["domain"\] )
-#xtranslate HBBSON_ERROR_CODE( <error> ) => iif( <error> = nil, nil, <error>\["code"\] )
-#xtranslate HBBSON_ERROR_MESSAGE( <error> ) => iif( <error> = nil, nil, <error>\["message"\] )
+#xtranslate HB_BSON_ERROR_DOMAIN( <error> ) => iif( <error> = nil, nil, <error>\["domain"\] )
+#xtranslate HB_BSON_ERROR_CODE( <error> ) => iif( <error> = nil, nil, <error>\["code"\] )
+#xtranslate HB_BSON_ERROR_MESSAGE( <error> ) => iif( <error> = nil, nil, <error>\["message"\] )
 
 #endif /* hbmongoc_ch */

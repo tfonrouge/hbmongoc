@@ -11,12 +11,12 @@
 
 HB_FUNC( MONGOC_CLIENT_COMMAND_SIMPLE )
 {
-    mongoc_client_t * client = mongoc_hbparam( 1, _hb_client_t_ );
+    mongoc_client_t * client = mongoc_hbparam( 1, _hbmongoc_client_t_ );
     bson_t * command = bson_hbparam( 3, HB_IT_ANY );
     const char * db_name = hb_parc( 2 );
 
     if ( client && db_name && command && HB_ISBYREF( 5 ) ) {
-        const mongoc_read_prefs_t * read_prefs = NULL;
+        const mongoc_read_prefs_t * read_prefs = mongoc_hbparam( 4, _hbmongoc_read_prefs_t_ );
         bson_t reply;
         bson_error_t error;
 
@@ -45,7 +45,7 @@ HB_FUNC( MONGOC_CLIENT_COMMAND_SIMPLE )
 
 HB_FUNC( MONGOC_CLIENT_DESTROY )
 {
-    PHB_MONGOC client = hbmongoc_param( 1, _hb_client_t_ );
+    PHB_MONGOC client = hbmongoc_param( 1, _hbmongoc_client_t_ );
 
     if( client ) {
         mongoc_client_destroy( client->p );
@@ -57,14 +57,14 @@ HB_FUNC( MONGOC_CLIENT_DESTROY )
 
 HB_FUNC( MONGOC_CLIENT_GET_COLLECTION )
 {
-    mongoc_client_t * client = mongoc_hbparam( 1, _hb_client_t_ );
+    mongoc_client_t * client = mongoc_hbparam( 1, _hbmongoc_client_t_ );
     const char * db = hb_parc( 2 );
     const char * szCollection = hb_parc( 3 );
 
     if ( client && db && szCollection ) {
         mongoc_collection_t * collection = mongoc_client_get_collection( client, db, szCollection);
         if ( collection ) {
-            PHB_MONGOC phCollection = hbmongoc_new_dataContainer( collection, _hb_collection_t_ );
+            PHB_MONGOC phCollection = hbmongoc_new_dataContainer( _hbmongoc_collection_t_, collection );
             hb_retptrGC( phCollection );
         } else {
             hb_ret();
@@ -76,13 +76,13 @@ HB_FUNC( MONGOC_CLIENT_GET_COLLECTION )
 
 HB_FUNC( MONGOC_CLIENT_GET_DATABASE )
 {
-    mongoc_client_t * client = mongoc_hbparam( 1, _hb_client_t_ );
+    mongoc_client_t * client = mongoc_hbparam( 1, _hbmongoc_client_t_ );
     const char * name = hb_parc( 2 );
 
     if ( client && name ) {
         mongoc_database_t * database = mongoc_client_get_database( client, name );
         if ( database ) {
-            PHB_MONGOC phDatabase = hbmongoc_new_dataContainer( database, _hb_database_t_ );
+            PHB_MONGOC phDatabase = hbmongoc_new_dataContainer( _hbmongoc_database_t_, database );
             hb_retptrGC( phDatabase );
         } else {
             hb_ret();
@@ -99,7 +99,7 @@ HB_FUNC( MONGOC_CLIENT_NEW )
     if ( uri_string ) {
         mongoc_client_t * client = mongoc_client_new( uri_string );
         if ( client ) {
-            PHB_MONGOC phClient = hbmongoc_new_dataContainer( client, _hb_client_t_ );
+            PHB_MONGOC phClient = hbmongoc_new_dataContainer( _hbmongoc_client_t_, client );
             hb_retptrGC( phClient );
         } else {
             hb_ret();
@@ -112,12 +112,12 @@ HB_FUNC( MONGOC_CLIENT_NEW )
 
 HB_FUNC( MONGOC_CLIENT_NEW_FROM_URI )
 {
-    const mongoc_uri_t * uri = mongoc_hbparam( 1, _hb_uri_t_ );
+    const mongoc_uri_t * uri = mongoc_hbparam( 1, _hbmongoc_uri_t_ );
 
     if ( uri ) {
         mongoc_client_t * client = mongoc_client_new_from_uri( uri );
         if ( client ) {
-            PHB_MONGOC phClient = hbmongoc_new_dataContainer( client, _hb_client_t_ );
+            PHB_MONGOC phClient = hbmongoc_new_dataContainer( _hbmongoc_client_t_, client );
             hb_retptrGC( phClient );
         } else {
             hb_ret();
@@ -130,7 +130,7 @@ HB_FUNC( MONGOC_CLIENT_NEW_FROM_URI )
 HB_FUNC( MONGOC_CLIENT_SET_APPNAME )
 #if MONGOC_CHECK_VERSION( 1, 5, 0 )
 {
-    mongoc_client_t * client = mongoc_hbparam( 1, _hb_client_t_ );
+    mongoc_client_t * client = mongoc_hbparam( 1, _hbmongoc_client_t_ );
     const char * appname = hb_parc( 2 );
 
     if ( client && appname ) {

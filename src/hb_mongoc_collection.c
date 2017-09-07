@@ -11,12 +11,12 @@
 
 HB_FUNC( MONGOC_COLLECTION_COMMAND_SIMPLE )
 {
-    mongoc_collection_t * collection = mongoc_hbparam( 1, _hb_collection_t_ );
+    mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
     bson_t * command = bson_hbparam( 2, HB_IT_ANY );
 
     if ( collection && command && HB_ISBYREF( 4 ) ) {
 
-        const mongoc_read_prefs_t *read_prefs = NULL;
+        const mongoc_read_prefs_t *read_prefs = mongoc_hbparam( 3, _hbmongoc_read_prefs_t_ );
         bson_t reply;
         bson_error_t error;
 
@@ -45,7 +45,7 @@ HB_FUNC( MONGOC_COLLECTION_COMMAND_SIMPLE )
 
 HB_FUNC( MONGOC_COLLECTION_DESTROY )
 {
-    PHB_MONGOC collection = hbmongoc_param( 1, _hb_collection_t_ );
+    PHB_MONGOC collection = hbmongoc_param( 1, _hbmongoc_collection_t_ );
 
     if( collection ) {
         mongoc_collection_destroy( collection->p );
@@ -57,7 +57,7 @@ HB_FUNC( MONGOC_COLLECTION_DESTROY )
 
 HB_FUNC( MONGOC_COLLECTION_DROP )
 {
-    mongoc_collection_t * collection = mongoc_hbparam( 1, _hb_collection_t_ );
+    mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
 
     if ( collection ) {
         bson_error_t error;
@@ -81,7 +81,7 @@ HB_FUNC( MONGOC_COLLECTION_DROP )
 
 HB_FUNC( MONGOC_COLLECTION_DROP_WITH_OPTS )
 {
-    mongoc_collection_t * collection = mongoc_hbparam( 1, _hb_collection_t_ );
+    mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
     bson_t * opts = bson_hbparam( 2, HB_IT_ANY );
 
     if ( collection && opts ) {
@@ -110,16 +110,16 @@ HB_FUNC( MONGOC_COLLECTION_DROP_WITH_OPTS )
 
 HB_FUNC( MONGOC_COLLECTION_FIND_WITH_OPTS )
 {
-    mongoc_collection_t * collection = mongoc_hbparam( 1, _hb_collection_t_ );
+    mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
     bson_t * filter = bson_hbparam( 2, HB_IT_ANY );
 
     if ( collection && filter ) {
         bson_t * opts = bson_hbparam( 3, HB_IT_ANY );
-        const mongoc_read_prefs_t *read_prefs = NULL;
+        const mongoc_read_prefs_t *read_prefs = mongoc_hbparam( 4, _hbmongoc_read_prefs_t_ );
 
         mongoc_cursor_t * cursor = mongoc_collection_find_with_opts( collection, filter, opts, read_prefs );
 
-        PHB_MONGOC phCursor = hbmongoc_new_dataContainer( cursor, _hb_cursor_t_ );
+        PHB_MONGOC phCursor = hbmongoc_new_dataContainer( _hbmongoc_cursor_t_, cursor );
 
         hb_retptrGC( phCursor );
 
@@ -139,12 +139,12 @@ HB_FUNC( MONGOC_COLLECTION_FIND_WITH_OPTS )
 
 HB_FUNC( MONGOC_COLLECTION_INSERT )
 {
-    mongoc_collection_t * collection = mongoc_hbparam( 1, _hb_collection_t_ );
+    mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
     bson_t * document = bson_hbparam( 3, HB_IT_ANY );
 
     if ( collection && document ) {
         mongoc_insert_flags_t flags = HB_ISNUM( 2 ) ? hb_parni( 2 ) : MONGOC_INSERT_NONE;
-        const mongoc_write_concern_t * write_concern = NULL;
+        const mongoc_write_concern_t * write_concern = mongoc_hbparam( 4, _hbmongoc_write_concern_t_ );
         bson_error_t error;
 
         bool result = mongoc_collection_insert( collection, flags, document, write_concern, &error );
@@ -170,12 +170,12 @@ HB_FUNC( MONGOC_COLLECTION_INSERT )
 
 HB_FUNC( MONGOC_COLLECTION_REMOVE )
 {
-    mongoc_collection_t * collection = mongoc_hbparam( 1, _hb_collection_t_ );
+    mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
     bson_t * selector = bson_hbparam( 3, HB_IT_ANY );
 
     if ( collection && selector ) {
         int flags = HB_ISNUM( 2 ) ? hb_parni( 2 ) : MONGOC_REMOVE_NONE;
-        const mongoc_write_concern_t * write_concern = NULL;
+        const mongoc_write_concern_t * write_concern = mongoc_hbparam( 4, _hbmongoc_write_concern_t_ );
         bson_error_t error;
 
         bool result = mongoc_collection_remove( collection, flags, selector, write_concern, &error );

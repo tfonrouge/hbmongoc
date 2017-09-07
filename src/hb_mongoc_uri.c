@@ -16,7 +16,7 @@ HB_FUNC( MONGOC_URI_NEW )
     if ( uri_string ) {
         mongoc_uri_t * uri = mongoc_uri_new( uri_string );
         if ( uri ) {
-            PHB_MONGOC phURI = hbmongoc_new_dataContainer( uri, _hb_uri_t_ );
+            PHB_MONGOC phURI = hbmongoc_new_dataContainer( _hbmongoc_uri_t_, uri );
             hb_retptrGC( phURI );
         } else {
             hb_ret();

@@ -24,7 +24,7 @@
 
 typedef enum
     {
-        _hbbson_t_,
+        _hbbson_bson_t_,
 #if BSON_CHECK_VERSION( 1, 5, 0 )
         _hbbson_decimal128_t_
 #endif

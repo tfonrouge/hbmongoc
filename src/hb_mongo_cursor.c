@@ -11,8 +11,7 @@
 
 HB_FUNC( MONGOC_CURSOR_NEXT )
 {
-    mongoc_cursor_t * cursor = mongoc_hbparam( 1, _hb_cursor_t_ );
-
+    mongoc_cursor_t * cursor = mongoc_hbparam( 1, _hbmongoc_cursor_t_ );
 
     if ( cursor && HB_ISBYREF( 2 ) ) {
 

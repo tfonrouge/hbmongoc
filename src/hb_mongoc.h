@@ -22,7 +22,16 @@
 #include <mongoc.h>
 #include <bson.h>
 
-typedef enum { _hb_client_t_, _hb_database_t_, _hb_collection_t_, _hb_uri_t_, _hb_cursor_t_ } hbmongoc_t_;
+typedef enum
+{
+    _hbmongoc_client_t_,
+    _hbmongoc_database_t_,
+    _hbmongoc_collection_t_,
+    _hbmongoc_uri_t_,
+    _hbmongoc_cursor_t_,
+    _hbmongoc_write_concern_t_,
+    _hbmongoc_read_prefs_t_
+} hbmongoc_t_;
 
 typedef struct _HB_MONGOC_
 {
@@ -32,7 +41,7 @@ typedef struct _HB_MONGOC_
 } HB_MONGOC, * PHB_MONGOC;
 
 PHB_MONGOC  hbmongoc_param( int iParam, hbmongoc_t_ type );
-PHB_MONGOC  hbmongoc_new_dataContainer( void * p, hbmongoc_t_ type );
+PHB_MONGOC  hbmongoc_new_dataContainer( hbmongoc_t_ type, void * p );
 PHB_BSON    hbmongoc_return_byref_bson( int iParam, bson_t * bson );
 void *      mongoc_hbparam( int iParam, hbmongoc_t_ type );
 

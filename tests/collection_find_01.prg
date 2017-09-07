@@ -24,9 +24,9 @@ PROCEDURE main()
     /* REQUIRED to initialize mongoc internals */
     mongoc_init()
 
-//    hb_mongoc_set_return_bson_value_type("BSON")
+    hb_mongoc_set_return_bson_value_type("BSON")
 //    hb_mongoc_set_return_bson_value_type("JSON")
-    hb_mongoc_set_return_bson_value_type("HASH")
+//    hb_mongoc_set_return_bson_value_type("HASH")
 
     client := mongoc_client_new( "mongodb://localhost" )
 

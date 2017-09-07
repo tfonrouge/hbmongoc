@@ -10,7 +10,10 @@
 
 PROCEDURE main()
     LOCAL client
+    LOCAL database
+    LOCAL arrayCollections
     LOCAL collection
+    LOCAL error
     LOCAL millis
     LOCAL filter
 
@@ -28,10 +31,22 @@ PROCEDURE main()
     ENDIF
 
     client := mongoc_client_new( "mongodb://localhost" )
-    collection := mongoc_client_get_collection( client, db_name, coll_name )
+    database := mongoc_client_get_database( client, db_name )
+    collection := mongoc_database_get_collection( database, coll_name )
 
     /* drops collection (if exists) */
-    mongoc_collection_drop( collection, coll_name )
+    arrayCollections := mongoc_database_get_collection_names( database, @error )
+    IF error = nil
+        IF aScan( arrayCollections, coll_name ) > 0
+            ? "Drop existing collection", coll_name, ":", mongoc_collection_drop( collection, @error )
+            IF error != nil
+                ? "Error:", HB_BSON_ERROR_MESSAGE( error )
+            ENDIF
+        ENDIF
+    ELSE
+        ? "Error:", HB_BSON_ERROR_MESSAGE( error )
+    ENDIF
+
 
     millis := hb_milliSeconds()
     importDocs( collection )
@@ -114,7 +129,7 @@ STATIC PROCEDURE importDocs( collection )
         NEXT
 
         IF ! mongoc_collection_insert( collection, MONGOC_INSERT_NONE, doc, nil, @error )
-            ? "Insert error:", HBBSON_ERROR_MESSAGE( error )
+            ? "Insert error:", HB_BSON_ERROR_MESSAGE( error )
         ENDIF
 
         TEST->( dbGoto( ++recNo ) )

@@ -52,7 +52,7 @@ PROCEDURE main()
         IF retVal
             ? "Server reply:", i, bson_as_json( reply )
         ELSE
-            ? "Server error:", HBBSON_ERROR_MESSAGE( error )
+            ? "Server error:", HB_BSON_ERROR_MESSAGE( error )
             EXIT
         ENDIF
 
