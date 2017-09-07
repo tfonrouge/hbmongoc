@@ -1,6 +1,6 @@
 /* --------------------------------------------------------------------
  * NOTE: You can add manual override which functions to include or
- *       exclude from automatically generated EXTERNAL/DYNAMIC list.
+ *       exclude from automatically generated EXTERNAL/list.
  *          Syntax: // HB_FUNC_INCLUDE <func>
  *                  // HB_FUNC_EXCLUDE <func>
  */
@@ -18,66 +18,68 @@
 #endif
 
 #if defined( __HBEXTREQ__ ) .OR. defined( __HBEXTERN__HBMONGOC__REQUEST )
-   #command DYNAMIC <fncs,...> => EXTERNAL <fncs>
+   #command <fncs,...> => EXTERNAL <fncs>
 #endif
 
-DYNAMIC bson_append_array
-DYNAMIC bson_append_array_begin
-DYNAMIC bson_append_array_end
-DYNAMIC bson_append_binary
-DYNAMIC bson_append_bool
-DYNAMIC bson_append_code
-DYNAMIC bson_append_code_with_scope
-DYNAMIC bson_append_date_time
-DYNAMIC bson_append_decimal128
-DYNAMIC bson_append_document
-DYNAMIC bson_append_document_begin
-DYNAMIC bson_append_document_end
-DYNAMIC bson_append_double
-DYNAMIC bson_append_int32
-DYNAMIC bson_append_int64
-DYNAMIC bson_append_null
-DYNAMIC bson_append_regex
-DYNAMIC bson_append_utf8
-DYNAMIC bson_as_canonical_extended_json
-DYNAMIC bson_as_json
-DYNAMIC bson_as_relaxed_extended_json
-DYNAMIC bson_check_version
-DYNAMIC bson_decimal128_from_string
-DYNAMIC bson_decimal128_to_string
-DYNAMIC bson_destroy
-DYNAMIC bson_get_major_version
-DYNAMIC bson_get_micro_version
-DYNAMIC bson_get_minor_version
-DYNAMIC bson_get_version
-DYNAMIC bson_new
-DYNAMIC bson_new_from_json
-DYNAMIC bson_validate
-DYNAMIC hb_bson_version
-DYNAMIC hb_mongoc_set_return_bson_value_type
-DYNAMIC mongoc_cleanup
-DYNAMIC mongoc_client_command_simple
-DYNAMIC mongoc_client_destroy
-DYNAMIC mongoc_client_get_collection
-DYNAMIC mongoc_client_get_database
-DYNAMIC mongoc_client_new
-DYNAMIC mongoc_client_new_from_uri
-DYNAMIC mongoc_client_set_appname
-DYNAMIC mongoc_collection_command_simple
-DYNAMIC mongoc_collection_destroy
-DYNAMIC MONGOC_COLLECTION_DROP
-DYNAMIC MONGOC_COLLECTION_DROP_WITH_OPTS
-DYNAMIC MONGOC_COLLECTION_FIND_WITH_OPTS
-DYNAMIC mongoc_collection_insert
-DYNAMIC MONGOC_COLLECTION_REMOVE
-DYNAMIC MONGOC_CURSOR_NEXT
-DYNAMIC mongoc_database_destroy
-DYNAMIC MONGOC_DATABASE_GET_COLLECTION
-DYNAMIC mongoc_init
-DYNAMIC mongoc_uri_new
+bson_append_array
+bson_append_array_begin
+bson_append_array_end
+bson_append_binary
+bson_append_bool
+bson_append_code
+bson_append_code_with_scope
+bson_append_date_time
+bson_append_decimal128
+bson_append_document
+bson_append_document_begin
+bson_append_document_end
+bson_append_double
+bson_append_int32
+bson_append_int64
+bson_append_null
+bson_append_regex
+bson_append_utf8
+bson_array_as_json
+bson_as_canonical_extended_json
+bson_as_json
+bson_as_relaxed_extended_json
+bson_check_version
+bson_decimal128_from_string
+bson_decimal128_to_string
+bson_destroy
+bson_get_major_version
+bson_get_micro_version
+bson_get_minor_version
+bson_get_version
+bson_has_field
+bson_new
+bson_new_from_json
+bson_validate
+hb_bson_version
+hb_mongoc_set_return_bson_value_type
+mongoc_cleanup
+mongoc_client_command_simple
+mongoc_client_destroy
+mongoc_client_get_collection
+mongoc_client_get_database
+mongoc_client_new
+mongoc_client_new_from_uri
+mongoc_client_set_appname
+mongoc_collection_command_simple
+mongoc_collection_destroy
+mongoc_collection_drop
+mongoc_collection_drop_with_opts
+mongoc_collection_find_with_opts
+mongoc_collection_insert
+mongoc_collection_remove
+mongoc_cursor_next
+mongoc_database_destroy
+mongoc_database_get_collection
+mongoc_init
+mongoc_uri_new
 
 #if defined( __HBEXTREQ__ ) .OR. defined( __HBEXTERN__HBMONGOC__REQUEST )
-   #uncommand DYNAMIC <fncs,...> => EXTERNAL <fncs>
+   #uncommand <fncs,...> => EXTERNAL <fncs>
 #endif
 
 #endif
