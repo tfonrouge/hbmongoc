@@ -144,8 +144,6 @@ HB_FUNC( MONGOC_COLLECTION_INSERT )
     mongoc_collection_t * collection = mongoc_hbparam( 1, _hb_collection_t_ );
     bson_t * document = bson_hbparam( 3, HB_IT_ANY );
 
-    printf("\ndocument: %s\n", bson_as_json( document, NULL ) );
-
     if ( collection && document ) {
         mongoc_insert_flags_t flags = HB_ISNUM( 2 ) ? hb_parni( 2 ) : MONGOC_INSERT_NONE;
         const mongoc_write_concern_t * write_concern = NULL;
