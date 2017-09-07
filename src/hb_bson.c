@@ -92,6 +92,43 @@ bson_t * bson_hbparam( int iParam, long lMask )
     return NULL;
 }
 
+void bson_hbstor_ref_error( int iParam, bson_error_t * error )
+{
+    if ( error ) {
+        PHB_ITEM pItemHash = hb_itemNew( NULL );
+        hb_hashNew( pItemHash );
+
+        PHB_ITEM pItemKey;
+        PHB_ITEM pItemValue;
+
+        pItemKey = hb_itemNew( NULL );
+        pItemValue = hb_itemNew( NULL );
+        hb_itemPutC( pItemKey, "domain" );
+        hb_itemPutNI( pItemValue, error->domain );
+        hb_hashAdd( pItemHash, pItemKey, pItemValue );
+        hb_itemRelease( pItemKey );
+        hb_itemRelease( pItemValue );
+
+        pItemKey = hb_itemNew( NULL );
+        pItemValue = hb_itemNew( NULL );
+        hb_itemPutC( pItemKey, "code" );
+        hb_itemPutNI( pItemValue, error->code );
+        hb_hashAdd( pItemHash, pItemKey, pItemValue );
+        hb_itemRelease( pItemKey );
+        hb_itemRelease( pItemValue );
+
+        pItemKey = hb_itemNew( NULL );
+        pItemValue = hb_itemNew( NULL );
+        hb_itemPutC( pItemKey, "message" );
+        hb_itemPutC( pItemValue, error->message );
+        hb_hashAdd( pItemHash, pItemKey, pItemValue );
+        hb_itemRelease( pItemKey );
+        hb_itemRelease( pItemValue );
+
+        hb_itemParamStoreRelease( iParam, pItemHash );
+    }
+}
+
 static uint64_t hbbson_dateTimeToUnix( int iParam ) {
     long lJulian;
     long lMillis;
@@ -455,6 +492,22 @@ HB_FUNC( BSON_APPEND_UTF8 )
     }
 }
 
+HB_FUNC( BSON_ARRAY_AS_JSON )
+{
+    const bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
+
+    if ( bson ) {
+        HB_ULONG length;
+        const char * result = bson_array_as_json( bson, &length );
+        if ( HB_ISBYREF( 2 ) ) {
+            hb_stornl( (HB_LONG) length, 2 );
+        }
+        hb_retc( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
 HB_FUNC( BSON_AS_JSON )
 {
     bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
@@ -597,6 +650,19 @@ HB_FUNC( BSON_GET_VERSION )
     hb_retc( bson_get_version() );
 }
 
+HB_FUNC( BSON_HAS_FIELD )
+{
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
+    const char * key = hb_parc( 2 );
+
+    if ( bson && key ) {
+        bool result = bson_has_field( bson, key );
+        hb_retl( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
 HB_FUNC( BSON_NEW )
 {
     if ( hb_pcount() == 0 ) {
@@ -636,7 +702,7 @@ HB_FUNC( BSON_NEW_FROM_JSON )
         hb_retptrGC( phBson );
     } else {
         if ( HB_ISBYREF( 3 ) ) {
-            hb_storc( error.message, 3 );
+            bson_hbstor_ref_error( 3, &error );
         }
         hb_ret();
     }

@@ -28,7 +28,7 @@ HB_FUNC( MONGOC_CLIENT_COMMAND_SIMPLE )
             if ( result ) {
                 hb_stor( 6 );
             } else {
-                hb_storc( error.message, 6 );
+                bson_hbstor_ref_error( 6, &error );
             }
         }
 

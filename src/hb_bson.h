@@ -40,6 +40,7 @@ typedef struct _HB_BSON_
 bson_decimal128_t * bson_decimal128_hbparam( int iParam );
 #endif
 bson_t *            bson_hbparam( int iParam, long lMask );
+void                bson_hbstor_ref_error( int iParam, bson_error_t * error );
 PHB_BSON            hbbson_new_dataContainer( hbbson_t_ hbbson_type, void * p );
 PHB_BSON            hbbson_param( int iParam, hbbson_t_ hbbson_type );
 

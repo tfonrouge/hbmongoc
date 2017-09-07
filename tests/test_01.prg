@@ -168,7 +168,7 @@ PROCEDURE main( serverConn )
         BSON_APPEND_DOCUMENT( insert, "childs",  {"1"=>"Arel","2"=>"Moises","3"=>"Israel","4"=>"Avril","5"=>"Lucy","6"=>"Nathalie","7"=>"Michal" } )
 
         IF ! mongoc_collection_insert( collection, MONGOC_INSERT_NONE, insert, nil, @error )
-            ? e"\nError:", error
+            ? e"\nError:", HBBSON_ERROR_MESSAGE( error )
         ENDIF
 
     NEXT

@@ -33,4 +33,9 @@
 #xtranslate BSON_APPEND_REGEX( <document>, <key>, <regex>, <options> ) => bson_append_regex( <document>, <key>, -1, <regex>, <options> )
 #xtranslate BSON_APPEND_UTF8( <document>, <key>, <value> ) => bson_append_utf8( <document>, <key>, -1, <value>, -1 )
 
+/* bson_error_t */
+#xtranslate HBBSON_ERROR_DOMAIN( <error> ) => iif( <error> = nil, nil, <error>\["domain"\] )
+#xtranslate HBBSON_ERROR_CODE( <error> ) => iif( <error> = nil, nil, <error>\["code"\] )
+#xtranslate HBBSON_ERROR_MESSAGE( <error> ) => iif( <error> = nil, nil, <error>\["message"\] )
+
 #endif /* hbmongoc_ch */

@@ -28,7 +28,7 @@ HB_FUNC( MONGOC_COLLECTION_COMMAND_SIMPLE )
             if ( result ) {
                 hb_stor( 5 );
             } else {
-                hb_storc( error.message, 5 );
+                bson_hbstor_ref_error( 5, &error );
             }
         }
 
@@ -68,8 +68,7 @@ HB_FUNC( MONGOC_COLLECTION_DROP )
             if ( result ) {
                 hb_stor( 2 );
             } else {
-                const char *szError = error.message;
-                hb_storc( szError, 2 );
+                bson_hbstor_ref_error( 2, &error );
             }
         }
 
@@ -94,8 +93,7 @@ HB_FUNC( MONGOC_COLLECTION_DROP_WITH_OPTS )
             if ( result ) {
                 hb_stor( 3 );
             } else {
-                const char *szError = error.message;
-                hb_storc( szError, 3 );
+                bson_hbstor_ref_error( 3, &error );
             }
         }
 
@@ -155,8 +153,7 @@ HB_FUNC( MONGOC_COLLECTION_INSERT )
             if ( result ) {
                 hb_stor( 5 );
             } else {
-                const char *szError = error.message;
-                hb_storc( szError, 5 );
+                bson_hbstor_ref_error( 5, &error );
             }
         }
 
@@ -187,8 +184,7 @@ HB_FUNC( MONGOC_COLLECTION_REMOVE )
             if ( result ) {
                 hb_stor( 5 );
             } else {
-                const char *szError = error.message;
-                hb_storc( szError, 5 );
+                bson_hbstor_ref_error( 5, &error );
             }
         }
 
