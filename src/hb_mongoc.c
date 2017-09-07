@@ -104,8 +104,7 @@ PHB_BSON hbmongoc_return_byref_bson( int iParam, bson_t * bson )
             hb_jsonDecode( szJson, pItem );
             bson_free( szJson );
             bson_destroy( bson );
-            hb_itemParamStoreForward( iParam, pItem );
-            hb_itemRelease( pItem );
+            hb_itemParamStoreRelease( iParam, pItem );
             break;
     }
     return phBson;
