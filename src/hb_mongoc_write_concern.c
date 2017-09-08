@@ -108,6 +108,7 @@ HB_FUNC( MONGOC_WRITE_CONCERN_IS_ACKNOWLEDGED )
 }
 
 HB_FUNC( MONGOC_WRITE_CONCERN_IS_DEFAULT )
+#if MONGOC_CHECK_VERSION( 1, 7, 0 )
 {
     mongoc_write_concern_t * write_concern = mongoc_hbparam( 1, _hbmongoc_write_concern_t_ );
 
@@ -118,6 +119,11 @@ HB_FUNC( MONGOC_WRITE_CONCERN_IS_DEFAULT )
         HBMONGOC_ERR_ARGS();
     }
 }
+#else
+{
+    HBMONGOC_ERR_NOFUNC();
+}
+#endif
 
 HB_FUNC( MONGOC_WRITE_CONCERN_IS_VALID )
 {
