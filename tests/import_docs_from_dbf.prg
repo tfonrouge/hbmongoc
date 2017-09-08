@@ -8,7 +8,7 @@
 #define db_name     "hbmongoc"
 #define coll_name   "test.dbf"
 
-PROCEDURE main()
+PROCEDURE main( uriString )
     LOCAL client
     LOCAL database
     LOCAL arrayCollections
@@ -30,7 +30,15 @@ PROCEDURE main()
         QUIT
     ENDIF
 
-    client := mongoc_client_new( "mongodb://localhost" )
+    IF empty( uriString )
+        uriString := "localhost"
+    ENDIF
+
+    uriString := "mongodb://" + uriString
+
+    ? "Server:", uriString
+
+    client := mongoc_client_new( uriString )
     database := mongoc_client_get_database( client, db_name )
     collection := mongoc_database_get_collection( database, coll_name )
 
@@ -64,8 +72,7 @@ PROCEDURE main()
 
     filter := bson_new()
     BSON_APPEND_UTF8( filter, "FIRST", "John" )
-    WAIT "press any key to show only docs with 'John' as NAME in collection... filter: " + bson_as_json( filter )
-
+    WAIT "press any key to show docs in collection with filter: " + bson_as_json( filter )
 
     displayDocs( collection, filter )
 
@@ -97,6 +104,8 @@ STATIC PROCEDURE importDocs( collection )
     LOCAL doc
     LOCAL error
     LOCAL recNo
+
+    ? "Initiating inserting documents:"
 
     dbfStruct := dbStruct()
 
@@ -133,6 +142,8 @@ STATIC PROCEDURE importDocs( collection )
         ENDIF
 
         TEST->( dbGoto( ++recNo ) )
+
+        ?? "."
 
     ENDDO
 
