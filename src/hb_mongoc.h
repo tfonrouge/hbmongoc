@@ -30,7 +30,8 @@ typedef enum
     _hbmongoc_uri_t_,
     _hbmongoc_cursor_t_,
     _hbmongoc_write_concern_t_,
-    _hbmongoc_read_prefs_t_
+    _hbmongoc_read_prefs_t_,
+    _hbmongoc_bult_operation_t_
 } hbmongoc_t_;
 
 typedef struct _HB_MONGOC_

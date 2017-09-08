@@ -9,6 +9,21 @@
 #include "hb_mongoc_collection.h"
 #include "hb_mongoc.h"
 
+HB_FUNC( MONGOC_COLLECTION_CREATE_BULK_OPERATION )
+{
+    mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
+
+    if ( collection && HB_ISLOG( 2 ) ) {
+        HB_BOOL ordered = hb_parl( 2 );
+        const mongoc_write_concern_t * write_concern = mongoc_hbparam( 3, _hbmongoc_write_concern_t_ );
+        mongoc_bulk_operation_t * bulk = mongoc_collection_create_bulk_operation( collection, ordered, write_concern );
+        PHB_MONGOC phMongo = hbmongoc_new_dataContainer( _hbmongoc_bult_operation_t_, bulk );
+        hb_retptrGC( phMongo );
+    } else {
+        HBMONGOC_ERR_ARGS();
+    }
+}
+
 HB_FUNC( MONGOC_COLLECTION_COMMAND_SIMPLE )
 {
     mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
@@ -112,9 +127,9 @@ HB_FUNC( MONGOC_COLLECTION_FIND_WITH_OPTS )
 {
     mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
     bson_t * filter = bson_hbparam( 2, HB_IT_ANY );
+    bson_t * opts = bson_hbparam( 3, HB_IT_ANY );
 
-    if ( collection && filter ) {
-        bson_t * opts = bson_hbparam( 3, HB_IT_ANY );
+    if ( collection && filter && opts ) {
         const mongoc_read_prefs_t *read_prefs = mongoc_hbparam( 4, _hbmongoc_read_prefs_t_ );
 
         mongoc_cursor_t * cursor = mongoc_collection_find_with_opts( collection, filter, opts, read_prefs );
@@ -122,10 +137,6 @@ HB_FUNC( MONGOC_COLLECTION_FIND_WITH_OPTS )
         PHB_MONGOC phCursor = hbmongoc_new_dataContainer( _hbmongoc_cursor_t_, cursor );
 
         hb_retptrGC( phCursor );
-
-        if ( opts && ! HB_ISPOINTER( 3 ) ) {
-            bson_destroy( opts );
-        }
 
     } else {
         HBMONGOC_ERR_ARGS();
@@ -135,6 +146,9 @@ HB_FUNC( MONGOC_COLLECTION_FIND_WITH_OPTS )
         bson_destroy( filter );
     }
 
+    if ( opts && ! HB_ISPOINTER( 3 ) ) {
+        bson_destroy( opts );
+    }
 }
 
 HB_FUNC( MONGOC_COLLECTION_INSERT )
