@@ -27,6 +27,7 @@ PROCEDURE main( uriString )
     USE test
 
     IF neterr()
+        ? "error opening test.dbf"
         QUIT
     ENDIF
 
