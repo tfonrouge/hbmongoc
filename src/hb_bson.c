@@ -92,40 +92,44 @@ bson_t * bson_hbparam( int iParam, long lMask )
     return NULL;
 }
 
-void bson_hbstor_ref_error( int iParam, bson_error_t * error )
+void bson_hbstor_byref_error( int iParam, bson_error_t * error )
 {
-    if ( error ) {
-        PHB_ITEM pItemHash = hb_itemNew( NULL );
-        hb_hashNew( pItemHash );
+    if ( HB_ISBYREF( iParam ) ) {
+        if ( error && error->code != 0 && error->domain != 0 && strlen( error->message ) > 0 ) {
+            PHB_ITEM pItemHash = hb_itemNew( NULL );
+            hb_hashNew( pItemHash );
 
-        PHB_ITEM pItemKey;
-        PHB_ITEM pItemValue;
+            PHB_ITEM pItemKey;
+            PHB_ITEM pItemValue;
 
-        pItemKey = hb_itemNew( NULL );
-        pItemValue = hb_itemNew( NULL );
-        hb_itemPutC( pItemKey, "domain" );
-        hb_itemPutNI( pItemValue, error->domain );
-        hb_hashAdd( pItemHash, pItemKey, pItemValue );
-        hb_itemRelease( pItemKey );
-        hb_itemRelease( pItemValue );
+            pItemKey = hb_itemNew( NULL );
+            pItemValue = hb_itemNew( NULL );
+            hb_itemPutC( pItemKey, "domain" );
+            hb_itemPutNI( pItemValue, error->domain );
+            hb_hashAdd( pItemHash, pItemKey, pItemValue );
+            hb_itemRelease( pItemKey );
+            hb_itemRelease( pItemValue );
 
-        pItemKey = hb_itemNew( NULL );
-        pItemValue = hb_itemNew( NULL );
-        hb_itemPutC( pItemKey, "code" );
-        hb_itemPutNI( pItemValue, error->code );
-        hb_hashAdd( pItemHash, pItemKey, pItemValue );
-        hb_itemRelease( pItemKey );
-        hb_itemRelease( pItemValue );
+            pItemKey = hb_itemNew( NULL );
+            pItemValue = hb_itemNew( NULL );
+            hb_itemPutC( pItemKey, "code" );
+            hb_itemPutNI( pItemValue, error->code );
+            hb_hashAdd( pItemHash, pItemKey, pItemValue );
+            hb_itemRelease( pItemKey );
+            hb_itemRelease( pItemValue );
 
-        pItemKey = hb_itemNew( NULL );
-        pItemValue = hb_itemNew( NULL );
-        hb_itemPutC( pItemKey, "message" );
-        hb_itemPutC( pItemValue, error->message );
-        hb_hashAdd( pItemHash, pItemKey, pItemValue );
-        hb_itemRelease( pItemKey );
-        hb_itemRelease( pItemValue );
-
-        hb_itemParamStoreRelease( iParam, pItemHash );
+            pItemKey = hb_itemNew( NULL );
+            pItemValue = hb_itemNew( NULL );
+            hb_itemPutC( pItemKey, "message" );
+            hb_itemPutC( pItemValue, error->message );
+            hb_hashAdd( pItemHash, pItemKey, pItemValue );
+            hb_itemRelease( pItemKey );
+            hb_itemRelease( pItemValue );
+            
+            hb_itemParamStoreRelease( iParam, pItemHash );
+        } else {
+            hb_stor( iParam );
+        }
     }
 }
 
@@ -714,13 +718,7 @@ HB_FUNC( BSON_NEW_FROM_JSON )
         HBBSON_ERR_ARGS();
     }
 
-    if ( HB_ISBYREF( 3 ) ) {
-        if ( bson ) {
-            hb_stor( 3 );
-        } else {
-            bson_hbstor_ref_error( 3, &error );
-        }
-    }
+    bson_hbstor_byref_error( 3, &error );
 
     if ( bson ) {
         PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_bson_t_, bson );

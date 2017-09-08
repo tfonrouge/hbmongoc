@@ -33,9 +33,7 @@ HB_FUNC( MONGOC_BULK_OPERATION_EXECUTE )
 
         hbmongoc_return_byref_bson( 2, reply );
 
-        if ( HB_ISBYREF( 3 ) ) {
-            bson_hbstor_ref_error( 3, &error );
-        }
+        bson_hbstor_byref_error( 3, &error );
 
         hb_retni( result );
 
@@ -72,13 +70,7 @@ HB_FUNC( MONGOC_BULK_OPERATION_INSERT_WITH_OPTS )
 
         HB_BOOL result = mongoc_bulk_operation_insert_with_opts( bulk, document, opts, &error );
 
-        if ( HB_ISBYREF( 4 ) ) {
-            if ( result ) {
-                hb_stor( 4 );
-            } else {
-                bson_hbstor_ref_error( 4, &error );
-            }
-        }
+        bson_hbstor_byref_error( 4, &error );
 
         hb_retl( result );
 

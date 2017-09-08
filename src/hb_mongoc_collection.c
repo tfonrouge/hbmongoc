@@ -39,13 +39,7 @@ HB_FUNC( MONGOC_COLLECTION_COMMAND_SIMPLE )
 
         hbmongoc_return_byref_bson( 4, bson_copy( &reply ) );
 
-        if ( HB_ISBYREF( 5 ) ) {
-            if ( result ) {
-                hb_stor( 5 );
-            } else {
-                bson_hbstor_ref_error( 5, &error );
-            }
-        }
+        bson_hbstor_byref_error( 5, &error );
 
         hb_retl( result );
 
@@ -79,13 +73,7 @@ HB_FUNC( MONGOC_COLLECTION_DROP )
 
         bool result = mongoc_collection_drop( collection, &error );
 
-        if ( HB_ISBYREF( 2 ) ) {
-            if ( result ) {
-                hb_stor( 2 );
-            } else {
-                bson_hbstor_ref_error( 2, &error );
-            }
-        }
+        bson_hbstor_byref_error( 2, &error );
 
         hb_retl( result );
 
@@ -104,13 +92,7 @@ HB_FUNC( MONGOC_COLLECTION_DROP_WITH_OPTS )
 
         bool result = mongoc_collection_drop_with_opts( collection, opts, &error );
 
-        if ( HB_ISBYREF( 3 ) ) {
-            if ( result ) {
-                hb_stor( 3 );
-            } else {
-                bson_hbstor_ref_error( 3, &error );
-            }
-        }
+        bson_hbstor_byref_error( 3, &error );
 
         hb_retl( result );
 
@@ -163,13 +145,7 @@ HB_FUNC( MONGOC_COLLECTION_INSERT )
 
         bool result = mongoc_collection_insert( collection, flags, document, write_concern, &error );
 
-        if ( HB_ISBYREF( 5 ) ) {
-            if ( result ) {
-                hb_stor( 5 );
-            } else {
-                bson_hbstor_ref_error( 5, &error );
-            }
-        }
+        bson_hbstor_byref_error( 5, &error );
 
         hb_retl( result );
 
@@ -194,13 +170,7 @@ HB_FUNC( MONGOC_COLLECTION_REMOVE )
 
         bool result = mongoc_collection_remove( collection, flags, selector, write_concern, &error );
 
-        if ( HB_ISBYREF( 5 ) ) {
-            if ( result ) {
-                hb_stor( 5 );
-            } else {
-                bson_hbstor_ref_error( 5, &error );
-            }
-        }
+        bson_hbstor_byref_error( 5, &error );
 
         hb_retl( result );
 

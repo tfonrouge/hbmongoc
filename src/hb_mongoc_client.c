@@ -24,13 +24,7 @@ HB_FUNC( MONGOC_CLIENT_COMMAND_SIMPLE )
 
         hbmongoc_return_byref_bson( 5, bson_copy( &reply ) );
 
-        if ( HB_ISBYREF( 6 ) ) {
-            if ( result ) {
-                hb_stor( 6 );
-            } else {
-                bson_hbstor_ref_error( 6, &error );
-            }
-        }
+        bson_hbstor_byref_error( 6, &error );
 
         hb_retl( result );
 
