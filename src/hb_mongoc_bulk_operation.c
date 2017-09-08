@@ -61,6 +61,7 @@ HB_FUNC( MONGOC_BULK_OPERATION_INSERT )
 }
 
 HB_FUNC( MONGOC_BULK_OPERATION_INSERT_WITH_OPTS )
+#if MONGOC_CHECK_VERSION( 1, 7, 0 )
 {
     mongoc_bulk_operation_t * bulk = mongoc_hbparam( 1, _hbmongoc_bult_operation_t_ );
     bson_t * document = bson_hbparam( 2, HB_IT_ANY );
@@ -93,3 +94,8 @@ HB_FUNC( MONGOC_BULK_OPERATION_INSERT_WITH_OPTS )
         bson_destroy( opts );
     }
 }
+#else
+{
+    HBMONGOC_ERR_NOFUNC();
+}
+#endif
