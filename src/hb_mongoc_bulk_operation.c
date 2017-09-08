@@ -29,13 +29,13 @@ HB_FUNC( MONGOC_BULK_OPERATION_EXECUTE )
         bson_t * reply = bson_new();
         bson_error_t error;
 
-        uint32_t result = mongoc_bulk_operation_execute( bulk, reply, &error );
+        uint32_t server_id = mongoc_bulk_operation_execute( bulk, reply, &error );
 
         hbmongoc_return_byref_bson( 2, reply );
 
-        bson_hbstor_byref_error( 3, &error );
+        bson_hbstor_byref_error( 3, &error, server_id != 0 );
 
-        hb_retni( result );
+        hb_retni( server_id );
 
     } else {
         HBMONGOC_ERR_ARGS();
@@ -70,7 +70,7 @@ HB_FUNC( MONGOC_BULK_OPERATION_INSERT_WITH_OPTS )
 
         HB_BOOL result = mongoc_bulk_operation_insert_with_opts( bulk, document, opts, &error );
 
-        bson_hbstor_byref_error( 4, &error );
+        bson_hbstor_byref_error( 4, &error, result );
 
         hb_retl( result );
 

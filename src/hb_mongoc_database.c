@@ -48,7 +48,7 @@ HB_FUNC( MONGOC_DATABASE_GET_COLLECTION_NAMES )
 
         char ** names = mongoc_database_get_collection_names( database, &error );
 
-        bson_hbstor_byref_error( 2, &error );
+        bson_hbstor_byref_error( 2, &error, true ); /* previous function doesn't returns a result of operation */
 
         if ( names ) {
             PHB_ITEM pItemArray = hb_itemNew( NULL );

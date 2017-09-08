@@ -39,7 +39,7 @@ HB_FUNC( MONGOC_COLLECTION_COMMAND_SIMPLE )
 
         hbmongoc_return_byref_bson( 4, bson_copy( &reply ) );
 
-        bson_hbstor_byref_error( 5, &error );
+        bson_hbstor_byref_error( 5, &error, result );
 
         hb_retl( result );
 
@@ -73,7 +73,7 @@ HB_FUNC( MONGOC_COLLECTION_DROP )
 
         bool result = mongoc_collection_drop( collection, &error );
 
-        bson_hbstor_byref_error( 2, &error );
+        bson_hbstor_byref_error( 2, &error, result );
 
         hb_retl( result );
 
@@ -92,7 +92,7 @@ HB_FUNC( MONGOC_COLLECTION_DROP_WITH_OPTS )
 
         bool result = mongoc_collection_drop_with_opts( collection, opts, &error );
 
-        bson_hbstor_byref_error( 3, &error );
+        bson_hbstor_byref_error( 3, &error, result );
 
         hb_retl( result );
 
@@ -145,7 +145,7 @@ HB_FUNC( MONGOC_COLLECTION_INSERT )
 
         bool result = mongoc_collection_insert( collection, flags, document, write_concern, &error );
 
-        bson_hbstor_byref_error( 5, &error );
+        bson_hbstor_byref_error( 5, &error, result );
 
         hb_retl( result );
 
@@ -170,7 +170,7 @@ HB_FUNC( MONGOC_COLLECTION_REMOVE )
 
         bool result = mongoc_collection_remove( collection, flags, selector, write_concern, &error );
 
-        bson_hbstor_byref_error( 5, &error );
+        bson_hbstor_byref_error( 5, &error, result );
 
         hb_retl( result );
 

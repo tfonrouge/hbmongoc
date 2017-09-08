@@ -24,7 +24,7 @@ HB_FUNC( MONGOC_CLIENT_COMMAND_SIMPLE )
 
         hbmongoc_return_byref_bson( 5, bson_copy( &reply ) );
 
-        bson_hbstor_byref_error( 6, &error );
+        bson_hbstor_byref_error( 6, &error, result );
 
         hb_retl( result );
 

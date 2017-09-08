@@ -92,10 +92,10 @@ bson_t * bson_hbparam( int iParam, long lMask )
     return NULL;
 }
 
-void bson_hbstor_byref_error( int iParam, bson_error_t * error )
+void bson_hbstor_byref_error( int iParam, bson_error_t * error, HB_BOOL valid )
 {
     if ( HB_ISBYREF( iParam ) ) {
-        if ( error && strlen( error->message ) > 0 ) {
+        if ( valid && error && strlen( error->message ) > 0 ) {
             PHB_ITEM pItemHash = hb_itemNew( NULL );
             hb_hashNew( pItemHash );
 
@@ -718,7 +718,7 @@ HB_FUNC( BSON_NEW_FROM_JSON )
         HBBSON_ERR_ARGS();
     }
 
-    bson_hbstor_byref_error( 3, &error );
+    bson_hbstor_byref_error( 3, &error, bson != NULL );
 
     if ( bson ) {
         PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_bson_t_, bson );
