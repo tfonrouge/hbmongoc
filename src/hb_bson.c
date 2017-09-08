@@ -714,16 +714,18 @@ HB_FUNC( BSON_NEW_FROM_JSON )
         HBBSON_ERR_ARGS();
     }
 
-    if ( bson ) {
-        if ( HB_ISBYREF( 3 ) ) {
+    if ( HB_ISBYREF( 3 ) ) {
+        if ( bson ) {
             hb_stor( 3 );
+        } else {
+            bson_hbstor_ref_error( 3, &error );
         }
+    }
+
+    if ( bson ) {
         PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_bson_t_, bson );
         hb_retptrGC( phBson );
     } else {
-        if ( HB_ISBYREF( 3 ) ) {
-            bson_hbstor_ref_error( 3, &error );
-        }
         hb_ret();
     }
 }
