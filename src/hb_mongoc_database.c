@@ -48,26 +48,25 @@ HB_FUNC( MONGOC_DATABASE_GET_COLLECTION_NAMES )
 
         char ** names = mongoc_database_get_collection_names( database, &error );
 
-        PHB_ITEM pItemArray = hb_itemNew( NULL );
-        hb_arrayNew( pItemArray, 0 );
-        for ( int i = 0; names[ i ]; ++i ) {
-            PHB_ITEM pItem = hb_itemNew( NULL );
-            hb_itemPutC( pItem, names[ i ] );
-            hb_arrayAdd( pItemArray, pItem );
-            hb_itemRelease( pItem );
-        }
+        bson_hbstor_byref_error( 2, &error );
 
-        bson_strfreev( names );
-
-        if ( HB_ISBYREF( 2 ) ) {
-            if ( error.code == 0 && error.domain == 0 && strlen( error.message ) == 0 ) {
-                hb_stor( 2 );
-            } else {
-                bson_hbstor_ref_error( 2, &error );
+        if ( names ) {
+            PHB_ITEM pItemArray = hb_itemNew( NULL );
+            hb_arrayNew( pItemArray, 0 );
+            
+            for ( int i = 0; names[ i ]; ++i ) {
+                PHB_ITEM pItem = hb_itemNew( NULL );
+                hb_itemPutC( pItem, names[ i ] );
+                hb_arrayAdd( pItemArray, pItem );
+                hb_itemRelease( pItem );
             }
-        }
 
-        hb_itemReturnRelease( pItemArray );
+            bson_strfreev( names );
+
+            hb_itemReturnRelease( pItemArray );
+        } else {
+            hb_ret();
+        }
 
     } else {
         HBMONGOC_ERR_ARGS();
