@@ -91,17 +91,21 @@ PHB_MONGOC hbmongoc_param( int iParam, hbmongoc_t_ type )
 PHB_BSON hbmongoc_return_byref_bson( int iParam, bson_t * bson )
 {
     PHB_BSON phBson = NULL;
-    char * szJson;
+    char * szJSON = NULL;
 
     switch ( s_hbmongoc_return_bson_value_type ) {
         case _HBRETVAL_JSON_:
 #if BSON_CHECK_VERSION( 1, 7, 0 )
-            szJson = bson_as_canonical_extended_json( bson, NULL );
+            szJSON = hbbson_as_json( bson );
 #else
-            szJson = bson_as_json( bson, NULL );
+            szJSON = bson_as_json( bson, NULL );
 #endif
-            hb_storc( szJson, iParam );
-            bson_free( szJson );
+            if ( szJSON ) {
+                hb_storc( szJSON, iParam );
+                bson_free( szJSON );
+            } else {
+                hb_stor( iParam );
+            }
             bson_destroy( bson );
             break;
         case _HBRETVAL_BSON_:
@@ -110,15 +114,19 @@ PHB_BSON hbmongoc_return_byref_bson( int iParam, bson_t * bson )
             break;
         case _HBRETVAL_HASH_:
 #if BSON_CHECK_VERSION( 1, 7, 0 )
-            szJson = bson_as_canonical_extended_json( bson, NULL );
+            szJSON = hbbson_as_json( bson );
 #else
-            szJson = bson_as_json( bson, NULL );
+            szJSON = bson_as_json( bson, NULL );
 #endif
             PHB_ITEM pItem = hb_itemNew( NULL );
-            hb_jsonDecode( szJson, pItem );
-            bson_free( szJson );
+            if ( szJSON ) {
+                hb_jsonDecode( szJSON, pItem );
+                bson_free( szJSON );
+                hb_itemParamStoreRelease( iParam, pItem );
+            } else {
+                hb_stor( iParam );
+            }
             bson_destroy( bson );
-            hb_itemParamStoreRelease( iParam, pItem );
             break;
     }
     return phBson;

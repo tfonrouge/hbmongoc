@@ -41,6 +41,9 @@ bson_decimal128_t * bson_decimal128_hbparam( int iParam );
 #endif
 bson_t *            bson_hbparam( int iParam, long lMask );
 void                bson_hbstor_byref_error( int iParam, bson_error_t * error, HB_BOOL valid );
+#if BSON_CHECK_VERSION( 1, 7, 0 )
+char *              hbbson_as_json( const bson_t * bson );
+#endif
 PHB_BSON            hbbson_new_dataContainer( hbbson_t_ hbbson_type, void * p );
 PHB_BSON            hbbson_param( int iParam, hbbson_t_ hbbson_type );
 

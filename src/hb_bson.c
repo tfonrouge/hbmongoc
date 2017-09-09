@@ -12,6 +12,20 @@
 
 #define HBMONGOC_MAX_ARRAYDOCUMENT_LEVEL 100
 
+enum hb_return_json_type { _HBRETJSON_SIMPLE_, _HBRETJSON_CANONICAL_, _HBRETJSON_RELAXED_ };
+static enum hb_return_json_type s_hbmongoc_return_json_type =
+#if BSON_CHECK_VERSION( 1, 7, 0 )
+    _HBRETJSON_RELAXED_;
+#else
+    _HBRETJSON_SIMPLE_;
+#endif
+
+static const char * _STR_JSON_SIMPLE_       = "SIMPLE";
+#if BSON_CHECK_VERSION( 1, 7, 0 )
+static const char * _STR_JSON_CANONICAL_    = "CANONICAL";
+static const char * _STR_JSON_RELAXED_      = "RELAXED";
+#endif
+
 static PHB_BSON hbbson_hbparam( PHB_ITEM pItem, hbbson_t_ hbbson_type );
 
 static bson_t s_bson_documentStack[ HBMONGOC_MAX_ARRAYDOCUMENT_LEVEL ];
@@ -133,6 +147,25 @@ void bson_hbstor_byref_error( int iParam, bson_error_t * error, HB_BOOL valid )
         }
     }
 }
+
+#if BSON_CHECK_VERSION( 1, 7, 0 )
+char * hbbson_as_json( const bson_t * bson )
+{
+    char * szJSON = NULL;
+    switch ( s_hbmongoc_return_json_type ) {
+        case _HBRETJSON_SIMPLE_:
+            szJSON = bson_as_json( bson, NULL );
+            break;
+        case _HBRETJSON_CANONICAL_:
+            szJSON = bson_as_canonical_extended_json( bson, NULL );
+            break;
+        case _HBRETJSON_RELAXED_:
+            szJSON = bson_as_relaxed_extended_json( bson, NULL );
+            break;
+    }
+    return szJSON;
+}
+#endif
 
 static uint64_t hbbson_juliantimeToUnix( long lJulian, long lMillis, HB_BOOL utc )
 {
@@ -347,11 +380,16 @@ HB_FUNC( BSON_APPEND_DATE_TIME )
 {
     bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
     const char * key = hb_parc( 2 );
-    PHB_ITEM pItem = hb_param( 4, HB_IT_DATETIME );
+    PHB_ITEM pItem = hb_param( 4, HB_IT_LONG | HB_IT_DATETIME );
 
     if ( bson && key && pItem ) {
         int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
-        uint64_t value = hbbson_dateTimeToUnix( pItem, false );
+        uint64_t value;
+        if ( hb_itemType( pItem ) & HB_IT_DATETIME ) {
+            value = hbbson_dateTimeToUnix( pItem, false );
+        } else {
+            value = hb_itemGetNL( pItem );
+        }
         bool result = bson_append_date_time( bson, key, key_length, value );
         hb_retl( result );
     } else {
@@ -546,7 +584,7 @@ HB_FUNC( BSON_AS_CANONICAL_EXTENDED_JSON )
     bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
 
     if ( bson ) {
-        char * szJSON = bson_as_json( bson, NULL );
+        char * szJSON = bson_as_canonical_extended_json( bson, NULL );
         if( szJSON ) {
             hb_retc( szJSON );
             bson_free( szJSON );
@@ -752,6 +790,60 @@ HB_FUNC( BSON_NEW_FROM_JSON )
 HB_FUNC( BSON_VALIDATE )
 {
 
+}
+
+HB_FUNC( HB_BSON_AS_HASH )
+{
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
+
+    if ( bson ) {
+        char * szJSON;
+#if BSON_CHECK_VERSION( 1, 7, 0 )
+        szJSON = hbbson_as_json( bson );
+#else
+        szJSON = bson_as_json( bson, NULL );
+#endif
+        if ( szJSON ) {
+            PHB_ITEM pItem = hb_itemNew( NULL );
+            hb_jsonDecode( szJSON, pItem );
+            bson_free( szJSON );
+            hb_itemReturnRelease( pItem );
+        } else {
+            hb_ret();
+        }
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( HB_BSON_SET_RETURN_JSON_TYPE )
+{
+    if ( hb_pcount() > 0 ) {
+        if ( hb_stricmp( hb_parc( 1 ), _STR_JSON_SIMPLE_ ) == 0 ) {
+            s_hbmongoc_return_json_type = _HBRETJSON_SIMPLE_;
+#if BSON_CHECK_VERSION( 1, 7, 0 )
+        } else if ( hb_stricmp( hb_parc( 1 ), _STR_JSON_CANONICAL_ ) == 0 ) {
+            s_hbmongoc_return_json_type = _HBRETJSON_CANONICAL_;
+        } else if ( hb_stricmp( hb_parc( 1 ), _STR_JSON_RELAXED_ ) == 0 ) {
+            s_hbmongoc_return_json_type = _HBRETJSON_CANONICAL_;
+#endif
+        } else {
+            HBBSON_ERR_ARGS();
+        }
+    }
+    switch ( s_hbmongoc_return_json_type ) {
+        case _HBRETJSON_SIMPLE_:
+            hb_retc( _STR_JSON_SIMPLE_ );
+            break;
+#if BSON_CHECK_VERSION( 1, 7, 0 )
+        case _HBRETJSON_CANONICAL_:
+            hb_retc( _STR_JSON_CANONICAL_ );
+            break;
+        case _HBRETJSON_RELAXED_:
+            hb_retc( _STR_JSON_RELAXED_ );
+            break;
+#endif
+    }
 }
 
 HB_FUNC( HB_BSON_VERSION )
