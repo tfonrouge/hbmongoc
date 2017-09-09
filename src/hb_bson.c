@@ -8,6 +8,7 @@
 
 #include "hb_bson.h"
 #include "hbjson.h"
+#include "hbdate.h"
 
 #define HBMONGOC_MAX_ARRAYDOCUMENT_LEVEL 100
 
@@ -133,13 +134,32 @@ void bson_hbstor_byref_error( int iParam, bson_error_t * error, HB_BOOL valid )
     }
 }
 
-static uint64_t hbbson_dateTimeToUnix( int iParam ) {
-    long lJulian;
-    long lMillis;
+static uint64_t hbbson_juliantimeToUnix( long lJulian, long lMillis, HB_BOOL utc )
+{
+    long utfOffset = utc ? hb_timeUTCOffset() * 1000 : 0;
+    return (lJulian - 2440588) * 86400000 + lMillis - utfOffset;
+}
 
-    hb_partdt( &lJulian, &lMillis, iParam );
+static uint64_t hbbson_dateTimeToUnix( PHB_ITEM pItem, HB_BOOL utc )
+{
+    long lJulian; long lMillis;
+    hb_itemGetTDT( pItem, &lJulian, &lMillis );
+    return hbbson_juliantimeToUnix( lJulian, lMillis, utc );
+//    return ( ( hb_itemGetTD( pItem ) - 2440587.5 ) * 86400000 );
+}
 
-    return (lJulian - 2440588) * 86400000 + lMillis;
+HB_FUNC( HB_DTTOUNIX )
+{
+    if ( HB_ISDATETIME( 1 ) ) {
+        PHB_ITEM pItem = hb_param( 1, HB_IT_DATETIME );
+        hb_retnl( hbbson_dateTimeToUnix( pItem, hb_parl( 2 ) ) );
+    } else if ( HB_ISNIL( 1 ) || HB_ISLOG( 2 ) ) {
+        long lJulian, lMillis;
+        hb_timeStampGet( &lJulian, &lMillis );
+        hb_retnl( hbbson_juliantimeToUnix( lJulian, lMillis, hb_parl( 2 ) ) );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
 }
 
 static PHB_BSON hbbson_hbparam( PHB_ITEM pItem, hbbson_t_ hbbson_type )
@@ -278,7 +298,7 @@ HB_FUNC( BSON_APPEND_BOOL )
     bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
     const char * key = hb_parc( 2 );
 
-    if ( bson && key ) {
+    if ( bson && key && HB_ISLOG( 4 ) ) {
         int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
         bool value = hb_parl( 4 );
         bool result = bson_append_bool( bson, key, key_length, value );
@@ -310,7 +330,7 @@ HB_FUNC( BSON_APPEND_CODE_WITH_SCOPE )
     const char * javascript = hb_parc( 4 );
     bson_t * scope = bson_hbparam( 5 , HB_IT_ANY );
 
-    if ( bson && key && javascript ) {
+    if ( bson && key && javascript && scope ) {
         int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
         bool result = bson_append_code_with_scope( bson, key, key_length, javascript, scope );
         hb_retl( result );
@@ -327,10 +347,11 @@ HB_FUNC( BSON_APPEND_DATE_TIME )
 {
     bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
     const char * key = hb_parc( 2 );
+    PHB_ITEM pItem = hb_param( 4, HB_IT_DATETIME );
 
-    if ( bson && key && HB_ISTIMESTAMP( 4 ) ) {
+    if ( bson && key && pItem ) {
         int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
-        uint64_t value = hbbson_dateTimeToUnix( 4 );
+        uint64_t value = hbbson_dateTimeToUnix( pItem, false );
         bool result = bson_append_date_time( bson, key, key_length, value );
         hb_retl( result );
     } else {
