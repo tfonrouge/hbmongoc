@@ -156,7 +156,6 @@ void bson_hbstor_byref_error( int iParam, bson_error_t * error, HB_BOOL valid )
     }
 }
 
-#if BSON_CHECK_VERSION( 1, 7, 0 )
 char * hbbson_as_json( const bson_t * bson )
 {
     char * szJSON = NULL;
@@ -164,16 +163,17 @@ char * hbbson_as_json( const bson_t * bson )
         case _HBRETJSON_SIMPLE_:
             szJSON = bson_as_json( bson, NULL );
             break;
+#if BSON_CHECK_VERSION( 1, 7, 0 )
         case _HBRETJSON_CANONICAL_:
             szJSON = bson_as_canonical_extended_json( bson, NULL );
             break;
         case _HBRETJSON_RELAXED_:
             szJSON = bson_as_relaxed_extended_json( bson, NULL );
             break;
+#endif
     }
     return szJSON;
 }
-#endif
 
 static uint64_t hbbson_juliantimeToUnix( long lJulian, long lMillis, HB_BOOL utc )
 {
@@ -806,11 +806,7 @@ HB_FUNC( HB_BSON_AS_HASH )
 
     if ( bson ) {
         char * szJSON;
-#if BSON_CHECK_VERSION( 1, 7, 0 )
         szJSON = hbbson_as_json( bson );
-#else
-        szJSON = bson_as_json( bson, NULL );
-#endif
         if ( szJSON ) {
             PHB_ITEM pItem = hb_itemNew( NULL );
             hb_jsonDecode( szJSON, pItem );
@@ -830,11 +826,7 @@ HB_FUNC( HB_BSON_AS_JSON )
 
     if ( bson ) {
         char * szJSON;
-#if BSON_CHECK_VERSION( 1, 7, 0 )
         szJSON = hbbson_as_json( bson );
-#else
-        szJSON = bson_as_json( bson, NULL );
-#endif
         if ( szJSON ) {
             hb_retc( szJSON );
             bson_free( szJSON );

@@ -95,11 +95,7 @@ PHB_BSON hbmongoc_return_byref_bson( int iParam, bson_t * bson )
 
     switch ( s_hbmongoc_return_bson_value_type ) {
         case _HBRETVAL_JSON_:
-#if BSON_CHECK_VERSION( 1, 7, 0 )
             szJSON = hbbson_as_json( bson );
-#else
-            szJSON = bson_as_json( bson, NULL );
-#endif
             if ( szJSON ) {
                 hb_storc( szJSON, iParam );
                 bson_free( szJSON );
@@ -113,11 +109,7 @@ PHB_BSON hbmongoc_return_byref_bson( int iParam, bson_t * bson )
             hb_storptrGC( phBson, iParam );
             break;
         case _HBRETVAL_HASH_:
-#if BSON_CHECK_VERSION( 1, 7, 0 )
             szJSON = hbbson_as_json( bson );
-#else
-            szJSON = bson_as_json( bson, NULL );
-#endif
             PHB_ITEM pItem = hb_itemNew( NULL );
             if ( szJSON ) {
                 hb_jsonDecode( szJSON, pItem );
