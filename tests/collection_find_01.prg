@@ -49,7 +49,7 @@ PROCEDURE main()
         filter := bson_new()
         BSON_APPEND_INT32( filter, "_id", hb_randomInt( 10 ) )
 
-        ? i, "Find:", bson_as_json( filter ), "->", ""
+        ? i, "Find:", hb_bson_as_json( filter ), "->", ""
 
         cursor := mongoc_collection_find_with_opts( collection, filter, opts )
 
@@ -59,7 +59,7 @@ PROCEDURE main()
 
             SWITCH hb_mongoc_set_return_bson_value_type()
             CASE "BSON"
-                ? bson_as_json( doc )
+                ? hb_bson_as_json( doc )
                 EXIT
             CASE "JSON"
                 ? doc

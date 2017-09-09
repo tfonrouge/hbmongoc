@@ -79,7 +79,7 @@ PROCEDURE main( serverConn )
 
     SWITCH hb_mongoc_set_return_bson_value_type()
     CASE "BSON"
-        ? "reply: ", reply, bson_as_json( reply )
+        ? "reply: ", reply, hb_bson_as_json( reply )
         EXIT
     CASE "JSON"
         ? "reply: ", reply, reply
@@ -160,7 +160,7 @@ PROCEDURE main( serverConn )
          */
 
         IF printOne
-            ? e"BSON_AS_JSON:\n", bson_as_json( insert )
+            ? e"hb_bson_as_json:\n", hb_bson_as_json( insert )
             ? e"BSON_AS_CANONICAL_EXTENDED_JSON:\n", bson_as_canonical_extended_json( insert )
             printOne := .F.
         ENDIF

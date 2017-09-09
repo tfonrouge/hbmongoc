@@ -50,7 +50,7 @@ PROCEDURE main()
         retVal := mongoc_client_command_simple( client, "admin", commandPing, nil, @reply, @error )
 
         IF retVal
-            ? "Server reply:", i, bson_as_json( reply )
+            ? "Server reply:", i, hb_bson_as_json( reply )
         ELSE
             ? "Server error:", HB_BSON_ERROR_MESSAGE( error )
             EXIT

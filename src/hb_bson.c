@@ -824,6 +824,28 @@ HB_FUNC( HB_BSON_AS_HASH )
     }
 }
 
+HB_FUNC( HB_BSON_AS_JSON )
+{
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
+
+    if ( bson ) {
+        char * szJSON;
+#if BSON_CHECK_VERSION( 1, 7, 0 )
+        szJSON = hbbson_as_json( bson );
+#else
+        szJSON = bson_as_json( bson, NULL );
+#endif
+        if ( szJSON ) {
+            hb_retc( szJSON );
+            bson_free( szJSON );
+        } else {
+            hb_ret();
+        }
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
 HB_FUNC( HB_BSON_SET_RETURN_JSON_TYPE )
 {
     if ( hb_pcount() > 0 ) {

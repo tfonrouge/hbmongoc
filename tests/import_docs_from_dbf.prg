@@ -65,7 +65,7 @@ PROCEDURE main( uriString )
     WAIT
 
     filter := bson_new()
-    WAIT "press any key to show ALL docs in collection... filter: " + bson_as_json( filter )
+    WAIT "press any key to show ALL docs in collection... filter: " + hb_bson_as_json( filter )
 
     displayDocs( collection, filter )
 
@@ -73,7 +73,7 @@ PROCEDURE main( uriString )
 
     filter := bson_new()
     BSON_APPEND_UTF8( filter, "FIRST", "John" )
-    WAIT "press any key to show docs in collection with filter: " + bson_as_json( filter )
+    WAIT "press any key to show docs in collection with filter: " + hb_bson_as_json( filter )
 
     displayDocs( collection, filter )
 
@@ -94,7 +94,7 @@ STATIC PROCEDURE displayDocs( collection, filter )
     cursor := mongoc_collection_find_with_opts( collection, filter, opts )
 
     WHILE mongoc_cursor_next( cursor, @doc )
-        ? bson_as_json( doc )
+        ? hb_bson_as_json( doc )
     ENDDO
 
 RETURN
@@ -105,6 +105,7 @@ STATIC PROCEDURE importDocs( collection )
     LOCAL doc
     LOCAL error
     LOCAL recNo
+    LOCAL value
 
     ? "Initiating inserting documents:"
 
@@ -120,22 +121,15 @@ STATIC PROCEDURE importDocs( collection )
         BSON_APPEND_INT32( doc, "_id", recNo )  /* using dbf recNo() as doc _id */
 
         FOR EACH itm IN dbfStruct
-            SWITCH itm[ DBS_TYPE ]
-            CASE "C"
-                BSON_APPEND_UTF8( doc, itm[ DBS_NAME ], rTrim( fieldGet( itm:__enumIndex ) ) )
-                EXIT
-            CASE "D"
-                BSON_APPEND_DATE_TIME( doc, itm[ DBS_NAME ], hb_dToT( fieldGet( itm:__enumIndex ) ) ) /* date type is converted to dateTime */
-                EXIT
-            CASE "L"
-                BSON_APPEND_BOOL( doc, itm[ DBS_NAME ], fieldGet( itm:__enumIndex ) )
-                EXIT
-            CASE "N"
-                BSON_APPEND_DOUBLE( doc, itm[ DBS_NAME ], fieldGet( itm:__enumIndex ) )
-                EXIT
-            OTHERWISE
-                BSON_APPEND_NULL( doc, itm[ DBS_NAME ] )
-            ENDSWITCH
+
+            value := fieldGet( itm:__enumIndex )
+
+            IF valType( value ) = "C"
+                value := rTrim( value )
+            ENDIF
+
+            hb_bson_append( doc, itm[ DBS_NAME ], value )
+
         NEXT
 
         IF ! mongoc_collection_insert( collection, MONGOC_INSERT_NONE, doc, nil, @error )

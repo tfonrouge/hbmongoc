@@ -2,39 +2,67 @@
 #include "hbmongoc.ch"
 
 PROCEDURE main()
-    LOCAL read_prefs
+    LOCAL client
+    LOCAL collection
+    LOCAL filter
+    LOCAL opts
+    LOCAL cursor
+    LOCAL error
     LOCAL bson
-    LOCAL i
+    LOCAL unixEpoch := int( hb_dtToUnix() / 1000 )
+    LOCAL _id
 
     /* REQUIRED to initialize mongoc internals */
     mongoc_init()
 
-    CLS
+    client := mongoc_client_new( "mongodb://localhost" )
 
-    read_prefs := mongoc_read_prefs_new( MONGOC_READ_PRIMARY )
+    collection := mongoc_client_get_collection( client, "hbmongoc", "test_00" )
 
-    FOR i := 1 TO 10
+    mongoc_collection_drop( collection )
+
+    WHILE inkey() != 27
+
+        CLS
+
         bson := bson_new()
-        BSON_APPEND_INT32( bson, "tag" + hb_ntos( i ), i )
-        mongoc_read_prefs_add_tag( read_prefs, bson )
-    NEXT
+        HB_BSON_APPEND( bson, "datetime", hb_dateTime() )
+        HB_BSON_APPEND( bson, "date", date() )
+        BSON_APPEND_DATE_TIME( bson, "dtToUnix", hb_dtToUnix() )
+        BSON_APPEND_DATE_TIME( bson, "dtToUnixUTC", hb_dtToUnix( nil, .T. ) )
+        hb_bson_append( bson, "integer", 1 )
+        hb_bson_append( bson, "long", hb_dtToUnix() )
+        hb_bson_append( bson, "double", 1.0 )
 
-    WAIT
+        IF ! mongoc_collection_insert( collection, MONGOC_INSERT_NONE, bson, nil, @error )
+            ? "error:", HB_BSON_ERROR_MESSAGE( error )
+        ENDIF
 
-    bson := mongoc_read_prefs_get_tags( read_prefs )
+        filter := bson_new()
+        opts := bson_new()
 
-    ? bson_as_json( bson )
+        cursor := mongoc_collection_find_with_opts( collection, filter, opts )
 
-    WAIT
+        WHILE mongoc_cursor_next( cursor, @bson )
+            _id := hb_bson_as_hash( bson, .T. )["_id"]["$oid"]
+            ? _id
+            ?
+            ? "BSON_AS_JSON"
+            ? bson_as_json( bson )
+            ?
+            ? "BSON_AS_CANONICAL_EXTENDED_JSON"
+            ? bson_as_canonical_extended_json( bson )
+            ?
+            ? "BSON_AS_RELAXED_EXTENDED_JSON"
+            ? bson_as_relaxed_extended_json( bson )
+        ENDDO
 
-    FOR i := 1 TO 1000000
-        bson := mongoc_read_prefs_get_tags( read_prefs )
-        ? bson_as_json( bson )
-    NEXT
+        WHILE unixEpoch = int( hb_dtToUnix() / 1000 )
+        ENDDO
 
-    WAIT
+        unixEpoch := int( hb_dtToUnix() / 1000 )
 
-    read_prefs := nil
+    ENDDO
 
     WAIT
 

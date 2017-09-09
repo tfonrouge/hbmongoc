@@ -31,7 +31,7 @@ PROCEDURE main()
     IF mongoc_collection_command_simple ( collection, command, nil, @reply, @error )
         ? "Server reply:", reply
         IF hb_mongoc_set_return_bson_value_type() == "BSON"
-            ? "bson_as_json( reply, nil ):", bson_as_json( reply, nil )
+            ? "bson_as_json( reply, nil ):", hb_bson_as_json( reply, nil )
             ? "bson_as_canonical_extended_json( reply, nil ):", bson_as_canonical_extended_json( reply, nil )
         ENDIF
     ELSE
