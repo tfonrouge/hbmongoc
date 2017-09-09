@@ -12,7 +12,15 @@
 
 #define HBMONGOC_MAX_ARRAYDOCUMENT_LEVEL 100
 
-enum hb_return_json_type { _HBRETJSON_SIMPLE_, _HBRETJSON_CANONICAL_, _HBRETJSON_RELAXED_ };
+enum hb_return_json_type
+{
+#if BSON_CHECK_VERSION( 1, 7, 0 )
+    _HBRETJSON_CANONICAL_,
+    _HBRETJSON_RELAXED_,
+#endif
+    _HBRETJSON_SIMPLE_
+};
+
 static enum hb_return_json_type s_hbmongoc_return_json_type =
 #if BSON_CHECK_VERSION( 1, 7, 0 )
     _HBRETJSON_RELAXED_;
