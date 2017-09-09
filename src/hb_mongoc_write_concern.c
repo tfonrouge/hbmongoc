@@ -10,6 +10,7 @@
 #include "hb_mongoc.h"
 
 HB_FUNC( MONGOC_WRITE_CONCERN_APPEND )
+#if MONGOC_CHECK_VERSION( 1, 5, 0 )
 {
     mongoc_write_concern_t * write_concern = mongoc_hbparam( 1, _hbmongoc_write_concern_t_ );
     bson_t * doc = bson_hbparam( 2, HB_IT_POINTER );
@@ -21,6 +22,11 @@ HB_FUNC( MONGOC_WRITE_CONCERN_APPEND )
         HBMONGOC_ERR_ARGS();
     }
 }
+#else
+{
+    HBMONGOC_ERR_NOFUNC();
+}
+#endif
 
 HB_FUNC( MONGOC_WRITE_CONCERN_COPY )
 {
@@ -96,6 +102,7 @@ HB_FUNC( MONGOC_WRITE_CONCERN_GET_WTIMEOUT )
 }
 
 HB_FUNC( MONGOC_WRITE_CONCERN_IS_ACKNOWLEDGED )
+#if MONGOC_CHECK_VERSION( 1, 5, 0 )
 {
     mongoc_write_concern_t * write_concern = mongoc_hbparam( 1, _hbmongoc_write_concern_t_ );
 
@@ -106,6 +113,11 @@ HB_FUNC( MONGOC_WRITE_CONCERN_IS_ACKNOWLEDGED )
         HBMONGOC_ERR_ARGS();
     }
 }
+#else
+{
+    HBMONGOC_ERR_NOFUNC();
+}
+#endif
 
 HB_FUNC( MONGOC_WRITE_CONCERN_IS_DEFAULT )
 #if MONGOC_CHECK_VERSION( 1, 7, 0 )
@@ -126,6 +138,7 @@ HB_FUNC( MONGOC_WRITE_CONCERN_IS_DEFAULT )
 #endif
 
 HB_FUNC( MONGOC_WRITE_CONCERN_IS_VALID )
+#if MONGOC_CHECK_VERSION( 1, 5, 0 )
 {
     mongoc_write_concern_t * write_concern = mongoc_hbparam( 1, _hbmongoc_write_concern_t_ );
 
@@ -136,8 +149,14 @@ HB_FUNC( MONGOC_WRITE_CONCERN_IS_VALID )
         HBMONGOC_ERR_ARGS();
     }
 }
+#else
+{
+    HBMONGOC_ERR_NOFUNC();
+}
+#endif
 
 HB_FUNC( MONGOC_WRITE_CONCERN_JOURNAL_IS_SET )
+#if MONGOC_CHECK_VERSION( 1, 5, 0 )
 {
     mongoc_write_concern_t * write_concern = mongoc_hbparam( 1, _hbmongoc_write_concern_t_ );
 
@@ -148,6 +167,11 @@ HB_FUNC( MONGOC_WRITE_CONCERN_JOURNAL_IS_SET )
         HBMONGOC_ERR_ARGS();
     }
 }
+#else
+{
+    HBMONGOC_ERR_NOFUNC();
+}
+#endif
 
 HB_FUNC( MONGOC_WRITE_CONCERN_SET_JOURNAL )
 {

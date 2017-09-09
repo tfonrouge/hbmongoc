@@ -39,6 +39,7 @@ HB_FUNC( MONGOC_READ_PREFS_COPY )
 }
 
 HB_FUNC( MONGOC_READ_PREFS_GET_MAX_STALENESS_SECONDS )
+#if MONGOC_CHECK_VERSION( 1, 5, 0 )
 {
     const mongoc_read_prefs_t * read_prefs = mongoc_hbparam( 1, _hbmongoc_read_prefs_t_ );
 
@@ -49,6 +50,11 @@ HB_FUNC( MONGOC_READ_PREFS_GET_MAX_STALENESS_SECONDS )
         HBMONGOC_ERR_ARGS();
     }
 }
+#else
+{
+    HBMONGOC_ERR_NOFUNC();
+}
+#endif
 
 HB_FUNC( MONGOC_READ_PREFS_GET_MODE )
 {
@@ -100,6 +106,7 @@ HB_FUNC( MONGOC_READ_PREFS_NEW )
 }
 
 HB_FUNC( MONGOC_READ_PREFS_SET_MAX_STALENESS_SECONDS )
+#if MONGOC_CHECK_VERSION( 1, 5, 0 )
 {
     mongoc_read_prefs_t * read_prefs = mongoc_hbparam( 1, _hbmongoc_read_prefs_t_ );
 
@@ -110,6 +117,11 @@ HB_FUNC( MONGOC_READ_PREFS_SET_MAX_STALENESS_SECONDS )
         HBMONGOC_ERR_ARGS();
     }
 }
+#else
+{
+    HBMONGOC_ERR_NOFUNC();
+}
+#endif
 
 HB_FUNC( MONGOC_READ_PREFS_SET_MODE )
 {
