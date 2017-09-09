@@ -25,6 +25,7 @@
 
 -hbx=${hb_name}
 
+src/*.prg
 src/*.c
 
 $hb_pkg_dynlib.hbm

@@ -145,6 +145,25 @@ void * mongoc_hbparam( int iParam, hbmongoc_t_ type )
 
 /* Harbour API */
 
+HB_FUNC( HB_NUMTYPE )
+{
+    PHB_ITEM pItem = hb_param( 1, HB_IT_NUMERIC );
+
+    if ( pItem ) {
+        switch ( HB_ITEM_TYPE( pItem ) ) {
+            case HB_IT_INTEGER:
+                hb_retc( "I" );
+                break;
+            case HB_IT_LONG:
+                hb_retc( "L" );
+                break;
+            case HB_IT_DOUBLE:
+                hb_retc( "D" );
+                break;
+        }
+    }
+}
+
 HB_FUNC( HB_MONGOC_SET_RETURN_BSON_VALUE_TYPE )
 {
     if ( hb_pcount() > 0 ) {

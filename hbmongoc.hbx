@@ -56,11 +56,13 @@ DYNAMIC bson_has_field
 DYNAMIC bson_new
 DYNAMIC bson_new_from_json
 DYNAMIC bson_validate
+DYNAMIC hb_bson_append
 DYNAMIC hb_bson_as_hash
 DYNAMIC hb_bson_set_return_json_type
 DYNAMIC hb_bson_version
 DYNAMIC hb_dttounix
 DYNAMIC hb_mongoc_set_return_bson_value_type
+DYNAMIC hb_numtype
 DYNAMIC mongoc_bulk_operation_destroy
 DYNAMIC mongoc_bulk_operation_execute
 DYNAMIC mongoc_bulk_operation_insert
