@@ -31,14 +31,13 @@ PROCEDURE main( uri )
     ?
 
     FOR i := 1 TO 10
-        ? "sending ping to server...", i, ""
+        ? "ping", hb_nToS( i ), ": "
 
-        IF ! mongoc_client_command_simple( client, "admin", command, nil, @reply, @error )
-            alert("Error sending command to server: " + HB_BSON_ERROR_MESSAGE( error ) )
-            QUIT
+        IF mongoc_client_command_simple( client, "admin", command, nil, @reply, @error )
+            ?? "response:", reply
+        ELSE
+            ?? "error:", HB_BSON_ERROR_MESSAGE( error )
         ENDIF
-
-        ?? "Server response:", reply
 
         hb_idleSleep( 1 )
 
