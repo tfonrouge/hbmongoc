@@ -194,7 +194,7 @@ HB_FUNC( HB_DTTOUNIX )
     if ( HB_ISDATETIME( 1 ) ) {
         PHB_ITEM pItem = hb_param( 1, HB_IT_DATETIME );
         hb_retnl( hbbson_dateTimeToUnix( pItem, hb_parl( 2 ) ) );
-    } else if ( HB_ISNIL( 1 ) || HB_ISLOG( 2 ) ) {
+    } else if ( HB_ISNIL( 1 ) ) {
         long lJulian, lMillis;
         hb_timeStampGet( &lJulian, &lMillis );
         hb_retnl( hbbson_juliantimeToUnix( lJulian, lMillis, hb_parl( 2 ) ) );
