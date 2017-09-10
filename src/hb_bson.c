@@ -203,6 +203,18 @@ HB_FUNC( HB_DTTOUNIX )
     }
 }
 
+HB_FUNC( HB_UNIXTOT )
+{
+    PHB_ITEM pItem = hb_param( 1, HB_IT_NUMERIC );
+
+    if ( pItem ) {
+        double julian = ( hb_itemGetND( pItem ) / 86400000 ) + 2440588;
+        hb_rettd( julian );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
 static PHB_BSON hbbson_hbparam( PHB_ITEM pItem, hbbson_t_ hbbson_type )
 {
     PHB_BSON phBson = hb_itemGetPtrGC( pItem, &s_gc_bson_funcs );
