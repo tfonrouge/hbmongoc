@@ -118,7 +118,7 @@ bson_t * bson_hbparam( int iParam, long lMask )
 void bson_hbstor_byref_error( int iParam, bson_error_t * error, HB_BOOL valid )
 {
     if ( HB_ISBYREF( iParam ) ) {
-        if ( valid && error && strlen( error->message ) > 0 ) {
+        if ( ! valid && error && strlen( error->message ) > 0 ) {
             PHB_ITEM pItemHash = hb_itemNew( NULL );
             hb_hashNew( pItemHash );
 
