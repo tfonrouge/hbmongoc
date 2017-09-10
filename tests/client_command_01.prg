@@ -5,6 +5,7 @@ PROCEDURE main( uri )
     LOCAL client
     LOCAL command
     LOCAL reply
+    LOCAL error
     LOCAL i
 
     /* REQUIRED to initialize mongoc internals */
@@ -32,8 +33,8 @@ PROCEDURE main( uri )
     FOR i := 1 TO 10
         ? "sending ping to server...", i, ""
 
-        IF ! mongoc_client_command_simple( client, "admin", command, nil, @reply )
-            alert("Error sending command to server...")
+        IF ! mongoc_client_command_simple( client, "admin", command, nil, @reply, @error )
+            alert("Error sending command to server: " + HB_BSON_ERROR_MESSAGE( error ) )
             QUIT
         ENDIF
 
