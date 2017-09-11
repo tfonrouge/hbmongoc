@@ -284,7 +284,7 @@ HB_FUNC( BSON_APPEND_ARRAY )
     bson_t * array = bson_hbparam( 4 , HB_IT_ANY );
 
     if ( bson && key && array ) {
-        int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
+        int key_length = hb_parnidef( 3, ( int ) hb_parclen( 2 ) );
         bool result = bson_append_array( bson, key, key_length, array );
         hb_retl( result );
     } else {
@@ -302,7 +302,7 @@ HB_FUNC( BSON_APPEND_ARRAY_BEGIN )
     const char * key = hb_parc( 2 );
 
     if ( parent && key && HB_ISBYREF( 4 ) && arrayLevel <= HBMONGOC_MAX_ARRAYDOCUMENT_LEVEL ) {
-        int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
+        int key_length = hb_parnidef( 3, ( int ) hb_parclen( 2 ) );
         bson_t * child = &s_bson_arrayStack[ arrayLevel++ ];
         bool result = bson_append_array_begin( parent, key, key_length, child );
         PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_bson_t_, child );
@@ -336,9 +336,9 @@ HB_FUNC( BSON_APPEND_BINARY )
     const char * binary = hb_parc( 5 );
 
     if ( bson && key && binary ) {
-        int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
-        int subtype = HB_ISNUM( 4 ) ? hb_parni( 4 ) : BSON_SUBTYPE_BINARY;
-        int length = HB_ISNUM( 6 ) ? hb_parni( 6 ) : ( int ) hb_parclen( 5 );
+        int key_length = hb_parnidef( 3, ( int ) hb_parclen( 2 ) );
+        int subtype = hb_parnidef( 4, BSON_SUBTYPE_BINARY );
+        int length = hb_parnidef( 6, ( int ) hb_parclen( 5 ) );
         bool result = bson_append_binary( bson, key, key_length, subtype, ( const uint8_t * ) binary, length );
         hb_retl( result );
     } else {
@@ -352,7 +352,7 @@ HB_FUNC( BSON_APPEND_BOOL )
     const char * key = hb_parc( 2 );
 
     if ( bson && key && HB_ISLOG( 4 ) ) {
-        int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
+        int key_length = hb_parnidef( 3, ( int ) hb_parclen( 2 ) );
         bool value = hb_parl( 4 );
         bool result = bson_append_bool( bson, key, key_length, value );
         hb_retl( result );
@@ -368,7 +368,7 @@ HB_FUNC( BSON_APPEND_CODE )
     const char * javascript = hb_parc( 4 );
 
     if ( bson && key && javascript ) {
-        int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
+        int key_length = hb_parnidef( 3, ( int ) hb_parclen( 2 ) );
         bool result = bson_append_code( bson, key, key_length, javascript );
         hb_retl( result );
     } else {
@@ -384,7 +384,7 @@ HB_FUNC( BSON_APPEND_CODE_WITH_SCOPE )
     bson_t * scope = bson_hbparam( 5 , HB_IT_ANY );
 
     if ( bson && key && javascript && scope ) {
-        int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
+        int key_length = hb_parnidef( 3, ( int ) hb_parclen( 2 ) );
         bool result = bson_append_code_with_scope( bson, key, key_length, javascript, scope );
         hb_retl( result );
     } else {
@@ -403,7 +403,7 @@ HB_FUNC( BSON_APPEND_DATE_TIME )
     PHB_ITEM pItem = hb_param( 4, HB_IT_LONG | HB_IT_DATETIME );
 
     if ( bson && key && pItem ) {
-        int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
+        int key_length = hb_parnidef( 3, ( int ) hb_parclen( 2 ) );
         uint64_t value;
         if ( hb_itemType( pItem ) & HB_IT_DATETIME ) {
             value = hbbson_dateTimeToUnix( pItem, false );
@@ -425,7 +425,7 @@ HB_FUNC( BSON_APPEND_DECIMAL128 )
     bson_decimal128_t * dec = bson_decimal128_hbparam( 4 );
 
     if ( bson && key && dec ) {
-        int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
+        int key_length = hb_parnidef( 3, ( int ) hb_parclen( 2 ) );
         bool result = bson_append_decimal128( bson, key, key_length, dec );
         hb_retl( result );
     } else {
@@ -445,7 +445,7 @@ HB_FUNC( BSON_APPEND_DOCUMENT )
     bson_t * child = bson_hbparam( 4, HB_IT_ANY );
 
     if ( bson && key && child ) {
-        int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
+        int key_length = hb_parnidef( 3, ( int ) hb_parclen( 2 ) );
         bool result = bson_append_document( bson, key, key_length, child );
         hb_retl( result );
     } else {
@@ -463,7 +463,7 @@ HB_FUNC( BSON_APPEND_DOCUMENT_BEGIN )
     const char * key = hb_parc( 2 );
 
     if ( parent && key && HB_ISBYREF( 4 ) && documentLevel <= HBMONGOC_MAX_ARRAYDOCUMENT_LEVEL ) {
-        int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
+        int key_length = hb_parnidef( 3, ( int ) hb_parclen( 2 ) );
         bson_t * child = &s_bson_documentStack[ documentLevel++ ];
         bool result = bson_append_document_begin( parent, key, key_length, child );
         PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_bson_t_, child );
@@ -496,7 +496,7 @@ HB_FUNC( BSON_APPEND_DOUBLE )
     const char * key = hb_parc( 2 );
 
     if ( bson && key && HB_ISNUM( 4 ) ) {
-        int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
+        int key_length = hb_parnidef( 3, ( int ) hb_parclen( 2 ) );
         double value = hb_parnd( 4 );
         bool result = bson_append_double( bson, key, key_length, value );
         hb_retl( result );
@@ -511,7 +511,7 @@ HB_FUNC( BSON_APPEND_INT32 )
     const char * key = hb_parc( 2 );
 
     if ( bson && key && HB_ISNUM( 4 ) ) {
-        int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
+        int key_length = hb_parnidef( 3, ( int ) hb_parclen( 2 ) );
         int32_t value = hb_parni( 4 );
         bool result = bson_append_int32( bson, key, key_length, value );
         hb_retl( result );
@@ -526,7 +526,7 @@ HB_FUNC( BSON_APPEND_INT64 )
     const char * key = hb_parc( 2 );
 
     if ( bson && key && HB_ISNUM( 4 ) ) {
-        int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
+        int key_length = hb_parnidef( 3, ( int ) hb_parclen( 2 ) );
         int64_t value = hb_parnl( 4 );
         bool result = bson_append_int64( bson, key, key_length, value );
         hb_retl( result );
@@ -541,7 +541,7 @@ HB_FUNC( BSON_APPEND_NULL )
     const char * key = hb_parc( 2 );
 
     if ( bson && key ) {
-        int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
+        int key_length = hb_parnidef( 3, ( int ) hb_parclen( 2 ) );
         bool result = bson_append_null( bson, key, key_length );
         hb_retl( result );
     } else {
@@ -556,7 +556,7 @@ HB_FUNC( BSON_APPEND_REGEX )
     const char * regex = hb_parc( 4 );
 
     if( bson && key && regex ) {
-        int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
+        int key_length = hb_parnidef( 3, ( int ) hb_parclen( 2 ) );
         const char * options = hb_parc( 5 );
         bool result = bson_append_regex( bson, key, key_length, regex, options );
         hb_retl( result );
@@ -573,8 +573,8 @@ HB_FUNC( BSON_APPEND_UTF8 )
     const char * value = hb_parc( 4 );
 
     if ( bson && key && value ) {
-        int key_length = HB_ISNUM( 3 ) ? hb_parni( 3 ) : ( int ) hb_parclen( 2 );
-        int length = HB_ISNUM( 5 ) ? hb_parni( 5 ) : ( int ) hb_parclen( 4 );
+        int key_length = hb_parnidef( 3, ( int ) hb_parclen( 2 ) );
+        int length = hb_parnidef( 5, ( int ) hb_parclen( 4 ) );
         bool result = bson_append_utf8( bson, key, key_length, value, length);
         hb_retl( result );
     } else {
@@ -787,7 +787,7 @@ HB_FUNC( BSON_NEW_FROM_JSON )
 
     if ( hb_itemType( pItem ) & HB_IT_STRING ) {
         const char * data = hb_parc( 1 );
-        int len = HB_ISNUM( 2 ) ? hb_parni( 2 ) : ( int ) hb_parclen( 1 );
+        int len = hb_parnidef( 2, ( int ) hb_parclen( 1 ) );
         bson = bson_new_from_json( ( const uint8_t * ) data, len, &error );
     } else if ( hb_itemType( pItem ) & ( HB_IT_HASH | HB_IT_ARRAY ) ) {
         char * szJSON = hb_jsonEncode( pItem, NULL, false );

@@ -182,7 +182,7 @@ HB_FUNC( MONGOC_COLLECTION_INSERT )
     bson_t * document = bson_hbparam( 3, HB_IT_ANY );
 
     if ( collection && document ) {
-        mongoc_insert_flags_t flags = HB_ISNUM( 2 ) ? hb_parni( 2 ) : MONGOC_INSERT_NONE;
+        mongoc_insert_flags_t flags = hb_parnidef( 2, MONGOC_INSERT_NONE );
         const mongoc_write_concern_t * write_concern = mongoc_hbparam( 4, _hbmongoc_write_concern_t_ );
         bson_error_t error;
 
@@ -207,7 +207,7 @@ HB_FUNC( MONGOC_COLLECTION_REMOVE )
     bson_t * selector = bson_hbparam( 3, HB_IT_ANY );
 
     if ( collection && selector ) {
-        int flags = HB_ISNUM( 2 ) ? hb_parni( 2 ) : MONGOC_REMOVE_NONE;
+        int flags = hb_parnidef( 2, MONGOC_REMOVE_NONE );
         const mongoc_write_concern_t * write_concern = mongoc_hbparam( 4, _hbmongoc_write_concern_t_ );
         bson_error_t error;
 
