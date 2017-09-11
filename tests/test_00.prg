@@ -41,7 +41,11 @@ PROCEDURE main()
         filter := bson_new()
         opts := bson_new()
 
-        cursor := mongoc_collection_find_with_opts( collection, filter, opts )
+        IF mongoc_check_version( 1, 5, 0 )
+            cursor := mongoc_collection_find_with_opts( collection, filter, opts )
+        ELSE
+            cursor := mongoc_collection_find( collection, nil, nil, nil, nil, filter )
+        ENDIF
 
         WHILE mongoc_cursor_next( cursor, @bson )
             _id := hb_bson_as_hash( bson, .T. )["_id"]["$oid"]
@@ -49,12 +53,14 @@ PROCEDURE main()
             ?
             ? "BSON_AS_JSON"
             ? bson_as_json( bson )
-            ?
-            ? "BSON_AS_CANONICAL_EXTENDED_JSON"
-            ? bson_as_canonical_extended_json( bson )
-            ?
-            ? "BSON_AS_RELAXED_EXTENDED_JSON"
-            ? bson_as_relaxed_extended_json( bson )
+            IF bson_check_version( 1, 7, 0 )
+                ?
+                ? "BSON_AS_CANONICAL_EXTENDED_JSON"
+                ? bson_as_canonical_extended_json( bson )
+                ?
+                ? "BSON_AS_RELAXED_EXTENDED_JSON"
+                ? bson_as_relaxed_extended_json( bson )
+            ENDIF
         ENDDO
 
         WHILE unixEpoch = int( hb_dtToUnix() / 1000 )

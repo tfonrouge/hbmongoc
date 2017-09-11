@@ -51,7 +51,11 @@ PROCEDURE main()
 
         ? i, "Find:", hb_bson_as_json( filter ), "->", ""
 
-        cursor := mongoc_collection_find_with_opts( collection, filter, opts )
+        IF mongoc_check_version( 1, 5, 0 )
+            cursor := mongoc_collection_find_with_opts( collection, filter, opts )
+        ELSE
+            cursor := mongoc_collection_find( collection, nil, nil, nil, nil, filter )
+        ENDIF
 
         IF mongoc_cursor_next( cursor, @doc )
 
