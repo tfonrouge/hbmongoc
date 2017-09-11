@@ -48,5 +48,6 @@ void *      mongoc_hbparam( int iParam, hbmongoc_t_ type );
 
 #define HBMONGOC_ERR_ARGS()  ( hb_errRT_BASE_SubstR( EG_ARG, 3012, NULL, HB_ERR_FUNCNAME, HB_ERR_ARGS_BASEPARAMS ) )
 #define HBMONGOC_ERR_NOFUNC()  ( hb_errRT_BASE_SubstR( EG_NOFUNC, 1001, "Undefined function", HB_ERR_FUNCNAME, 0 ) )
+#define HBMONGOC_WARN_DEPRECATEDFUNC() ( hb_conOutErr( "Use of deprecated function", 0 ) )
 
 #endif /* hb_mongoc_h */

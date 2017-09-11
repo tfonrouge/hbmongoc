@@ -111,6 +111,37 @@ HB_FUNC( MONGOC_COLLECTION_DROP_WITH_OPTS )
 }
 #endif
 
+HB_FUNC( MONGOC_COLLECTION_FIND )
+{
+    mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
+    bson_t * query = bson_hbparam( 6, HB_IT_ANY );
+
+    if ( collection && query ) {
+        mongoc_query_flags_t flags = hb_parnidef( 2, MONGOC_QUERY_NONE );
+        u_int32_t skip = hb_parnidef( 3, 0 );
+        u_int32_t limit = hb_parnidef( 4, 0 );
+        u_int32_t batch_size = hb_parnidef( 5, 0 );
+        bson_t * fields = bson_hbparam( 7, HB_IT_ANY );
+        const mongoc_read_prefs_t *read_prefs = mongoc_hbparam( 8, _hbmongoc_read_prefs_t_ );
+        mongoc_cursor_t * cursor = mongoc_collection_find( collection, flags, skip, limit, batch_size, query, fields, read_prefs );
+
+        PHB_MONGOC phCursor = hbmongoc_new_dataContainer( _hbmongoc_cursor_t_, cursor );
+
+        hb_retptrGC( phCursor );
+
+#if ! MONGOC_CHECK_VERSION( 1, 5, 0 )
+        HBMONGOC_WARN_DEPRECATEDFUNC();
+#endif
+
+    } else {
+        HBMONGOC_ERR_ARGS();
+    }
+
+    if ( query && ! HB_ISPOINTER( 6 ) ) {
+        bson_destroy( query );
+    }
+}
+
 HB_FUNC( MONGOC_COLLECTION_FIND_WITH_OPTS )
 #if MONGOC_CHECK_VERSION( 1, 5, 0 )
 {

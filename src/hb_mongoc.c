@@ -182,11 +182,40 @@ HB_FUNC( HB_MONGOC_SET_RETURN_BSON_VALUE_TYPE )
     }
 }
 
+HB_FUNC( MONGOC_CHECK_VERSION )
+{
+    if ( HB_ISNUM( 1 ) && HB_ISNUM( 2 ) && HB_ISNUM( 3 ) ) {
+        hb_retl( mongoc_check_version( hb_parni( 1 ), hb_parni( 2 ), hb_parni( 3 ) ) );
+    } else {
+        HBMONGOC_ERR_ARGS();
+    }
+}
+
 HB_FUNC( MONGOC_CLEANUP )
 {
     if( s_mongoc_inited ) {
         mongoc_cleanup();
     }
+}
+
+HB_FUNC( MONGOC_GET_MAJOR_VERSION )
+{
+    hb_retni( mongoc_get_major_version() );
+}
+
+HB_FUNC( MONGOC_GET_MICRO_VERSION )
+{
+    hb_retni( mongoc_get_micro_version() );
+}
+
+HB_FUNC( MONGOC_GET_MINOR_VERSION )
+{
+    hb_retni( mongoc_get_minor_version() );
+}
+
+HB_FUNC( MONGOC_GET_VERSION )
+{
+    hb_retc( mongoc_get_version() );
 }
 
 HB_FUNC( MONGOC_INIT )

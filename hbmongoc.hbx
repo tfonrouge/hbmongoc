@@ -64,11 +64,12 @@ DYNAMIC hb_bson_version
 DYNAMIC hb_dttounix
 DYNAMIC hb_mongoc_set_return_bson_value_type
 DYNAMIC hb_numtype
-DYNAMIC hb_unixtodt
+DYNAMIC hb_unixtot
 DYNAMIC mongoc_bulk_operation_destroy
 DYNAMIC mongoc_bulk_operation_execute
 DYNAMIC mongoc_bulk_operation_insert
 DYNAMIC mongoc_bulk_operation_insert_with_opts
+DYNAMIC mongoc_check_version
 DYNAMIC mongoc_cleanup
 DYNAMIC mongoc_client_command_simple
 DYNAMIC mongoc_client_destroy
@@ -82,6 +83,7 @@ DYNAMIC mongoc_collection_create_bulk_operation
 DYNAMIC mongoc_collection_destroy
 DYNAMIC mongoc_collection_drop
 DYNAMIC mongoc_collection_drop_with_opts
+DYNAMIC mongoc_collection_find
 DYNAMIC mongoc_collection_find_with_opts
 DYNAMIC mongoc_collection_insert
 DYNAMIC mongoc_collection_remove
@@ -89,6 +91,10 @@ DYNAMIC mongoc_cursor_next
 DYNAMIC mongoc_database_destroy
 DYNAMIC mongoc_database_get_collection
 DYNAMIC mongoc_database_get_collection_names
+DYNAMIC mongoc_get_major_version
+DYNAMIC mongoc_get_micro_version
+DYNAMIC mongoc_get_minor_version
+DYNAMIC mongoc_get_version
 DYNAMIC mongoc_init
 DYNAMIC mongoc_read_prefs_add_tag
 DYNAMIC mongoc_read_prefs_copy
