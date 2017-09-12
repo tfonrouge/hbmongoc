@@ -11,7 +11,7 @@
 
 HB_FUNC( MONGOC_BULK_OPERATION_DESTROY )
 {
-    PHB_MONGOC phBulk = hbmongoc_param( 1, _hbmongoc_bult_operation_t_ );
+    PHB_MONGOC phBulk = hbmongoc_param( 1, _hbmongoc_bulk_operation_t_ );
 
     if ( phBulk ) {
         mongoc_bulk_operation_destroy( ( mongoc_bulk_operation_t * ) phBulk->p );
@@ -23,7 +23,7 @@ HB_FUNC( MONGOC_BULK_OPERATION_DESTROY )
 
 HB_FUNC( MONGOC_BULK_OPERATION_EXECUTE )
 {
-    mongoc_bulk_operation_t * bulk = mongoc_hbparam( 1, _hbmongoc_bult_operation_t_ );
+    mongoc_bulk_operation_t * bulk = mongoc_hbparam( 1, _hbmongoc_bulk_operation_t_ );
 
     if ( bulk && HB_ISBYREF( 2 ) ) {
         bson_t * reply = bson_new();
@@ -44,7 +44,7 @@ HB_FUNC( MONGOC_BULK_OPERATION_EXECUTE )
 
 HB_FUNC( MONGOC_BULK_OPERATION_INSERT )
 {
-    mongoc_bulk_operation_t * bulk = mongoc_hbparam( 1, _hbmongoc_bult_operation_t_ );
+    mongoc_bulk_operation_t * bulk = mongoc_hbparam( 1, _hbmongoc_bulk_operation_t_ );
     bson_t * document = bson_hbparam( 2, HB_IT_ANY );
 
     if ( bulk && document ) {
@@ -61,7 +61,7 @@ HB_FUNC( MONGOC_BULK_OPERATION_INSERT )
 HB_FUNC( MONGOC_BULK_OPERATION_INSERT_WITH_OPTS )
 #if MONGOC_CHECK_VERSION( 1, 7, 0 )
 {
-    mongoc_bulk_operation_t * bulk = mongoc_hbparam( 1, _hbmongoc_bult_operation_t_ );
+    mongoc_bulk_operation_t * bulk = mongoc_hbparam( 1, _hbmongoc_bulk_operation_t_ );
     bson_t * document = bson_hbparam( 2, HB_IT_ANY );
     bson_t * opts = bson_hbparam( 3, HB_IT_ANY );
 

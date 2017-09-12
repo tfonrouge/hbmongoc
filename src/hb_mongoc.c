@@ -45,7 +45,7 @@ static HB_GARBAGE_FUNC( hbmongoc_funcs_destroy )
             case _hbmongoc_read_prefs_t_:
                 mongoc_read_prefs_destroy( ( mongoc_read_prefs_t * ) phMongoc->p );
                 break;
-            case _hbmongoc_bult_operation_t_:
+            case _hbmongoc_bulk_operation_t_:
                 mongoc_bulk_operation_destroy( ( mongoc_bulk_operation_t * ) phMongoc->p );
                 break;
         }

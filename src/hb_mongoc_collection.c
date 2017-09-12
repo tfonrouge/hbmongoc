@@ -17,7 +17,7 @@ HB_FUNC( MONGOC_COLLECTION_CREATE_BULK_OPERATION )
         HB_BOOL ordered = hb_parl( 2 );
         const mongoc_write_concern_t * write_concern = mongoc_hbparam( 3, _hbmongoc_write_concern_t_ );
         mongoc_bulk_operation_t * bulk = mongoc_collection_create_bulk_operation( collection, ordered, write_concern );
-        PHB_MONGOC phMongo = hbmongoc_new_dataContainer( _hbmongoc_bult_operation_t_, bulk );
+        PHB_MONGOC phMongo = hbmongoc_new_dataContainer( _hbmongoc_bulk_operation_t_, bulk );
         hb_retptrGC( phMongo );
     } else {
         HBMONGOC_ERR_ARGS();
@@ -112,6 +112,7 @@ HB_FUNC( MONGOC_COLLECTION_DROP_WITH_OPTS )
 #endif
 
 HB_FUNC( MONGOC_COLLECTION_FIND )
+#if ! MONGOC_CHECK_VERSION( 1, 5, 0 )
 {
     mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
     bson_t * query = bson_hbparam( 6, HB_IT_ANY );
@@ -129,10 +130,6 @@ HB_FUNC( MONGOC_COLLECTION_FIND )
 
         hb_retptrGC( phCursor );
 
-#if ! MONGOC_CHECK_VERSION( 1, 5, 0 )
-        HBMONGOC_WARN_DEPRECATEDFUNC();
-#endif
-
     } else {
         HBMONGOC_ERR_ARGS();
     }
@@ -141,6 +138,11 @@ HB_FUNC( MONGOC_COLLECTION_FIND )
         bson_destroy( query );
     }
 }
+#else
+{
+    HBMONGOC_ERR_DEPRECATEDFUNC();
+}
+#endif
 
 HB_FUNC( MONGOC_COLLECTION_FIND_WITH_OPTS )
 #if MONGOC_CHECK_VERSION( 1, 5, 0 )

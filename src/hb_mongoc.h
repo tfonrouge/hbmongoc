@@ -31,7 +31,7 @@ typedef enum
     _hbmongoc_cursor_t_,
     _hbmongoc_write_concern_t_,
     _hbmongoc_read_prefs_t_,
-    _hbmongoc_bult_operation_t_
+    _hbmongoc_bulk_operation_t_
 } hbmongoc_t_;
 
 typedef struct _HB_MONGOC_
@@ -48,6 +48,6 @@ void *      mongoc_hbparam( int iParam, hbmongoc_t_ type );
 
 #define HBMONGOC_ERR_ARGS()  ( hb_errRT_BASE_SubstR( EG_ARG, 3012, NULL, HB_ERR_FUNCNAME, HB_ERR_ARGS_BASEPARAMS ) )
 #define HBMONGOC_ERR_NOFUNC()  ( hb_errRT_BASE_SubstR( EG_NOFUNC, 1001, "Undefined function", HB_ERR_FUNCNAME, 0 ) )
-#define HBMONGOC_WARN_DEPRECATEDFUNC() ( hb_conOutErr( "Use of deprecated function", 0 ) )
+#define HBMONGOC_ERR_DEPRECATEDFUNC() ( hb_errRT_BASE_SubstR( EG_NOFUNC, 1001, "Deprecated function", HB_ERR_FUNCNAME, 0 ) )
 
 #endif /* hb_mongoc_h */
