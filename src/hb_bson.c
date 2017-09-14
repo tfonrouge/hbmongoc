@@ -587,7 +587,7 @@ HB_FUNC( BSON_ARRAY_AS_JSON )
     const bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
 
     if ( bson ) {
-        HB_ULONG length;
+        size_t length;
         const char * result = bson_array_as_json( bson, &length );
         if ( HB_ISBYREF( 2 ) ) {
             hb_stornl( (HB_LONG) length, 2 );
