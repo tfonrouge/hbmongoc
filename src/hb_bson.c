@@ -811,7 +811,17 @@ HB_FUNC( BSON_NEW_FROM_JSON )
 
 HB_FUNC( BSON_VALIDATE )
 {
+    const bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
 
+    if ( bson ) {
+        bson_validate_flags_t flags = hb_parnidef( 2, BSON_VALIDATE_NONE );
+        size_t offset;
+        bool result = bson_validate( bson, flags, &offset );
+        if ( HB_ISBYREF( 3 ) ) {
+            hb_storns( offset, 3 );
+        }
+        hb_retl( result );
+    }
 }
 
 HB_FUNC( HB_BSON_AS_HASH )

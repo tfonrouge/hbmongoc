@@ -46,13 +46,21 @@
 #xtranslate HB_BSON_ERROR_MESSAGE( <error> ) => iif( <error> = nil, nil, <error>\["message"\] )
 
 /* mongoc_query_flags_t ( DEPRECATED ) */
-#define     MONGOC_QUERY_NONE               0
-#define     MONGOC_QUERY_TAILABLE_CURSOR    hb_bitShift( 1, 1 )
-#define     MONGOC_QUERY_SLAVE_OK           hb_bitShift( 1, 2 )
-#define     MONGOC_QUERY_OPLOG_REPLAY       hb_bitShift( 1, 3 )
-#define     MONGOC_QUERY_NO_CURSOR_TIMEOUT  hb_bitShift( 1, 4 )
-#define     MONGOC_QUERY_AWAIT_DATA         hb_bitShift( 1, 5 )
-#define     MONGOC_QUERY_EXHAUST            hb_bitShift( 1, 6 )
-#define     MONGOC_QUERY_PARTIAL            hb_bitShift( 1, 7 )
+#define MONGOC_QUERY_NONE               0
+#define MONGOC_QUERY_TAILABLE_CURSOR    hb_bitShift( 1, 1 )
+#define MONGOC_QUERY_SLAVE_OK           hb_bitShift( 1, 2 )
+#define MONGOC_QUERY_OPLOG_REPLAY       hb_bitShift( 1, 3 )
+#define MONGOC_QUERY_NO_CURSOR_TIMEOUT  hb_bitShift( 1, 4 )
+#define MONGOC_QUERY_AWAIT_DATA         hb_bitShift( 1, 5 )
+#define MONGOC_QUERY_EXHAUST            hb_bitShift( 1, 6 )
+#define MONGOC_QUERY_PARTIAL            hb_bitShift( 1, 7 )
+
+/* bson_validate_flags_t */
+#define BSON_VALIDATE_NONE              0
+#define BSON_VALIDATE_UTF8              hb_bitShift( 1, 0 )
+#define BSON_VALIDATE_DOLLAR_KEYS       hb_bitShift( 1, 1 )
+#define BSON_VALIDATE_DOT_KEYS          hb_bitShift( 1, 2 )
+#define BSON_VALIDATE_UTF8_ALLOW_NULL   hb_bitShift( 1, 3 )
+#define BSON_VALIDATE_EMPTY_KEYS        hb_bitShift( 1, 4 )
 
 #endif /* hbmongoc_ch */
