@@ -105,10 +105,12 @@ bson_t * bson_hbparam( int iParam, long lMask )
             }
         } else if ( hb_itemType( pItem ) & ( HB_IT_HASH | HB_IT_ARRAY ) ) {
             char * szJSON = hb_jsonEncode( pItem, NULL, false );
-            bson_t * bson = bson_new_from_json( ( const uint8_t * ) szJSON, -1, NULL );
-            hb_xfree( szJSON );
-            if ( bson ) {
-                return bson;
+            if ( szJSON ) {
+                bson_t * bson = bson_new_from_json( ( const uint8_t * ) szJSON, -1, NULL );
+                hb_xfree( szJSON );
+                if ( bson ) {
+                    return bson;
+                }
             }
         }
     }
