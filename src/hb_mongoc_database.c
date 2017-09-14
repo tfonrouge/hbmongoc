@@ -45,6 +45,7 @@ HB_FUNC( MONGOC_DATABASE_GET_COLLECTION_NAMES )
 
     if ( database ) {
         bson_error_t error;
+        bson_set_error( &error, 0, 0, "%s", "" );
 
         char ** names = mongoc_database_get_collection_names( database, &error );
 
