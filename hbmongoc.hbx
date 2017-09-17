@@ -36,7 +36,9 @@ DYNAMIC bson_append_document_end
 DYNAMIC bson_append_double
 DYNAMIC bson_append_int32
 DYNAMIC bson_append_int64
+DYNAMIC bson_append_now_utc
 DYNAMIC bson_append_null
+DYNAMIC bson_append_oid
 DYNAMIC bson_append_regex
 DYNAMIC bson_append_utf8
 DYNAMIC bson_array_as_json
@@ -44,6 +46,9 @@ DYNAMIC bson_as_canonical_extended_json
 DYNAMIC bson_as_json
 DYNAMIC bson_as_relaxed_extended_json
 DYNAMIC bson_check_version
+DYNAMIC bson_context_destroy
+DYNAMIC bson_context_get_default
+DYNAMIC bson_context_new
 DYNAMIC bson_copy
 DYNAMIC bson_decimal128_from_string
 DYNAMIC bson_decimal128_to_string
@@ -55,6 +60,16 @@ DYNAMIC bson_get_version
 DYNAMIC bson_has_field
 DYNAMIC bson_new
 DYNAMIC bson_new_from_json
+DYNAMIC bson_oid_compare
+DYNAMIC bson_oid_copy
+DYNAMIC bson_oid_equal
+DYNAMIC bson_oid_get_time_t
+DYNAMIC bson_oid_hash
+DYNAMIC bson_oid_init
+DYNAMIC bson_oid_init_from_data
+DYNAMIC bson_oid_init_from_string
+DYNAMIC bson_oid_is_valid
+DYNAMIC bson_oid_to_string
 DYNAMIC bson_validate
 DYNAMIC hb_bson_append
 DYNAMIC hb_bson_as_hash

@@ -25,6 +25,8 @@
 typedef enum
     {
         _hbbson_bson_t_,
+        _hbbson_bson_oid_t_,
+        _hbbson_bson_context_t_,
 #if BSON_CHECK_VERSION( 1, 5, 0 )
         _hbbson_decimal128_t_
 #endif
@@ -36,12 +38,15 @@ typedef struct _HB_BSON_
     void * p;
 } HB_BSON, * PHB_BSON;
 
+bson_context_t *    bson_context_hbparam( int iParam );
 #if BSON_CHECK_VERSION( 1, 5, 0 )
 bson_decimal128_t * bson_decimal128_hbparam( int iParam );
 #endif
 bson_t *            bson_hbparam( int iParam, long lMask );
 void                bson_hbstor_byref_error( int iParam, bson_error_t * error, HB_BOOL valid );
+bson_oid_t *        bson_oid_hbparam( int iParam );
 char *              hbbson_as_json( const bson_t * bson );
+uint64_t            hbbson_dateTimeToUnix( PHB_ITEM pItem, HB_BOOL utc );
 PHB_BSON            hbbson_new_dataContainer( hbbson_t_ hbbson_type, void * p );
 PHB_BSON            hbbson_param( int iParam, hbbson_t_ hbbson_type );
 

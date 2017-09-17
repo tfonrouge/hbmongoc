@@ -63,4 +63,11 @@
 #define BSON_VALIDATE_UTF8_ALLOW_NULL   hb_bitShift( 1, 3 )
 #define BSON_VALIDATE_EMPTY_KEYS        hb_bitShift( 1, 4 )
 
+/* bson_context_t */
+#define BSON_CONTEXT_NONE               0
+#define BSON_CONTEXT_THREAD_SAFE        hb_bitShift( 1, 0 )
+#define BSON_CONTEXT_DISABLE_HOST_CACHE hb_bitShift( 1, 1 )
+#define BSON_CONTEXT_DISABLE_PID_CACHE  hb_bitShift( 1, 2 )
+#define BSON_CONTEXT_USE_TASK_ID        hb_bitShift( 1, 3 )
+
 #endif /* hbmongoc_ch */
