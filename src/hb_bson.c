@@ -43,9 +43,27 @@ static HB_GARBAGE_FUNC( hbbson_gc_func )
 
     if ( phBson ) {
         switch (phBson->hbbson_type) {
-            case _hbbson_bson_t_:
+            case _hbbson_t_:
                 if (phBson->p) {
                     bson_destroy( ( bson_t * ) phBson->p );
+                    phBson->p = NULL;
+                }
+                break;
+            case _hbbson_oid_t_:
+                if ( phBson->p ) {
+                    hb_xfree( phBson->p );
+                    phBson->p = NULL;
+                }
+                break;
+            case _hbbson_iter_t_:
+                if ( phBson->p ) {
+                    hb_xfree( phBson->p );
+                    phBson->p = NULL;
+                }
+                break;
+            case _hbbson_context_t_:
+                if ( phBson->p ) {
+                    bson_context_destroy( phBson->p );
                     phBson->p = NULL;
                 }
                 break;
@@ -57,18 +75,6 @@ static HB_GARBAGE_FUNC( hbbson_gc_func )
                 }
                 break;
 #endif
-            case _hbbson_bson_oid_t_:
-                if ( phBson->p ) {
-                    hb_xfree( phBson->p );
-                    phBson->p = NULL;
-                }
-                break;
-            case _hbbson_bson_context_t_:
-                if ( phBson->p ) {
-                    bson_context_destroy( phBson->p );
-                    phBson->p = NULL;
-                }
-                break;
         }
     }
 }
@@ -80,7 +86,7 @@ static const HB_GC_FUNCS s_gc_bson_funcs = {
 
 bson_context_t * bson_context_hbparam( int iParam )
 {
-    PHB_BSON phBson = hbbson_param( iParam, _hbbson_bson_context_t_ );
+    PHB_BSON phBson = hbbson_param( iParam, _hbbson_context_t_ );
 
     if ( phBson ) {
         return phBson->p;
@@ -102,7 +108,7 @@ bson_decimal128_t * bson_decimal128_hbparam( int iParam )
 
 bson_oid_t * bson_oid_hbparam( int iParam )
 {
-    PHB_BSON phBson = hbbson_param( iParam, _hbbson_bson_oid_t_ );
+    PHB_BSON phBson = hbbson_param( iParam, _hbbson_oid_t_ );
 
     if ( phBson ) {
         return phBson->p;
@@ -116,7 +122,7 @@ bson_t * bson_hbparam( int iParam, long lMask )
 
     if ( pItem ) {
         if ( hb_itemType( pItem ) & HB_IT_POINTER ) {
-            PHB_BSON phBson = hbbson_hbparam( pItem, _hbbson_bson_t_ );
+            PHB_BSON phBson = hbbson_hbparam( pItem, _hbbson_t_ );
             if ( phBson ) {
                 return phBson->p;
             }
@@ -256,12 +262,13 @@ PHB_BSON hbbson_new_dataContainer( hbbson_t_ hbbson_type, void * p )
         phBson->hbbson_type = hbbson_type;
 
         switch ( hbbson_type ) {
-            case _hbbson_bson_t_:
+            case _hbbson_t_:
+            case _hbbson_oid_t_:
+            case _hbbson_iter_t_:
+            case _hbbson_context_t_:
 #if BSON_CHECK_VERSION( 1, 5, 0 )
             case _hbbson_decimal128_t_:
 #endif
-            case _hbbson_bson_oid_t_:
-            case _hbbson_bson_context_t_:
                 phBson->p = p;
                 break;
         }
@@ -283,12 +290,13 @@ PHB_BSON hbbson_param( int iParam, hbbson_t_ hbbson_type )
         PHB_BSON phBson = hbbson_hbparam( pItem, hbbson_type );
         if ( phBson && phBson->hbbson_type == hbbson_type ) {
             switch ( hbbson_type ) {
-                case _hbbson_bson_t_:
+                case _hbbson_t_:
+                case _hbbson_oid_t_:
+                case _hbbson_iter_t_:
+                case _hbbson_context_t_:
 #if BSON_CHECK_VERSION( 1, 5, 0 )
                 case _hbbson_decimal128_t_:
 #endif
-                case _hbbson_bson_oid_t_:
-                case _hbbson_bson_context_t_:
                     if ( phBson->p ) {
                         return phBson;
                     }
@@ -391,7 +399,7 @@ HB_FUNC( BSON_COPY )
 
     if ( bson ) {
         bson_t * copy = bson_copy( bson );
-        PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_bson_t_, copy );
+        PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_t_, copy );
         hb_retptrGC( phBson );
     } else {
         HBBSON_ERR_ARGS();
@@ -443,7 +451,7 @@ HB_FUNC( BSON_DECIMAL128_TO_STRING )
 
 HB_FUNC( BSON_DESTROY )
 {
-    PHB_BSON phBson = hbbson_param( 1, _hbbson_bson_t_ );
+    PHB_BSON phBson = hbbson_param( 1, _hbbson_t_ );
 
     if ( phBson ) {
         bson_destroy( phBson->p );
@@ -491,7 +499,7 @@ HB_FUNC( BSON_NEW )
     if ( hb_pcount() == 0 ) {
         bson_t * bson = bson_new();
         if ( bson ) {
-            PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_bson_t_, bson );
+            PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_t_, bson );
             hb_retptrGC( phBson );
         }
     } else {
@@ -520,7 +528,7 @@ HB_FUNC( BSON_NEW_FROM_JSON )
     bson_hbstor_byref_error( 3, &error, bson != NULL );
 
     if ( bson ) {
-        PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_bson_t_, bson );
+        PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_t_, bson );
         hb_retptrGC( phBson );
     } else {
         hb_ret();

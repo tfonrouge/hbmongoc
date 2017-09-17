@@ -23,14 +23,15 @@
 #define HBBSON_ERR_NOFUNC()  ( hb_errRT_BASE_SubstR( EG_NOFUNC, 1001, "Undefined function", HB_ERR_FUNCNAME, 0 ) )
 
 typedef enum
-    {
-        _hbbson_bson_t_,
-        _hbbson_bson_oid_t_,
-        _hbbson_bson_context_t_,
+{
+    _hbbson_t_,
+    _hbbson_oid_t_,
+    _hbbson_iter_t_,
+    _hbbson_context_t_,
 #if BSON_CHECK_VERSION( 1, 5, 0 )
-        _hbbson_decimal128_t_
+    _hbbson_decimal128_t_
 #endif
-    } hbbson_t_;
+} hbbson_t_;
 
 typedef struct _HB_BSON_
 {

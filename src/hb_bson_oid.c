@@ -30,7 +30,7 @@ HB_FUNC( BSON_OID_COPY )
     if ( src ) {
         bson_oid_t * dst = hb_xgrab( sizeof( bson_oid_t ) );
         bson_oid_copy( src, dst );
-        PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_bson_oid_t_, dst );
+        PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_oid_t_, dst );
         if ( HB_ISBYREF( 2 ) ) {
             hb_storptrGC( phBson, 2 );
         }
@@ -81,7 +81,7 @@ HB_FUNC( BSON_OID_INIT )
 {
     if ( HB_ISBYREF( 1 ) ) {
 
-        PHB_BSON phBson = hbbson_param( 1, _hbbson_bson_oid_t_ );
+        PHB_BSON phBson = hbbson_param( 1, _hbbson_oid_t_ );
         bson_oid_t * oid = NULL;
 
         if ( phBson ) {
@@ -95,7 +95,7 @@ HB_FUNC( BSON_OID_INIT )
         bson_oid_init( oid, context );
 
         if ( phBson == NULL ) {
-            phBson = hbbson_new_dataContainer( _hbbson_bson_oid_t_, oid );
+            phBson = hbbson_new_dataContainer( _hbbson_oid_t_, oid );
             hb_storptrGC( phBson, 1 );
         }
     } else {
@@ -109,7 +109,7 @@ HB_FUNC( BSON_OID_INIT_FROM_DATA )
 
     if ( HB_ISBYREF( 1 ) && data ) {
 
-        PHB_BSON phBson = hbbson_param( 1, _hbbson_bson_oid_t_ );
+        PHB_BSON phBson = hbbson_param( 1, _hbbson_oid_t_ );
         bson_oid_t * oid = NULL;
 
         if ( phBson ) {
@@ -121,7 +121,7 @@ HB_FUNC( BSON_OID_INIT_FROM_DATA )
         bson_oid_init_from_data( oid, ( const uint8_t * ) data );
 
         if ( phBson == NULL ) {
-            phBson = hbbson_new_dataContainer( _hbbson_bson_oid_t_, oid );
+            phBson = hbbson_new_dataContainer( _hbbson_oid_t_, oid );
             hb_storptrGC( phBson, 1 );
         }
     } else {
@@ -135,7 +135,7 @@ HB_FUNC( BSON_OID_INIT_FROM_STRING )
 
     if ( HB_ISBYREF( 1 ) && str ) {
 
-        PHB_BSON phBson = hbbson_param( 1, _hbbson_bson_oid_t_ );
+        PHB_BSON phBson = hbbson_param( 1, _hbbson_oid_t_ );
         bson_oid_t * oid = NULL;
 
         if ( phBson ) {
@@ -147,7 +147,7 @@ HB_FUNC( BSON_OID_INIT_FROM_STRING )
         bson_oid_init_from_string( oid, str );
 
         if ( phBson == NULL ) {
-            phBson = hbbson_new_dataContainer( _hbbson_bson_oid_t_, oid );
+            phBson = hbbson_new_dataContainer( _hbbson_oid_t_, oid );
             hb_storptrGC( phBson, 1 );
         }
     } else {

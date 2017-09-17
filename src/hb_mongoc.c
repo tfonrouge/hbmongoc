@@ -105,7 +105,7 @@ PHB_BSON hbmongoc_return_byref_bson( int iParam, bson_t * bson )
             bson_destroy( bson );
             break;
         case _HBRETVAL_BSON_:
-            phBson = hbbson_new_dataContainer( _hbbson_bson_t_, bson );
+            phBson = hbbson_new_dataContainer( _hbbson_t_, bson );
             hb_storptrGC( phBson, iParam );
             break;
         case _HBRETVAL_HASH_:

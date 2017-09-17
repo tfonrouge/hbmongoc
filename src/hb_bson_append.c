@@ -48,7 +48,7 @@ HB_FUNC( BSON_APPEND_ARRAY_BEGIN )
         int key_length = hb_parnidef( 3, ( int ) hb_parclen( 2 ) );
         bson_t * child = &s_bson_arrayStack[ arrayLevel++ ];
         bool result = bson_append_array_begin( parent, key, key_length, child );
-        PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_bson_t_, child );
+        PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_t_, child );
         hb_storptrGC( phBson, 4 );
         hb_retl( result );
     } else {
@@ -209,7 +209,7 @@ HB_FUNC( BSON_APPEND_DOCUMENT_BEGIN )
         int key_length = hb_parnidef( 3, ( int ) hb_parclen( 2 ) );
         bson_t * child = &s_bson_documentStack[ documentLevel++ ];
         bool result = bson_append_document_begin( parent, key, key_length, child );
-        PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_bson_t_, child );
+        PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_t_, child );
         hb_storptrGC( phBson, 4 );
         hb_retl( result );
     } else {

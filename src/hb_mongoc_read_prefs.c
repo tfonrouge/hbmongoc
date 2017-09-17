@@ -74,7 +74,7 @@ HB_FUNC( MONGOC_READ_PREFS_GET_TAGS )
 
     if ( read_prefs ) {
         const bson_t * read_mode = mongoc_read_prefs_get_tags( read_prefs );
-        PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_bson_t_, bson_copy( read_mode ) );
+        PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_t_, bson_copy( read_mode ) );
         hb_retptrGC( phBson );
     } else {
         HBMONGOC_ERR_ARGS();
