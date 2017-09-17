@@ -45,6 +45,7 @@ bson_decimal128_t * bson_decimal128_hbparam( int iParam );
 #endif
 bson_t *            bson_hbparam( int iParam, long lMask );
 void                bson_hbstor_byref_error( int iParam, bson_error_t * error, HB_BOOL valid );
+bson_iter_t *       bson_iter_hbparam( int iParam );
 bson_oid_t *        bson_oid_hbparam( int iParam );
 char *              hbbson_as_json( const bson_t * bson );
 uint64_t            hbbson_dateTimeToUnix( PHB_ITEM pItem, HB_BOOL utc );

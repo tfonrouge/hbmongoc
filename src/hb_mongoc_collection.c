@@ -149,9 +149,9 @@ HB_FUNC( MONGOC_COLLECTION_FIND_WITH_OPTS )
 {
     mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
     bson_t * filter = bson_hbparam( 2, HB_IT_ANY );
-    bson_t * opts = bson_hbparam( 3, HB_IT_ANY );
 
-    if ( collection && filter && opts ) {
+    if ( collection && filter ) {
+        bson_t * opts = bson_hbparam( 3, HB_IT_ANY );
         const mongoc_read_prefs_t *read_prefs = mongoc_hbparam( 4, _hbmongoc_read_prefs_t_ );
 
         mongoc_cursor_t * cursor = mongoc_collection_find_with_opts( collection, filter, opts, read_prefs );
@@ -160,16 +160,15 @@ HB_FUNC( MONGOC_COLLECTION_FIND_WITH_OPTS )
 
         hb_retptrGC( phCursor );
 
+        if ( opts && ! HB_ISPOINTER( 3 ) ) {
+            bson_destroy( opts );
+        }
     } else {
         HBMONGOC_ERR_ARGS();
     }
 
     if ( filter && ! HB_ISPOINTER( 2 ) ) {
         bson_destroy( filter );
-    }
-
-    if ( opts && ! HB_ISPOINTER( 3 ) ) {
-        bson_destroy( opts );
     }
 }
 #else

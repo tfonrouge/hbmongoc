@@ -106,6 +106,16 @@ bson_decimal128_t * bson_decimal128_hbparam( int iParam )
 }
 #endif
 
+bson_iter_t * bson_iter_hbparam( int iParam )
+{
+    PHB_BSON phBson = hbbson_param( iParam, _hbbson_iter_t_ );
+
+    if ( phBson ) {
+        return phBson->p;
+    }
+    return NULL;
+}
+
 bson_oid_t * bson_oid_hbparam( int iParam )
 {
     PHB_BSON phBson = hbbson_param( iParam, _hbbson_oid_t_ );
@@ -393,6 +403,19 @@ HB_FUNC( BSON_CHECK_VERSION )
     }
 }
 
+HB_FUNC( BSON_CONCAT )
+{
+    bson_t * dst = bson_hbparam( 1, HB_IT_POINTER );
+    const bson_t * src = bson_hbparam( 2, HB_IT_POINTER );
+
+    if ( dst && src ) {
+        bool result = bson_concat( dst, src );
+        hb_retl( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
 HB_FUNC( BSON_COPY )
 {
     bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
@@ -494,6 +517,40 @@ HB_FUNC( BSON_HAS_FIELD )
     }
 }
 
+#if 0 /* memory leak on bson_init_from_json Mac OS X / Linux libbson v1.7.0 / v1.3.1 */
+HB_FUNC( BSON_INIT_FROM_JSON )
+{
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
+    const char * data = hb_parc( 2 );
+
+    if ( bson && data ) {
+        size_t len = hb_parnsdef( 3, hb_parclen( 2 ) );
+        bson_error_t error;
+        bool result = bson_init_from_json( bson, data, len, &error );
+        bson_hbstor_byref_error( 4, &error, result );
+        hb_retl( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+#endif
+
+#if 0 /* memory leak on bson_init_static Mac OS X / Linux libbson v1.7.0 / v1.3.1 */
+HB_FUNC( BSON_INIT_STATIC )
+{
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
+    const uint8_t * data = ( const uint8_t * ) hb_parc( 2 );
+
+    if ( bson && data ) {
+        size_t length = hb_parnsdef( 3, hb_parclen( 2 ) );
+        bool result = bson_init_static( bson, data, length );
+        hb_retl( result );
+    } else {
+        HBBSON_ERR_NOFUNC();
+    }
+}
+#endif
+
 HB_FUNC( BSON_NEW )
 {
     if ( hb_pcount() == 0 ) {
@@ -502,6 +559,20 @@ HB_FUNC( BSON_NEW )
             PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_t_, bson );
             hb_retptrGC( phBson );
         }
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_NEW_FROM_DATA )
+{
+    const uint8_t * data = ( const uint8_t * ) hb_parc( 1 );
+
+    if ( data ) {
+        size_t length = hb_parnsdef( 2, hb_parclen( 1 ) );
+        bson_t * bson = bson_new_from_data( data, length );
+        PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_t_, bson );
+        hb_retptrGC( phBson );
     } else {
         HBBSON_ERR_ARGS();
     }

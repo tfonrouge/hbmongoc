@@ -10,6 +10,157 @@
 
 #include "hb_bson.h"
 
+HB_FUNC( BSON_ITER_ARRAY )
+{
+    const bson_iter_t * iter = bson_iter_hbparam( 1 );
+
+    if ( iter && BSON_ITER_HOLDS_ARRAY( iter ) ) {
+
+        uint32_t array_len;
+        const uint8_t * array;
+        bson_iter_array( iter, &array_len, &array );
+
+        if ( HB_ISBYREF( 2 ) ) {
+            hb_stornl( array_len, 2 );
+        }
+
+        if ( HB_ISBYREF( 3 ) ) {
+            hb_storclen( ( const char * ) array, array_len, 3 );
+        }
+
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_ITER_AS_BOOL )
+{
+    const bson_iter_t * iter = bson_iter_hbparam( 1 );
+
+    if ( iter ) {
+        bool result = bson_iter_as_bool( iter );
+        hb_retl( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_ITER_AS_DOUBLE )
+#if BSON_CHECK_VERSION( 1, 6, 3 )
+{
+    const bson_iter_t * iter = bson_iter_hbparam( 1 );
+
+    if ( iter ) {
+        double result = bson_iter_as_double( iter );
+        hb_retnd( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+#else
+{
+    HBBSON_ERR_NOFUNC();
+}
+#endif
+
+HB_FUNC( BSON_ITER_AS_INT64 )
+{
+    const bson_iter_t * iter = bson_iter_hbparam( 1 );
+
+    if ( iter ) {
+        int64_t result = bson_iter_as_int64( iter );
+        hb_retnl( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_ITER_BINARY )
+{
+    const bson_iter_t * iter = bson_iter_hbparam( 1 );
+
+    if ( iter && BSON_ITER_HOLDS_BINARY( iter ) && HB_ISBYREF( 4 ) ) {
+        bson_subtype_t subtype;
+        uint32_t binary_len;
+        const uint8_t * binary;
+
+        bson_iter_binary( iter, &subtype, &binary_len, &binary );
+
+        if ( HB_ISBYREF( 2 ) ) {
+            hb_storni( subtype, 2 );
+        }
+        if ( HB_ISBYREF( 3 ) ) {
+            hb_stornl( binary_len, 3 );
+        }
+
+        hb_storclen( ( const char * ) binary, binary_len, 4 );
+
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_ITER_BOOL )
+{
+    const bson_iter_t * iter = bson_iter_hbparam( 1 );
+
+    if ( iter && BSON_ITER_HOLDS_BOOL( iter ) ) {
+        bool result = bson_iter_bool( iter );
+        hb_retl( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_ITER_CODE )
+{
+    const bson_iter_t * iter = bson_iter_hbparam( 1 );
+
+    if ( iter && BSON_ITER_HOLDS_CODE( iter ) ) {
+        uint32_t length;
+        const char * code = bson_iter_code( iter, &length );
+        if ( HB_ISBYREF( 2 ) ) {
+            hb_stornl( length, 2 );
+        }
+        hb_retc( code );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_ITER_DATE_TIME )
+{
+    const bson_iter_t * iter = bson_iter_hbparam( 1 );
+
+    if ( iter && BSON_ITER_HOLDS_DATE_TIME( iter ) ) {
+        int64_t dt = bson_iter_date_time( iter );
+        hb_retnl( dt );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_ITER_DECIMAL128 )
+#if BSON_CHECK_VERSION( 1, 5, 0 )
+{
+    const bson_iter_t * iter = bson_iter_hbparam( 1 );
+
+    if ( iter && BSON_ITER_HOLDS_DECIMAL128( iter ) && HB_ISBYREF( 2 ) ) {
+        bson_decimal128_t * dec = hb_xgrab( sizeof( bson_decimal128_t ) );
+        bool result = bson_iter_decimal128( iter, dec );
+        PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_decimal128_t_, dec );
+        hb_storptrGC( phBson, 2 );
+        hb_retl( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+#else
+{
+    HBBSON_ERR_NOFUNC();
+}
+#endif
+
 HB_FUNC( BSON_ITER_INIT )
 {
     const bson_t * bson = bson_hbparam( 2, HB_IT_POINTER );
@@ -34,6 +185,42 @@ HB_FUNC( BSON_ITER_INIT )
 
         hb_retl( result );
 
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_ITER_KEY )
+{
+    bson_iter_t * iter = bson_iter_hbparam( 1 );
+
+    if ( iter ) {
+        const char * key = bson_iter_key( iter );
+        hb_retc( key );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_ITER_NEXT )
+{
+    bson_iter_t * iter = bson_iter_hbparam( 1 );
+
+    if ( iter ) {
+        bool result = bson_iter_next( iter );
+        hb_retl( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_ITER_TYPE )
+{
+    bson_iter_t * iter = bson_iter_hbparam( 1 );
+
+    if ( iter ) {
+        int type = bson_iter_type( iter );
+        hb_retni( type );
     } else {
         HBBSON_ERR_ARGS();
     }

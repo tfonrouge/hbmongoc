@@ -70,4 +70,36 @@
 #define BSON_CONTEXT_DISABLE_PID_CACHE  hb_bitShift( 1, 2 )
 #define BSON_CONTEXT_USE_TASK_ID        hb_bitShift( 1, 3 )
 
+/* bson_type_t */
+#define BSON_TYPE_EOD           0x00
+#define BSON_TYPE_DOUBLE        0x01
+#define BSON_TYPE_UTF8          0x02
+#define BSON_TYPE_DOCUMENT      0x03
+#define BSON_TYPE_ARRAY         0x04
+#define BSON_TYPE_BINARY        0x05
+#define BSON_TYPE_UNDEFINED     0x06
+#define BSON_TYPE_OID           0x07
+#define BSON_TYPE_BOOL          0x08
+#define BSON_TYPE_DATE_TIME     0x09
+#define BSON_TYPE_NULL          0x0A
+#define BSON_TYPE_REGEX         0x0B
+#define BSON_TYPE_DBPOINTER     0x0C
+#define BSON_TYPE_CODE          0x0D
+#define BSON_TYPE_SYMBOL        0x0E
+#define BSON_TYPE_CODEWSCOPE    0x0F
+#define BSON_TYPE_INT32         0x10
+#define BSON_TYPE_TIMESTAMP     0x11
+#define BSON_TYPE_INT64         0x12
+#define BSON_TYPE_MAXKEY        0x7F
+#define BSON_TYPE_MINKEY        0xFF
+
+/* bson_subtype_t */
+#define BSON_SUBTYPE_BINARY             0x00
+#define BSON_SUBTYPE_FUNCTION           0x01
+#define BSON_SUBTYPE_BINARY_DEPRECATED  0x02
+#define BSON_SUBTYPE_UUID_DEPRECATED    0x03
+#define BSON_SUBTYPE_UUID               0x04
+#define BSON_SUBTYPE_MD5                0x05
+#define BSON_SUBTYPE_USER               0x80
+
 #endif /* hbmongoc_ch */
