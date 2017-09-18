@@ -161,6 +161,78 @@ HB_FUNC( BSON_ITER_DECIMAL128 )
 }
 #endif
 
+HB_FUNC( BSON_ITER_DOCUMENT )
+{
+    const bson_iter_t * iter = bson_iter_hbparam( 1 );
+
+    if ( iter && BSON_ITER_HOLDS_DOCUMENT( iter ) && HB_ISBYREF( 3 ) ) {
+        uint32_t document_len;
+        const uint8_t * document;
+        bson_iter_document( iter, &document_len, &document );
+        if ( HB_ISBYREF( 2 ) ) {
+            hb_stornl( document_len, 2 );
+        }
+
+        hb_storclen( ( const char * ) document, document_len, 3 );
+
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_ITER_DOUBLE )
+{
+    const bson_iter_t * iter = bson_iter_hbparam( 1 );
+
+    if ( iter && BSON_ITER_HOLDS_DOUBLE( iter ) ) {
+        double result = bson_iter_double( iter );
+        hb_retnd( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_ITER_FIND )
+{
+    bson_iter_t * iter = bson_iter_hbparam( 1 );
+    const char * key = hb_parc( 2 );
+
+    if ( iter && key ) {
+        bool result = bson_iter_find( iter, key );
+        hb_retl( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_ITER_FIND_CASE )
+{
+    bson_iter_t * iter = bson_iter_hbparam( 1 );
+    const char * key = hb_parc( 2 );
+
+    if ( iter && key ) {
+        bool result = bson_iter_find_case( iter, key );
+        hb_retl( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_ITER_FIND_DESCENDANT )
+{
+    bson_iter_t * iter = bson_iter_hbparam( 1 );
+    const char * key = hb_parc( 2 );
+    bson_iter_t * descendant = bson_iter_hbparam( 3 );
+
+    if ( iter && key && descendant ) {
+        bool result = bson_iter_find_descendant( iter, key, descendant );
+        hb_retl( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+
+}
+
 HB_FUNC( BSON_ITER_INIT )
 {
     const bson_t * bson = bson_hbparam( 2, HB_IT_POINTER );
@@ -190,6 +262,90 @@ HB_FUNC( BSON_ITER_INIT )
     }
 }
 
+HB_FUNC( BSON_ITER_INIT_FIND )
+{
+    const bson_t * bson = bson_hbparam( 2, HB_IT_POINTER );
+    const char * key = hb_parc( 3 );
+
+    if ( HB_ISBYREF( 1 ) && bson && key ) {
+
+        PHB_BSON phBson = hbbson_param( 1, _hbbson_iter_t_ );
+        bson_iter_t * iter = NULL;
+
+        if ( phBson ) {
+            iter = phBson->p;
+        } else {
+            iter = hb_xgrab( sizeof( bson_iter_t ) );
+        }
+
+        bool result = bson_iter_init_find( iter, bson, key );
+
+        if ( phBson == NULL ) {
+            phBson = hbbson_new_dataContainer( _hbbson_iter_t_, iter );
+            hb_storptrGC( phBson, 1 );
+        }
+
+        hb_retl( result );
+
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_ITER_INIT_FIND_CASE )
+{
+    const bson_t * bson = bson_hbparam( 2, HB_IT_POINTER );
+    const char * key = hb_parc( 3 );
+
+    if ( HB_ISBYREF( 1 ) && bson && key ) {
+
+        PHB_BSON phBson = hbbson_param( 1, _hbbson_iter_t_ );
+        bson_iter_t * iter = NULL;
+
+        if ( phBson ) {
+            iter = phBson->p;
+        } else {
+            iter = hb_xgrab( sizeof( bson_iter_t ) );
+        }
+
+        bool result = bson_iter_init_find_case( iter, bson, key );
+
+        if ( phBson == NULL ) {
+            phBson = hbbson_new_dataContainer( _hbbson_iter_t_, iter );
+            hb_storptrGC( phBson, 1 );
+        }
+
+        hb_retl( result );
+
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_ITER_INT32 )
+{
+    bson_iter_t * iter = bson_iter_hbparam( 1 );
+
+    if ( iter && BSON_ITER_HOLDS_INT32( iter ) ) {
+        int32_t result = bson_iter_int32( iter );
+        hb_retni( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_ITER_INT64 )
+{
+    bson_iter_t * iter = bson_iter_hbparam( 1 );
+
+    if ( iter && BSON_ITER_HOLDS_INT64( iter ) ) {
+        int64_t result = bson_iter_int64( iter );
+        hb_retnll( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
 HB_FUNC( BSON_ITER_KEY )
 {
     bson_iter_t * iter = bson_iter_hbparam( 1 );
@@ -209,6 +365,21 @@ HB_FUNC( BSON_ITER_NEXT )
     if ( iter ) {
         bool result = bson_iter_next( iter );
         hb_retl( result );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_ITER_OID )
+{
+    bson_iter_t * iter = bson_iter_hbparam( 1 );
+
+    if ( iter && BSON_ITER_HOLDS_OID( iter ) ) {
+        const bson_oid_t * oid = bson_iter_oid( iter );
+        bson_oid_t * new = hb_xgrab( sizeof( bson_oid_t ) );
+        bson_oid_copy( oid, new );
+        PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_oid_t_, new );
+        hb_retptrGC( phBson );
     } else {
         HBBSON_ERR_ARGS();
     }
