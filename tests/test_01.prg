@@ -140,7 +140,7 @@ PROCEDURE main( serverConn )
         BSON_APPEND_DOCUMENT_BEGIN( insert, "name", @name )
             BSON_APPEND_UTF8( name, "first", "Juana" )
             BSON_APPEND_UTF8( name, "last", "La Cubana" )
-        bson_append_document_end( insert, @name )
+        bson_append_document_end( insert, name )
 
         /*
         IF BSON_APPEND_DOCUMENT_BEGIN( insert, "name", @name )
