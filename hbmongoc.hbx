@@ -59,6 +59,8 @@ DYNAMIC bson_get_micro_version
 DYNAMIC bson_get_minor_version
 DYNAMIC bson_get_version
 DYNAMIC bson_has_field
+DYNAMIC bson_init
+DYNAMIC bson_init_from_json
 DYNAMIC bson_iter_array
 DYNAMIC bson_iter_as_bool
 DYNAMIC bson_iter_as_double
@@ -95,6 +97,7 @@ DYNAMIC bson_oid_init_from_data
 DYNAMIC bson_oid_init_from_string
 DYNAMIC bson_oid_is_valid
 DYNAMIC bson_oid_to_string
+DYNAMIC bson_reinit
 DYNAMIC bson_validate
 DYNAMIC hb_bson_append
 DYNAMIC hb_bson_as_hash

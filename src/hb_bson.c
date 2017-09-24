@@ -517,7 +517,17 @@ HB_FUNC( BSON_HAS_FIELD )
     }
 }
 
-#if 0 /* memory leak on bson_init_from_json Mac OS X / Linux libbson v1.7.0 / v1.3.1 */
+HB_FUNC( BSON_INIT )
+{
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
+
+    if ( bson ) {
+        bson_init( bson );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
 HB_FUNC( BSON_INIT_FROM_JSON )
 {
     bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
@@ -533,23 +543,12 @@ HB_FUNC( BSON_INIT_FROM_JSON )
         HBBSON_ERR_ARGS();
     }
 }
-#endif
 
-#if 0 /* memory leak on bson_init_static Mac OS X / Linux libbson v1.7.0 / v1.3.1 */
+/*
 HB_FUNC( BSON_INIT_STATIC )
-{
-    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
-    const uint8_t * data = ( const uint8_t * ) hb_parc( 2 );
-
-    if ( bson && data ) {
-        size_t length = hb_parnsdef( 3, hb_parclen( 2 ) );
-        bool result = bson_init_static( bson, data, length );
-        hb_retl( result );
-    } else {
-        HBBSON_ERR_NOFUNC();
-    }
-}
-#endif
+ * bson_init_static() uses bson_t on stack and create internal references to itself
+ * so it's not practical using it on a Harbour envå
+ */
 
 HB_FUNC( BSON_NEW )
 {
@@ -603,6 +602,17 @@ HB_FUNC( BSON_NEW_FROM_JSON )
         hb_retptrGC( phBson );
     } else {
         hb_ret();
+    }
+}
+
+HB_FUNC( BSON_REINIT )
+{
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
+
+    if ( bson ) {
+        bson_reinit( bson );
+    } else {
+        HBBSON_ERR_ARGS();
     }
 }
 
