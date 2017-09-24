@@ -6,7 +6,7 @@
 
 {darwin}-cflag=-Wno-documentation-unknown-command
 
--w3 -es2
+-w3 -es2 -gc3
 
 -deppkgname=libmongoc:libmongoc-dev{deb}
 #-deppkgname=libmongoc:file-libs{rpm}
