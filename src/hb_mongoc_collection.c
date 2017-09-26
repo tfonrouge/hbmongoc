@@ -226,3 +226,25 @@ HB_FUNC( MONGOC_COLLECTION_REMOVE )
         bson_destroy( selector );
     }
 }
+
+HB_FUNC( MONGOC_COLLECTION_UPDATE )
+{
+    mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
+    const bson_t * selector = bson_hbparam( 3, HB_IT_ANY );
+    const bson_t * update = bson_hbparam( 4, HB_IT_ANY );
+
+    if ( collection && HB_ISNUM( 2 ) && selector && update ) {
+        int flags = hb_parni( 2 );
+        const mongoc_write_concern_t * write_concern = mongoc_hbparam( 5, _hbmongoc_write_concern_t_ );
+        bson_error_t error;
+
+        bool result = mongoc_collection_update( collection, flags, selector, update, write_concern, &error );
+
+        bson_hbstor_byref_error( 6, &error, result );
+
+        hb_retl( result );
+
+    } else {
+        HBMONGOC_ERR_ARGS();
+    }
+}

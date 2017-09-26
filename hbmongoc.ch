@@ -55,6 +55,19 @@
 #define MONGOC_QUERY_EXHAUST            hb_bitShift( 1, 6 )
 #define MONGOC_QUERY_PARTIAL            hb_bitShift( 1, 7 )
 
+/* mongoc_write_concern_t */
+#define MONGOC_WRITE_CONCERN_W_UNACKNOWLEDGED   0
+#define MONGOC_WRITE_CONCERN_W_ERRORS_IGNORED   -1 /* deprecated */
+#define MONGOC_WRITE_CONCERN_W_DEFAULT          -2
+#define MONGOC_WRITE_CONCERN_W_MAJORITY         -3
+#define MONGOC_WRITE_CONCERN_W_TAG              -4
+
+/* mongoc_update_flags_t */
+#define MONGOC_UPDATE_NONE          0
+#define MONGOC_UPDATE_UPSERT        hb_bitShift( 1, 0 )
+#define MONGOC_UPDATE_MULTI_UPDATE  hb_bitShift( 1, 1 )
+#define MONGOC_UPDATE_NO_VALIDATE   hb_bitShift( 1, 31 )
+
 /* bson_validate_flags_t */
 #define BSON_VALIDATE_NONE              0
 #define BSON_VALIDATE_UTF8              hb_bitShift( 1, 0 )

@@ -130,6 +130,7 @@ DYNAMIC mongoc_collection_find
 DYNAMIC mongoc_collection_find_with_opts
 DYNAMIC mongoc_collection_insert
 DYNAMIC mongoc_collection_remove
+DYNAMIC mongoc_collection_update
 DYNAMIC mongoc_cursor_next
 DYNAMIC mongoc_database_destroy
 DYNAMIC mongoc_database_get_collection
