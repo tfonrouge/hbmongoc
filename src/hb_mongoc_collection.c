@@ -230,8 +230,8 @@ HB_FUNC( MONGOC_COLLECTION_REMOVE )
 HB_FUNC( MONGOC_COLLECTION_UPDATE )
 {
     mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
-    const bson_t * selector = bson_hbparam( 3, HB_IT_ANY );
-    const bson_t * update = bson_hbparam( 4, HB_IT_ANY );
+    bson_t * selector = bson_hbparam( 3, HB_IT_ANY );
+    bson_t * update = bson_hbparam( 4, HB_IT_ANY );
 
     if ( collection && HB_ISNUM( 2 ) && selector && update ) {
         int flags = hb_parni( 2 );
@@ -246,5 +246,13 @@ HB_FUNC( MONGOC_COLLECTION_UPDATE )
 
     } else {
         HBMONGOC_ERR_ARGS();
+    }
+
+    if ( selector && ! HB_ISPOINTER( 3 ) ) {
+        bson_destroy( selector );
+    }
+
+    if ( update && ! HB_ISPOINTER( 4 ) ) {
+        bson_destroy( update );
     }
 }
