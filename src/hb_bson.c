@@ -219,7 +219,7 @@ char * hbbson_as_json( const bson_t * bson )
 
 static uint64_t hbbson_juliantimeToUnix( long lJulian, long lMillis, HB_BOOL utc )
 {
-    long utfOffset = utc ? hb_timeUTCOffset() * 1000 : 0;
+    long utfOffset = utc ? 0 : hb_timeUTCOffset() * 1000;
     return (lJulian - 2440588) * 86400000 + lMillis - utfOffset;
 }
 
