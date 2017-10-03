@@ -44,8 +44,8 @@ HB_FUNC( MONGOC_READ_PREFS_GET_MAX_STALENESS_SECONDS )
     const mongoc_read_prefs_t * read_prefs = mongoc_hbparam( 1, _hbmongoc_read_prefs_t_ );
 
     if ( read_prefs ) {
-        uint64_t staleness = mongoc_read_prefs_get_max_staleness_seconds( read_prefs );
-        hb_retnl( staleness );
+        HB_LONGLONG staleness = mongoc_read_prefs_get_max_staleness_seconds( read_prefs );
+        hb_retnll( staleness );
     } else {
         HBMONGOC_ERR_ARGS();
     }
@@ -111,7 +111,7 @@ HB_FUNC( MONGOC_READ_PREFS_SET_MAX_STALENESS_SECONDS )
     mongoc_read_prefs_t * read_prefs = mongoc_hbparam( 1, _hbmongoc_read_prefs_t_ );
 
     if ( read_prefs && HB_ISNUM( 2 ) ) {
-        int64_t max_staleness_seconds = hb_parnl( 2 );
+        HB_LONGLONG max_staleness_seconds = hb_parnll( 2 );
         mongoc_read_prefs_set_max_staleness_seconds( read_prefs, max_staleness_seconds );
     } else {
         HBMONGOC_ERR_ARGS();

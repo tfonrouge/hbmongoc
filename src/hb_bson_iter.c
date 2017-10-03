@@ -68,8 +68,8 @@ HB_FUNC( BSON_ITER_AS_INT64 )
     const bson_iter_t * iter = bson_iter_hbparam( 1 );
 
     if ( iter ) {
-        int64_t result = bson_iter_as_int64( iter );
-        hb_retnl( result );
+        HB_LONGLONG result = bson_iter_as_int64( iter );
+        hb_retnll( result );
     } else {
         HBBSON_ERR_ARGS();
     }
@@ -133,8 +133,8 @@ HB_FUNC( BSON_ITER_DATE_TIME )
     const bson_iter_t * iter = bson_iter_hbparam( 1 );
 
     if ( iter && BSON_ITER_HOLDS_DATE_TIME( iter ) ) {
-        int64_t dt = bson_iter_date_time( iter );
-        hb_retnl( dt );
+        HB_LONGLONG dt = bson_iter_date_time( iter );
+        hb_retnll( dt );
     } else {
         HBBSON_ERR_ARGS();
     }
@@ -339,7 +339,7 @@ HB_FUNC( BSON_ITER_INT64 )
     bson_iter_t * iter = bson_iter_hbparam( 1 );
 
     if ( iter && BSON_ITER_HOLDS_INT64( iter ) ) {
-        int64_t result = bson_iter_int64( iter );
+        HB_LONGLONG result = bson_iter_int64( iter );
         hb_retnll( result );
     } else {
         HBBSON_ERR_ARGS();
