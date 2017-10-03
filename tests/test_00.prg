@@ -9,29 +9,29 @@ PROCEDURE main()
     LOCAL cursor
     LOCAL error
     LOCAL bson
-    LOCAL unixEpoch := int( hb_dtToUnix() / 1000 )
     LOCAL _id
 
     /* REQUIRED to initialize mongoc internals */
     mongoc_init()
 
-    client := mongoc_client_new( "mongodb://localhost" )
+    client := mongoc_client_new( "mongodb://192.168.0.1" )
 
     collection := mongoc_client_get_collection( client, "hbmongoc", "test_00" )
 
     mongoc_collection_drop( collection )
-
-    WHILE inkey() != 27
 
         CLS
 
         bson := bson_new()
         HB_BSON_APPEND( bson, "datetime", hb_dateTime() )
         HB_BSON_APPEND( bson, "date", date() )
+        ? hb_tton(hb_dateTime()), hb_dtToUnix()
         BSON_APPEND_DATE_TIME( bson, "dtToUnix", hb_dtToUnix() )
         BSON_APPEND_DATE_TIME( bson, "dtToUnixUTC", hb_dtToUnix( nil, .T. ) )
-        hb_bson_append( bson, "integer", 1 )
+        hb_bson_append( bson, "integer", 2^32 + 1 )
+        BSON_APPEND_INT32( bson, "integer32", 2^32 + 1 )
         hb_bson_append( bson, "long", hb_dtToUnix() )
+        BSON_APPEND_INT64( bson, "long64", hb_dtToUnix() )
         hb_bson_append( bson, "double", 1.0 )
 
         IF ! mongoc_collection_insert( collection, MONGOC_INSERT_NONE, bson, nil, @error )
@@ -62,13 +62,6 @@ PROCEDURE main()
                 ? bson_as_relaxed_extended_json( bson )
             ENDIF
         ENDDO
-
-        WHILE unixEpoch = int( hb_dtToUnix() / 1000 )
-        ENDDO
-
-        unixEpoch := int( hb_dtToUnix() / 1000 )
-
-    ENDDO
 
     WAIT
 

@@ -190,7 +190,7 @@ void bson_hbstor_byref_error( int iParam, bson_error_t * error, HB_BOOL valid )
             hb_hashAdd( pItemHash, pItemKey, pItemValue );
             hb_itemRelease( pItemKey );
             hb_itemRelease( pItemValue );
-            
+
             hb_itemParamStoreRelease( iParam, pItemHash );
         } else {
             hb_stor( iParam );
@@ -217,16 +217,19 @@ char * hbbson_as_json( const bson_t * bson )
     return szJSON;
 }
 
-static uint64_t hbbson_juliantimeToUnix( long lJulian, long lMillis, HB_BOOL utc )
+static HB_LONGLONG hbbson_juliantimeToUnix( HB_LONGLONG lJulian, HB_LONGLONG lMillis, HB_BOOL utc )
 {
-    long utfOffset = utc ? 0 : hb_timeUTCOffset() * 1000;
+    HB_LONGLONG utfOffset = utc ? 0 : hb_timeUTCOffset() * 1000;
     return (lJulian - 2440588) * 86400000 + lMillis - utfOffset;
 }
 
-uint64_t hbbson_dateTimeToUnix( PHB_ITEM pItem, HB_BOOL utc )
+HB_LONGLONG hbbson_dateTimeToUnix( PHB_ITEM pItem, HB_BOOL utc )
 {
-    long lJulian; long lMillis;
+    HB_LONG lJulian;
+    HB_LONG lMillis;
+
     hb_itemGetTDT( pItem, &lJulian, &lMillis );
+
     return hbbson_juliantimeToUnix( lJulian, lMillis, utc );
 //    return ( ( hb_itemGetTD( pItem ) - 2440587.5 ) * 86400000 );
 }
@@ -235,11 +238,11 @@ HB_FUNC( HB_DTTOUNIX )
 {
     if ( HB_ISDATETIME( 1 ) ) {
         PHB_ITEM pItem = hb_param( 1, HB_IT_DATETIME );
-        hb_retnl( hbbson_dateTimeToUnix( pItem, hb_parl( 2 ) ) );
+        hb_retnll( hbbson_dateTimeToUnix( pItem, hb_parl( 2 ) ) );
     } else if ( HB_ISNIL( 1 ) ) {
-        long lJulian, lMillis;
+        HB_LONG lJulian, lMillis;
         hb_timeStampGet( &lJulian, &lMillis );
-        hb_retnl( hbbson_juliantimeToUnix( lJulian, lMillis, hb_parl( 2 ) ) );
+        hb_retnll( hbbson_juliantimeToUnix( lJulian, lMillis, hb_parl( 2 ) ) );
     } else {
         HBBSON_ERR_ARGS();
     }
@@ -282,7 +285,7 @@ PHB_BSON hbbson_new_dataContainer( hbbson_t_ hbbson_type, void * p )
                 phBson->p = p;
                 break;
         }
-        
+
         return phBson;
 
     } else {

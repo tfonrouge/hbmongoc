@@ -48,7 +48,7 @@ void                bson_hbstor_byref_error( int iParam, bson_error_t * error, H
 bson_iter_t *       bson_iter_hbparam( int iParam );
 bson_oid_t *        bson_oid_hbparam( int iParam );
 char *              hbbson_as_json( const bson_t * bson );
-uint64_t            hbbson_dateTimeToUnix( PHB_ITEM pItem, HB_BOOL utc );
+HB_LONGLONG         hbbson_dateTimeToUnix( PHB_ITEM pItem, HB_BOOL utc );
 PHB_BSON            hbbson_new_dataContainer( hbbson_t_ hbbson_type, void * p );
 PHB_BSON            hbbson_param( int iParam, hbbson_t_ hbbson_type );
 

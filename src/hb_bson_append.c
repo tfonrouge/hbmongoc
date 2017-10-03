@@ -147,11 +147,11 @@ HB_FUNC( BSON_APPEND_DATE_TIME )
 
     if ( bson && key && pItem ) {
         int key_length = hb_parnidef( 3, ( int ) hb_parclen( 2 ) );
-        uint64_t value;
+        HB_LONGLONG value;
         if ( hb_itemType( pItem ) & HB_IT_DATETIME ) {
             value = hbbson_dateTimeToUnix( pItem, false );
         } else {
-            value = hb_itemGetNL( pItem );
+            value = hb_itemGetNLL( pItem );
         }
         bool result = bson_append_date_time( bson, key, key_length, value );
         hb_retl( result );
@@ -270,7 +270,7 @@ HB_FUNC( BSON_APPEND_INT64 )
 
     if ( bson && key && HB_ISNUM( 4 ) ) {
         int key_length = hb_parnidef( 3, ( int ) hb_parclen( 2 ) );
-        int64_t value = hb_parnl( 4 );
+        HB_LONGLONG value = hb_parnll( 4 );
         bool result = bson_append_int64( bson, key, key_length, value );
         hb_retl( result );
     } else {
