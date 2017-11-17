@@ -202,6 +202,23 @@ HB_FUNC( MONGOC_COLLECTION_INSERT )
     }
 }
 
+HB_FUNC( MONGOC_COLLECTION_KEYS_TO_INDEX_STRING )
+{
+    bson_t * document = bson_hbparam( 1, HB_IT_ANY );
+
+    if ( document ) {
+        char * indexName = mongoc_collection_keys_to_index_string( document );
+        hb_retc( indexName );
+        bson_free( indexName );
+    } else {
+        HBMONGOC_ERR_ARGS();
+    }
+
+    if ( document && ! HB_ISPOINTER( 1 ) ) {
+        bson_destroy( document );
+    }
+}
+
 HB_FUNC( MONGOC_COLLECTION_REMOVE )
 {
     mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
@@ -254,5 +271,35 @@ HB_FUNC( MONGOC_COLLECTION_UPDATE )
 
     if ( update && ! HB_ISPOINTER( 4 ) ) {
         bson_destroy( update );
+    }
+}
+
+HB_FUNC( MONGOC_COLLECTION_WRITE_COMMAND_WITH_OPTS )
+{
+    mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
+    bson_t * command = bson_hbparam( 2, HB_IT_ANY );
+    bson_t * opts = bson_hbparam( 3, HB_IT_ANY );
+
+    if ( collection && command ) {
+        bson_t reply;
+        bson_error_t error;
+
+        bool result = mongoc_collection_write_command_with_opts( collection, command, opts, &reply, &error );
+
+        hbmongoc_return_byref_bson( 4, bson_copy( &reply ) );
+        bson_hbstor_byref_error( 5, &error, result );
+
+        hb_retl( result );
+
+    } else {
+        HBMONGOC_ERR_ARGS();
+    }
+
+    if ( command && ! HB_ISPOINTER( 2 ) ) {
+        bson_destroy( command );
+    }
+
+    if ( opts && ! HB_ISPOINTER( 3 ) ) {
+        bson_destroy( opts );
     }
 }
