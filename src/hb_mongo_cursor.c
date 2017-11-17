@@ -19,13 +19,8 @@ HB_FUNC( MONGOC_CURSOR_NEXT )
 
         bool result = mongoc_cursor_next( cursor, &doc );
 
-        /* TODO: solve cast warning  */
-        /* TODO: solve return json/hash */
-        //hbmongoc_return_byref_bson( 2, ( void * ) doc, false );
-
         if ( result ) {
-            bson_t * bson = bson_copy( doc );
-            hbmongoc_return_byref_bson( 2, bson );
+            hbmongoc_return_byref_bson( 2, bson_copy( doc ) );
         } else {
             hb_stor( 2 );
         }
