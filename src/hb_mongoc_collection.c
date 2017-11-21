@@ -275,6 +275,7 @@ HB_FUNC( MONGOC_COLLECTION_UPDATE )
 }
 
 HB_FUNC( MONGOC_COLLECTION_WRITE_COMMAND_WITH_OPTS )
+#if MONGOC_CHECK_VERSION( 1, 5, 0 )
 {
     mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
     bson_t * command = bson_hbparam( 2, HB_IT_ANY );
@@ -303,3 +304,8 @@ HB_FUNC( MONGOC_COLLECTION_WRITE_COMMAND_WITH_OPTS )
         bson_destroy( opts );
     }
 }
+#else
+{
+    HBMONGOC_ERR_NOFUNC();
+}
+#endif
