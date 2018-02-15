@@ -100,6 +100,7 @@ HB_FUNC( MONGOC_DATABASE_GET_COLLECTION_NAMES )
 }
 
 HB_FUNC( MONGOC_DATABASE_WRITE_COMMAND_WITH_OPTS )
+#if MONGOC_CHECK_VERSION( 1, 9, 0 )
 {
     mongoc_database_t * database = mongoc_hbparam( 1, _hbmongoc_database_t_ );
     bson_t * command = bson_hbparam( 2, HB_IT_ANY );
@@ -128,3 +129,8 @@ HB_FUNC( MONGOC_DATABASE_WRITE_COMMAND_WITH_OPTS )
         bson_destroy( opts );
     }
 }
+#else
+{
+    HBMONGOC_ERR_NOFUNC();
+}
+#endif
