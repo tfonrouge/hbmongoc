@@ -23,7 +23,7 @@ HB_FUNC( MONGOC_CLIENT_COMMAND_SIMPLE )
         bool result = mongoc_client_command_simple( client, db_name, command, read_prefs, &reply, &error);
 
         hbmongoc_return_byref_bson( 5, bson_copy( &reply ) );
-
+        bson_destroy(&reply);
         bson_hbstor_byref_error( 6, &error, result );
 
         hb_retl( result );

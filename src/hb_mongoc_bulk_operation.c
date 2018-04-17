@@ -26,13 +26,13 @@ HB_FUNC( MONGOC_BULK_OPERATION_EXECUTE )
     mongoc_bulk_operation_t * bulk = mongoc_hbparam( 1, _hbmongoc_bulk_operation_t_ );
 
     if ( bulk && HB_ISBYREF( 2 ) ) {
-        bson_t * reply = bson_new();
+        bson_t reply;
         bson_error_t error;
 
-        uint32_t server_id = mongoc_bulk_operation_execute( bulk, reply, &error );
+        uint32_t server_id = mongoc_bulk_operation_execute( bulk, &reply, &error );
 
-        hbmongoc_return_byref_bson( 2, reply );
-
+        hbmongoc_return_byref_bson( 2, bson_copy(&reply) );
+        bson_destroy(&reply);
         bson_hbstor_byref_error( 3, &error, server_id != 0 );
 
         hb_retni( server_id );

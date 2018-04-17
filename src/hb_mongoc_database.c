@@ -67,14 +67,15 @@ HB_FUNC( MONGOC_DATABASE_GET_COLLECTION )
 HB_FUNC( MONGOC_DATABASE_GET_COLLECTION_NAMES )
 {
     mongoc_database_t * database = mongoc_hbparam( 1, _hbmongoc_database_t_ );
+    bson_t * opts = bson_hbparam( 2, HB_IT_ANY );
 
     if ( database ) {
         bson_error_t error;
         bson_set_error( &error, 0, 0, "%s", "" );
 
-        char ** names = mongoc_database_get_collection_names( database, &error );
+        char ** names = mongoc_database_get_collection_names_with_opts(database, opts, &error);
 
-        bson_hbstor_byref_error( 2, &error, false );
+        bson_hbstor_byref_error( 3, &error, false );
 
         if ( names ) {
             PHB_ITEM pItemArray = hb_itemNew( NULL );
@@ -113,6 +114,7 @@ HB_FUNC( MONGOC_DATABASE_WRITE_COMMAND_WITH_OPTS )
         bool result = mongoc_database_write_command_with_opts( database, command, opts, &reply, &error );
 
         hbmongoc_return_byref_bson( 4, bson_copy( &reply ) );
+        bson_destroy(&reply);
         bson_hbstor_byref_error( 5, &error, result );
 
         hb_retl( result );

@@ -9,14 +9,13 @@
 #include "hb_mongoc_collection.h"
 #include "hb_mongoc.h"
 
-HB_FUNC( MONGOC_COLLECTION_CREATE_BULK_OPERATION )
+HB_FUNC( MONGOC_COLLECTION_CREATE_BULK_OPERATION_WITH_OPTS )
 {
     mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
+    bson_t * opts = bson_hbparam( 2, HB_IT_ANY );
 
-    if ( collection && HB_ISLOG( 2 ) ) {
-        HB_BOOL ordered = hb_parl( 2 );
-        const mongoc_write_concern_t * write_concern = mongoc_hbparam( 3, _hbmongoc_write_concern_t_ );
-        mongoc_bulk_operation_t * bulk = mongoc_collection_create_bulk_operation( collection, ordered, write_concern );
+    if ( collection && opts ) {
+        mongoc_bulk_operation_t * bulk = mongoc_collection_create_bulk_operation_with_opts(collection, opts);
         PHB_MONGOC phMongo = hbmongoc_new_dataContainer( _hbmongoc_bulk_operation_t_, bulk );
         hb_retptrGC( phMongo );
     } else {
@@ -38,7 +37,7 @@ HB_FUNC( MONGOC_COLLECTION_COMMAND_SIMPLE )
         bool result = mongoc_collection_command_simple( collection, command, read_prefs, &reply, &error);
 
         hbmongoc_return_byref_bson( 4, bson_copy( &reply ) );
-
+        bson_destroy(&reply);
         bson_hbstor_byref_error( 5, &error, result );
 
         hb_retl( result );
@@ -196,9 +195,35 @@ HB_FUNC( MONGOC_COLLECTION_INSERT )
     } else {
         HBMONGOC_ERR_ARGS();
     }
-    
+
     if ( document && ! HB_ISPOINTER( 3 ) ) {
         bson_destroy( document );
+    }
+}
+
+HB_FUNC( MONGOC_COLLECTION_INSERT_ONE )
+{
+    mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
+    bson_t * document = bson_hbparam( 2, HB_IT_ANY );
+
+    if (collection && document) {
+        bson_t * opts = bson_hbparam( 3, HB_IT_ANY );
+        bson_t reply;
+        bson_error_t error;
+
+        bool result = mongoc_collection_insert_one(collection, document, opts, &reply, &error);
+
+        if (HB_ISBYREF(4)) {
+            hbmongoc_return_byref_bson(4, bson_copy(&reply));
+        }
+
+        bson_destroy(&reply);
+        bson_hbstor_byref_error( 5, &error, result );
+
+        hb_retl(result);
+
+    } else {
+        HBMONGOC_ERR_ARGS();
     }
 }
 
@@ -288,6 +313,7 @@ HB_FUNC( MONGOC_COLLECTION_WRITE_COMMAND_WITH_OPTS )
         bool result = mongoc_collection_write_command_with_opts( collection, command, opts, &reply, &error );
 
         hbmongoc_return_byref_bson( 4, bson_copy( &reply ) );
+        bson_destroy(&reply);
         bson_hbstor_byref_error( 5, &error, result );
 
         hb_retl( result );
