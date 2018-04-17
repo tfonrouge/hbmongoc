@@ -21,6 +21,10 @@ HB_FUNC( MONGOC_COLLECTION_CREATE_BULK_OPERATION_WITH_OPTS )
     } else {
         HBMONGOC_ERR_ARGS();
     }
+
+    if ( opts && ! HB_ISPOINTER( 2 ) ) {
+        bson_destroy( opts );
+    }
 }
 
 HB_FUNC( MONGOC_COLLECTION_COMMAND_SIMPLE )
@@ -201,6 +205,59 @@ HB_FUNC( MONGOC_COLLECTION_INSERT )
     }
 }
 
+/**
+ * param 3 (array size) not used
+ */
+HB_FUNC( MONGOC_COLLECTION_INSERT_MANY )
+{
+    mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
+    PHB_ITEM pArray = hb_param( 2, HB_IT_ARRAY );
+    HB_SIZE arrayLen = hb_arrayLen(pArray);
+
+    if (collection && pArray) {
+        bson_t * opts = bson_hbparam( 3, HB_IT_ANY );
+        bson_t reply;
+        bson_error_t error;
+        bson_t * docs[arrayLen];
+        bson_t * noBsonDocs[arrayLen];
+
+        for (HB_SIZE i = 0; i < arrayLen; ++i) {
+            PHB_ITEM pItem = hb_itemArrayGet(pArray, i + 1);
+            docs[i] = get_bson_item(pItem);
+            if (docs[i] && ! HB_IS_POINTER(pItem)) {
+                noBsonDocs[i] = docs[i];
+            } else {
+                noBsonDocs[i] = NULL;
+            }
+            hb_itemRelease(pItem);
+        }
+
+        bool result = mongoc_collection_insert_many(collection, (const bson_t **) docs, arrayLen, opts, &reply, &error);
+
+        for (HB_SIZE i = 0; i < arrayLen; ++i) {
+            if (noBsonDocs[i] != NULL) {
+                bson_free(noBsonDocs[i]);
+            }
+        }
+
+        if ( opts && ! HB_ISPOINTER( 3 ) ) {
+            bson_destroy( opts );
+        }
+
+        if (HB_ISBYREF(4)) {
+            hbmongoc_return_byref_bson(4, bson_copy(&reply));
+        }
+        bson_destroy(&reply);
+
+        bson_hbstor_byref_error( 5, &error, result );
+
+        hb_retl(result);
+
+    } else {
+        HBMONGOC_ERR_ARGS();
+    }
+}
+
 HB_FUNC( MONGOC_COLLECTION_INSERT_ONE )
 {
     mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
@@ -213,11 +270,15 @@ HB_FUNC( MONGOC_COLLECTION_INSERT_ONE )
 
         bool result = mongoc_collection_insert_one(collection, document, opts, &reply, &error);
 
+        if ( opts && ! HB_ISPOINTER( 3 ) ) {
+            bson_destroy( opts );
+        }
+
         if (HB_ISBYREF(4)) {
             hbmongoc_return_byref_bson(4, bson_copy(&reply));
         }
-
         bson_destroy(&reply);
+
         bson_hbstor_byref_error( 5, &error, result );
 
         hb_retl(result);

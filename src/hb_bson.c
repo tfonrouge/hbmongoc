@@ -126,10 +126,8 @@ bson_oid_t * bson_oid_hbparam( int iParam )
     return NULL;
 }
 
-bson_t * bson_hbparam( int iParam, long lMask )
+bson_t * get_bson_item(PHB_ITEM pItem)
 {
-    PHB_ITEM pItem = hb_param( iParam, lMask );
-
     if ( pItem ) {
         if ( hb_itemType( pItem ) & HB_IT_POINTER ) {
             PHB_BSON phBson = hbbson_hbparam( pItem, _hbbson_t_ );
@@ -155,6 +153,13 @@ bson_t * bson_hbparam( int iParam, long lMask )
         }
     }
     return NULL;
+}
+
+bson_t * bson_hbparam( int iParam, long lMask )
+{
+    PHB_ITEM pItem = hb_param( iParam, lMask );
+
+    return get_bson_item(pItem);
 }
 
 void bson_hbstor_byref_error( int iParam, bson_error_t * error, HB_BOOL valid )

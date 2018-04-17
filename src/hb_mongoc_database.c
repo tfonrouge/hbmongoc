@@ -98,6 +98,10 @@ HB_FUNC( MONGOC_DATABASE_GET_COLLECTION_NAMES )
     } else {
         HBMONGOC_ERR_ARGS();
     }
+
+    if ( opts && ! HB_ISPOINTER( 2 ) ) {
+        bson_destroy( opts );
+    }
 }
 
 HB_FUNC( MONGOC_DATABASE_WRITE_COMMAND_WITH_OPTS )

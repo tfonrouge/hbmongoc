@@ -129,6 +129,7 @@ DYNAMIC mongoc_collection_drop_with_opts
 DYNAMIC mongoc_collection_find
 DYNAMIC mongoc_collection_find_with_opts
 DYNAMIC mongoc_collection_insert
+DYNAMIC mongoc_collection_insert_many
 DYNAMIC mongoc_collection_insert_one
 DYNAMIC mongoc_collection_keys_to_index_string
 DYNAMIC mongoc_collection_remove
