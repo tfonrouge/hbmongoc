@@ -127,6 +127,7 @@ DYNAMIC mongoc_collection_destroy
 DYNAMIC mongoc_collection_drop
 DYNAMIC mongoc_collection_drop_with_opts
 DYNAMIC mongoc_collection_find
+DYNAMIC mongoc_collection_find_indexes_with_opts
 DYNAMIC mongoc_collection_find_with_opts
 DYNAMIC mongoc_collection_insert
 DYNAMIC mongoc_collection_insert_many
@@ -135,6 +136,7 @@ DYNAMIC mongoc_collection_keys_to_index_string
 DYNAMIC mongoc_collection_remove
 DYNAMIC mongoc_collection_update
 DYNAMIC mongoc_collection_write_command_with_opts
+DYNAMIC mongoc_cursor_error
 DYNAMIC mongoc_cursor_next
 DYNAMIC mongoc_database_create_collection
 DYNAMIC mongoc_database_destroy
