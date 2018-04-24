@@ -13,3 +13,4 @@ libs=bson-1.0
 
 libpaths=lib/${hb_plat}/${hb_comp}
 {darwin}libpaths=/usr/local/lib
+{linux}libpaths=/usr/local/lib
