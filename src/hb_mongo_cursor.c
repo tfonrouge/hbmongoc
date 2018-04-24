@@ -9,6 +9,20 @@
 #include "hb_mongo_cursor.h"
 #include "hb_mongoc.h"
 
+HB_FUNC( MONGOC_CURSOR_ERROR )
+{
+    mongoc_cursor_t * cursor = mongoc_hbparam( 1, _hbmongoc_cursor_t_ );
+
+    if (cursor && HB_ISBYREF(2)) {
+        bson_error_t error;
+        bool result = mongoc_cursor_error(cursor, &error);
+        bson_hbstor_byref_error( 2, &error, ! result );
+        hb_retl(result);
+    } else {
+        HBMONGOC_ERR_ARGS();
+    }
+}
+
 HB_FUNC( MONGOC_CURSOR_NEXT )
 {
     mongoc_cursor_t * cursor = mongoc_hbparam( 1, _hbmongoc_cursor_t_ );

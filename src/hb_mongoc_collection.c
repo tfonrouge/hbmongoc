@@ -147,6 +147,27 @@ HB_FUNC( MONGOC_COLLECTION_FIND )
 }
 #endif
 
+HB_FUNC( MONGOC_COLLECTION_FIND_INDEXES_WITH_OPTS )
+{
+    mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
+
+    if (collection) {
+        bson_t * opts = bson_hbparam( 2, HB_IT_ANY );
+
+        mongoc_cursor_t * cursor = mongoc_collection_find_indexes_with_opts(collection, opts);
+
+        PHB_MONGOC phCursor = hbmongoc_new_dataContainer( _hbmongoc_cursor_t_, cursor );
+
+        hb_retptrGC( phCursor );
+
+        if ( opts && ! HB_ISPOINTER( 2 ) ) {
+            bson_destroy( opts );
+        }
+    } else {
+        HBMONGOC_ERR_ARGS();
+    }
+}
+
 HB_FUNC( MONGOC_COLLECTION_FIND_WITH_OPTS )
 #if MONGOC_CHECK_VERSION( 1, 5, 0 )
 {
