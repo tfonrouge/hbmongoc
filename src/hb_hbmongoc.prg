@@ -71,6 +71,9 @@ FUNCTION hb_bson_append( bson, key, value )
             CASE "O"
                 result := BSON_APPEND_BINARY( bson, key, hb_serialize( value ) )
                 EXIT
+            CASE "P"
+                result := BSON_APPEND_DOCUMENT( bson, key, value )
+                EXIT
             OTHERWISE
                 result := BSON_APPEND_NULL( bson, key )
             ENDSWITCH
