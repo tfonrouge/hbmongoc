@@ -51,6 +51,7 @@ DYNAMIC bson_context_destroy
 DYNAMIC bson_context_get_default
 DYNAMIC bson_context_new
 DYNAMIC bson_copy
+DYNAMIC bson_count_keys
 DYNAMIC bson_decimal128_from_string
 DYNAMIC bson_decimal128_to_string
 DYNAMIC bson_destroy

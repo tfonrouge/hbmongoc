@@ -437,6 +437,18 @@ HB_FUNC( BSON_COPY )
     }
 }
 
+HB_FUNC( BSON_COUNT_KEYS )
+{
+    bson_t * bson = bson_hbparam( 1, HB_IT_POINTER );
+
+    if (bson) {
+        uint32_t result = bson_count_keys(bson);
+        hb_retni(result);
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
 HB_FUNC( BSON_DECIMAL128_FROM_STRING )
 #if BSON_CHECK_VERSION( 1, 5, 0 )
 {
