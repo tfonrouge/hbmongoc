@@ -9,6 +9,35 @@
 #include "hb_mongoc_collection.h"
 #include "hb_mongoc.h"
 
+
+HB_FUNC( MONGOC_COLLECTION_AGGREGATE )
+{
+    mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
+    bson_t * pipeline = bson_hbparam( 3, HB_IT_ANY );
+
+    if (collection && pipeline) {
+        mongoc_query_flags_t flags = hb_parnidef( 2, MONGOC_QUERY_NONE );
+        bson_t * opts = bson_hbparam( 4, HB_IT_ANY );
+        const mongoc_read_prefs_t *read_prefs = mongoc_hbparam( 5, _hbmongoc_read_prefs_t_ );
+
+        mongoc_cursor_t * cursor = mongoc_collection_aggregate(collection, flags, pipeline, opts, read_prefs);
+
+        PHB_MONGOC phCursor = hbmongoc_new_dataContainer( _hbmongoc_cursor_t_, cursor );
+
+        hb_retptrGC( phCursor );
+
+        if (opts && !HB_ISPOINTER(4)) {
+            bson_destroy(opts);
+        }
+    } else {
+        HBMONGOC_ERR_ARGS();
+    }
+
+    if (pipeline && !HB_ISPOINTER(3)) {
+        bson_destroy(pipeline);
+    }
+}
+
 HB_FUNC( MONGOC_COLLECTION_CREATE_BULK_OPERATION_WITH_OPTS )
 {
     mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
