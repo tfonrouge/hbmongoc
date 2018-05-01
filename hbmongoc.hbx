@@ -122,6 +122,7 @@ DYNAMIC mongoc_client_get_database
 DYNAMIC mongoc_client_new
 DYNAMIC mongoc_client_new_from_uri
 DYNAMIC mongoc_client_set_appname
+DYNAMIC mongoc_collection_aggregate
 DYNAMIC mongoc_collection_command_simple
 DYNAMIC mongoc_collection_create_bulk_operation_with_opts
 DYNAMIC mongoc_collection_destroy
