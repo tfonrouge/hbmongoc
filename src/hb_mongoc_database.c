@@ -64,7 +64,7 @@ HB_FUNC( MONGOC_DATABASE_GET_COLLECTION )
     }
 }
 
-HB_FUNC( MONGOC_DATABASE_GET_COLLECTION_NAMES )
+HB_FUNC( MONGOC_DATABASE_GET_COLLECTION_NAMES_WITH_OPTS )
 {
     mongoc_database_t * database = mongoc_hbparam( 1, _hbmongoc_database_t_ );
     bson_t * opts = bson_hbparam( 2, HB_IT_ANY );
