@@ -396,3 +396,19 @@ HB_FUNC( BSON_ITER_TYPE )
         HBBSON_ERR_ARGS();
     }
 }
+
+HB_FUNC( BSON_ITER_UTF8 )
+{
+    bson_iter_t * iter = bson_iter_hbparam( 1 );
+
+    if ( iter ) {
+        uint32_t length;
+        const char * utfBuffer = bson_iter_utf8(iter, &length);
+        if (HB_ISBYREF(2)) {
+            hb_storni(length, 2);
+        }
+        hb_retc( utfBuffer );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}

@@ -85,6 +85,7 @@ DYNAMIC bson_iter_key
 DYNAMIC bson_iter_next
 DYNAMIC bson_iter_oid
 DYNAMIC bson_iter_type
+DYNAMIC bson_iter_utf8
 DYNAMIC bson_new
 DYNAMIC bson_new_from_data
 DYNAMIC bson_new_from_json
