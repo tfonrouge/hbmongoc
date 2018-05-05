@@ -262,9 +262,9 @@ HB_FUNC( MONGOC_COLLECTION_INSERT_MANY )
 {
     mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
     PHB_ITEM pArray = hb_param( 2, HB_IT_ARRAY );
-    HB_SIZE arrayLen = hb_arrayLen(pArray);
 
     if (collection && pArray) {
+        HB_SIZE arrayLen = hb_arrayLen(pArray);
         bson_t * opts = bson_hbparam( 3, HB_IT_ANY );
         bson_t reply;
         bson_error_t error;
