@@ -222,32 +222,34 @@ char * hbbson_as_json( const bson_t * bson )
     return szJSON;
 }
 
-static HB_LONGLONG hbbson_juliantimeToUnix( HB_LONGLONG lJulian, HB_LONGLONG lMillis, HB_BOOL utc )
+long hb_dtToUnix(double dTimeStamp)
 {
-    HB_LONGLONG utfOffset = utc ? 0 : hb_timeUTCOffset() * 1000;
-    return (lJulian - 2440588) * 86400000 + lMillis - utfOffset;
-}
+    int iYear, iMonth, iDay, iHour, iMinute, iSecond, iMSec;
 
-HB_LONGLONG hbbson_dateTimeToUnix( PHB_ITEM pItem, HB_BOOL utc )
-{
-    HB_LONG lJulian;
-    HB_LONG lMillis;
+    /* returns unpacked local time */
+    hb_timeStampUnpack(dTimeStamp, &iYear, &iMonth, &iDay, &iHour, &iMinute, &iSecond, &iMSec);
 
-    hb_itemGetTDT( pItem, &lJulian, &lMillis );
+    struct tm t;
+    time_t timet;
 
-    return hbbson_juliantimeToUnix( lJulian, lMillis, utc );
-//    return ( ( hb_itemGetTD( pItem ) - 2440587.5 ) * 86400000 );
+    t.tm_year = iYear - 1900;
+    t.tm_mon = iMonth - 1;
+    t.tm_mday = iDay;
+    t.tm_hour = iHour;
+    t.tm_min = iMinute;
+    t.tm_sec = iSecond;
+    t.tm_isdst = -1;
+    timet = mktime(&t);
+
+    return timet * 1000 + iMSec;
 }
 
 HB_FUNC( HB_DTTOUNIX )
 {
     if ( HB_ISDATETIME( 1 ) ) {
-        PHB_ITEM pItem = hb_param( 1, HB_IT_DATETIME );
-        hb_retnll( hbbson_dateTimeToUnix( pItem, hb_parl( 2 ) ) );
-    } else if ( HB_ISNIL( 1 ) ) {
-        HB_LONG lJulian, lMillis;
-        hb_timeStampGet( &lJulian, &lMillis );
-        hb_retnll( hbbson_juliantimeToUnix( lJulian, lMillis, hb_parl( 2 ) ) );
+
+        hb_retnl(hb_dtToUnix(hb_partd(1)));
+
     } else {
         HBBSON_ERR_ARGS();
     }
@@ -258,8 +260,25 @@ HB_FUNC( HB_UNIXTOT )
     PHB_ITEM pItem = hb_param( 1, HB_IT_NUMERIC );
 
     if ( pItem ) {
-        double julian = ( hb_itemGetND( pItem ) / 86400000 ) + 2440588;
+        /* unusable on current hb
+        double julian = ((hb_itemGetND( pItem ) + hb_timeUTCOffset() * 1000) / 86400000.0 ) + 2440587.5;
+        needs to be 2440587.5
+        item->asDateTime.julian is LONG, and needs to be double to correct calculation:
+        t := hb_sToT("19700101000000")
+        hb_tToN(t) = 2440588.00 // which is false, needs to be 2440587.50
+        hb_dtToUnix(t) = 21600000 // which is false, needs to be 0
+        */
+        double julian = 0.0;
+        long secs = hb_parnl(1) / 1000;
+        time_t timet = secs;
+        struct tm *pt = localtime(&timet);
+
+        if (pt != NULL) {
+            julian = hb_timeStampPack(pt->tm_year + 1900, pt->tm_mon + 1, pt->tm_mday, pt->tm_hour, pt->tm_min, pt->tm_sec, (int)(hb_parnl(1) - secs * 1000));
+        }
+
         hb_rettd( julian );
+
     } else {
         HBBSON_ERR_ARGS();
     }

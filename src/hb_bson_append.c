@@ -147,11 +147,11 @@ HB_FUNC( BSON_APPEND_DATE_TIME )
 
     if ( bson && key && pItem ) {
         int key_length = hb_parnidef( 3, ( int ) hb_parclen( 2 ) );
-        HB_LONGLONG value;
+        HB_LONG value;
         if ( hb_itemType( pItem ) & HB_IT_DATETIME ) {
-            value = hbbson_dateTimeToUnix( pItem, false );
+            value = hb_dtToUnix(hb_itemGetTD(pItem));
         } else {
-            value = hb_itemGetNLL( pItem );
+            value = hb_itemGetNL( pItem );
         }
         bool result = bson_append_date_time( bson, key, key_length, value );
         hb_retl( result );

@@ -165,15 +165,26 @@ HB_FUNC( BSON_ITER_DOCUMENT )
 {
     const bson_iter_t * iter = bson_iter_hbparam( 1 );
 
-    if ( iter && BSON_ITER_HOLDS_DOCUMENT( iter ) && HB_ISBYREF( 3 ) ) {
+    if (iter && BSON_ITER_HOLDS_DOCUMENT(iter)) {
         uint32_t document_len;
         const uint8_t * document;
-        bson_iter_document( iter, &document_len, &document );
-        if ( HB_ISBYREF( 2 ) ) {
-            hb_stornl( document_len, 2 );
+        bson_iter_document(iter, &document_len, &document);
+        bson_t *doc = bson_new_from_data(document, document_len);
+
+        if (HB_ISBYREF(2)) {
+            hb_stornl(document_len, 2);
         }
 
-        hb_storclen( ( const char * ) document, document_len, 3 );
+        if (HB_ISBYREF(3)) {
+            hb_storclen((const char * ) document, document_len, 3);
+        }
+
+        if (doc) {
+            PHB_BSON phBson = hbbson_new_dataContainer(_hbbson_t_, doc);
+            hb_retptrGC(phBson);
+        } else {
+            hb_ret();
+        }
 
     } else {
         HBBSON_ERR_ARGS();

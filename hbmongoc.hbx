@@ -104,6 +104,7 @@ DYNAMIC bson_validate
 DYNAMIC hb_bson_append
 DYNAMIC hb_bson_as_hash
 DYNAMIC hb_bson_as_json
+DYNAMIC hb_bson_getvalue
 DYNAMIC hb_bson_set_return_json_type
 DYNAMIC hb_bson_version
 DYNAMIC hb_dttounix
