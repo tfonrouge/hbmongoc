@@ -51,6 +51,6 @@ bson_t *            get_bson_item(PHB_ITEM pItem);
 char *              hbbson_as_json( const bson_t * bson );
 PHB_BSON            hbbson_new_dataContainer( hbbson_t_ hbbson_type, void * p );
 PHB_BSON            hbbson_param( int iParam, hbbson_t_ hbbson_type );
-long                hb_dtToUnix(double dTimeStamp);
+HB_LONGLONG         hb_dtToUnix(double dTimeStamp);
 
 #endif /* hb_bson_h */

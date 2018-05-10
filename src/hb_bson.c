@@ -222,7 +222,7 @@ char * hbbson_as_json( const bson_t * bson )
     return szJSON;
 }
 
-long hb_dtToUnix(double dTimeStamp)
+HB_LONGLONG hb_dtToUnix(double dTimeStamp)
 {
     int iYear, iMonth, iDay, iHour, iMinute, iSecond, iMSec;
 
@@ -248,7 +248,7 @@ HB_FUNC( HB_DTTOUNIX )
 {
     if ( HB_ISDATETIME( 1 ) ) {
 
-        hb_retnl(hb_dtToUnix(hb_partd(1)));
+        hb_retnll(hb_dtToUnix(hb_partd(1)));
 
     } else {
         HBBSON_ERR_ARGS();
@@ -269,7 +269,7 @@ HB_FUNC( HB_UNIXTOT )
         hb_dtToUnix(t) = 21600000 // which is false, needs to be 0
         */
         double julian = 0.0;
-        long secs = hb_parnl(1) / 1000;
+        HB_LONGLONG secs = hb_parnll(1) / 1000;
         time_t timet = secs;
         struct tm *pt = localtime(&timet);
 
@@ -476,8 +476,12 @@ HB_FUNC( BSON_DECIMAL128_FROM_STRING )
     if ( string && HB_ISBYREF( 2 ) ) {
         bson_decimal128_t * dec = hb_xgrab( sizeof( bson_decimal128_t ) );
         bool result = bson_decimal128_from_string( string, dec );
-        PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_decimal128_t_, dec );
-        hb_storptrGC( phBson, 2 );
+        if (result) {
+            PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_decimal128_t_, dec );
+            hb_storptrGC( phBson, 2 );
+        } else {
+            hb_stor(2);
+        }
         hb_retl( result );
     } else {
         HBBSON_ERR_ARGS();
