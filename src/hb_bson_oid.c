@@ -42,12 +42,11 @@ HB_FUNC( BSON_OID_COPY )
 
 HB_FUNC( BSON_OID_EQUAL )
 {
-    const bson_oid_t * oid1 = bson_oid_hbparam( 1 );
-    const bson_oid_t * oid2 = bson_oid_hbparam( 2 );
+    const bson_oid_t * oid1 = bson_oid_hbparam(1);
+    const bson_oid_t * oid2 = bson_oid_hbparam(2);
 
-    if ( oid1 && oid2 ) {
-        bool result = bson_oid_equal( oid1, oid2 );
-        hb_retnl( result );
+    if (oid1 && oid2) {
+        hb_retl(bson_oid_equal( oid1, oid2 ));
     } else {
         HBBSON_ERR_ARGS();
     }
@@ -59,7 +58,7 @@ HB_FUNC( BSON_OID_GET_TIME_T )
 
     if ( oid ) {
         time_t time = bson_oid_get_time_t( oid );
-        hb_retnl( time );
+        hb_retnll( time );
     } else {
         HBBSON_ERR_ARGS();
     }
@@ -105,7 +104,7 @@ HB_FUNC( BSON_OID_INIT )
 
 HB_FUNC( BSON_OID_INIT_FROM_DATA )
 {
-    const char * data = hb_parc( 1 );
+    const char * data = hb_parc( 2 );
 
     if ( HB_ISBYREF( 1 ) && data ) {
 
@@ -131,7 +130,7 @@ HB_FUNC( BSON_OID_INIT_FROM_DATA )
 
 HB_FUNC( BSON_OID_INIT_FROM_STRING )
 {
-    const char * str = hb_parc( 1 );
+    const char * str = hb_parc( 2 );
 
     if ( HB_ISBYREF( 1 ) && str ) {
 
