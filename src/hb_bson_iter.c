@@ -19,6 +19,7 @@ HB_FUNC( BSON_ITER_ARRAY )
         uint32_t array_len;
         const uint8_t * array;
         bson_iter_array( iter, &array_len, &array );
+        bson_t *doc = bson_new_from_data(array, array_len);
 
         if ( HB_ISBYREF( 2 ) ) {
             hb_stornl( array_len, 2 );
@@ -26,6 +27,13 @@ HB_FUNC( BSON_ITER_ARRAY )
 
         if ( HB_ISBYREF( 3 ) ) {
             hb_storclen( ( const char * ) array, array_len, 3 );
+        }
+
+        if (doc) {
+            PHB_BSON phBson = hbbson_new_dataContainer(_hbbson_t_, doc);
+            hb_retptrGC(phBson);
+        } else {
+            hb_ret();
         }
 
     } else {
@@ -79,7 +87,7 @@ HB_FUNC( BSON_ITER_BINARY )
 {
     const bson_iter_t * iter = bson_iter_hbparam( 1 );
 
-    if ( iter && BSON_ITER_HOLDS_BINARY( iter ) && HB_ISBYREF( 4 ) ) {
+    if ( iter && BSON_ITER_HOLDS_BINARY( iter ) ) {
         bson_subtype_t subtype;
         uint32_t binary_len;
         const uint8_t * binary;
@@ -93,7 +101,11 @@ HB_FUNC( BSON_ITER_BINARY )
             hb_stornl( binary_len, 3 );
         }
 
-        hb_storclen( ( const char * ) binary, binary_len, 4 );
+        if (HB_ISBYREF( 4 )) {
+            hb_storclen( ( const char * ) binary, binary_len, 4 );
+        }
+
+        hb_retclen((const char *) binary, binary_len);
 
     } else {
         HBBSON_ERR_ARGS();
@@ -122,7 +134,37 @@ HB_FUNC( BSON_ITER_CODE )
         if ( HB_ISBYREF( 2 ) ) {
             hb_stornl( length, 2 );
         }
-        hb_retc( code );
+        hb_retclen(code, length);
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_ITER_CODEWSCOPE )
+{
+    const bson_iter_t * iter = bson_iter_hbparam( 1 );
+
+    if ( iter && BSON_ITER_HOLDS_CODEWSCOPE( iter ) ) {
+        uint32_t length;
+        uint32_t scope_len;
+        const uint8_t * scope;
+        const char * code = bson_iter_codewscope(iter, &length, &scope_len, &scope);
+        if ( HB_ISBYREF( 2 ) ) {
+            hb_stornl( length, 2 );
+        }
+        if (HB_ISBYREF(3)) {
+            hb_stornl(scope_len, 3);
+        }
+        if (HB_ISBYREF(4)) {
+            bson_t *doc = bson_new_from_data(scope, scope_len);
+            if (doc) {
+                PHB_BSON phBson = hbbson_new_dataContainer(_hbbson_t_, doc);
+                hb_storptrGC(phBson, 4);
+            } else {
+                hb_stor(4);
+            }
+        }
+        hb_retclen(code, length);
     } else {
         HBBSON_ERR_ARGS();
     }
@@ -148,8 +190,12 @@ HB_FUNC( BSON_ITER_DECIMAL128 )
     if ( iter && BSON_ITER_HOLDS_DECIMAL128( iter ) && HB_ISBYREF( 2 ) ) {
         bson_decimal128_t * dec = hb_xgrab( sizeof( bson_decimal128_t ) );
         bool result = bson_iter_decimal128( iter, dec );
-        PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_decimal128_t_, dec );
-        hb_storptrGC( phBson, 2 );
+        if (result) {
+            PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_decimal128_t_, dec );
+            hb_storptrGC( phBson, 2 );
+        } else {
+            hb_stor(2);
+        }
         hb_retl( result );
     } else {
         HBBSON_ERR_ARGS();
@@ -391,6 +437,22 @@ HB_FUNC( BSON_ITER_OID )
         bson_oid_copy( oid, new );
         PHB_BSON phBson = hbbson_new_dataContainer( _hbbson_oid_t_, new );
         hb_retptrGC( phBson );
+    } else {
+        HBBSON_ERR_ARGS();
+    }
+}
+
+HB_FUNC( BSON_ITER_REGEX )
+{
+    bson_iter_t * iter = bson_iter_hbparam( 1 );
+
+    if (iter && BSON_ITER_HOLDS_REGEX(iter)) {
+        const char * options;
+        const char * regex = bson_iter_regex(iter, &options);
+        if (HB_ISBYREF(2)) {
+            hb_storc(options, 2);
+        }
+        hb_retc(regex);
     } else {
         HBBSON_ERR_ARGS();
     }

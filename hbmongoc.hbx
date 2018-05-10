@@ -69,6 +69,7 @@ DYNAMIC bson_iter_as_int64
 DYNAMIC bson_iter_binary
 DYNAMIC bson_iter_bool
 DYNAMIC bson_iter_code
+DYNAMIC bson_iter_codewscope
 DYNAMIC bson_iter_date_time
 DYNAMIC bson_iter_decimal128
 DYNAMIC bson_iter_document
@@ -84,6 +85,7 @@ DYNAMIC bson_iter_int64
 DYNAMIC bson_iter_key
 DYNAMIC bson_iter_next
 DYNAMIC bson_iter_oid
+DYNAMIC bson_iter_regex
 DYNAMIC bson_iter_type
 DYNAMIC bson_iter_utf8
 DYNAMIC bson_new
@@ -104,8 +106,8 @@ DYNAMIC bson_validate
 DYNAMIC hb_bson_append
 DYNAMIC hb_bson_as_hash
 DYNAMIC hb_bson_as_json
-DYNAMIC hb_bson_getvalue
 DYNAMIC hb_bson_set_return_json_type
+DYNAMIC hb_bson_value
 DYNAMIC hb_bson_version
 DYNAMIC hb_dttounix
 DYNAMIC hb_mongoc_set_return_bson_value_type

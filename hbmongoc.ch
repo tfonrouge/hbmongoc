@@ -103,6 +103,7 @@
 #define BSON_TYPE_INT32         0x10
 #define BSON_TYPE_TIMESTAMP     0x11
 #define BSON_TYPE_INT64         0x12
+#define BSON_TYPE_DECIMAL128    0x13
 #define BSON_TYPE_MAXKEY        0x7F
 #define BSON_TYPE_MINKEY        0xFF
 
