@@ -89,7 +89,7 @@ FUNCTION hb_bson_value(bson, key, defValue, type)
 
     type := nil
 
-    IF bson_iter_init_find(@iter, bson, key)
+    IF bson != nil .AND. bson_iter_init_find(@iter, bson, key)
 
         type := bson_iter_type(iter)
 
