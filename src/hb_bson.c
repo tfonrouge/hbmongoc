@@ -246,9 +246,18 @@ HB_LONGLONG hb_dtToUnix(double dTimeStamp)
 
 HB_FUNC( HB_DTTOUNIX )
 {
-    if ( HB_ISDATETIME( 1 ) ) {
+    if (hb_pcount() == 0 || HB_ISDATETIME(1)) {
+        double dTimeStamp;
 
-        hb_retnll(hb_dtToUnix(hb_partd(1)));
+        if(HB_ISDATETIME(1)) {
+            dTimeStamp = hb_partd(1);
+        } else {
+            long lDate, lTime;
+            hb_timeStampGet(&lDate, &lTime);
+            dTimeStamp = (double) lDate + (double) lTime / HB_MILLISECS_PER_DAY;
+        }
+
+        hb_retnll(hb_dtToUnix(dTimeStamp));
 
     } else {
         HBBSON_ERR_ARGS();
