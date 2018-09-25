@@ -29,6 +29,7 @@ HB_FUNC( MONGOC_COLLECTION_AGGREGATE )
         if (opts && !HB_ISPOINTER(4)) {
             bson_destroy(opts);
         }
+
     } else {
         HBMONGOC_ERR_ARGS();
     }
@@ -41,18 +42,19 @@ HB_FUNC( MONGOC_COLLECTION_AGGREGATE )
 HB_FUNC( MONGOC_COLLECTION_CREATE_BULK_OPERATION_WITH_OPTS )
 {
     mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
-    bson_t * opts = bson_hbparam( 2, HB_IT_ANY );
 
-    if ( collection && opts ) {
+    if ( collection ) {
+        bson_t * opts = bson_hbparam( 2, HB_IT_ANY );
+
         mongoc_bulk_operation_t * bulk = mongoc_collection_create_bulk_operation_with_opts(collection, opts);
         PHB_MONGOC phMongo = hbmongoc_new_dataContainer( _hbmongoc_bulk_operation_t_, bulk );
         hb_retptrGC( phMongo );
+
+        if ( opts && ! HB_ISPOINTER( 2 ) ) {
+            bson_destroy( opts );
+        }
     } else {
         HBMONGOC_ERR_ARGS();
-    }
-
-    if ( opts && ! HB_ISPOINTER( 2 ) ) {
-        bson_destroy( opts );
     }
 }
 
@@ -118,9 +120,10 @@ HB_FUNC( MONGOC_COLLECTION_DROP_WITH_OPTS )
 #if MONGOC_CHECK_VERSION( 1, 5, 0 )
 {
     mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
-    bson_t * opts = bson_hbparam( 2, HB_IT_ANY );
 
-    if ( collection && opts ) {
+    if ( collection ) {
+        bson_t * opts = bson_hbparam( 2, HB_IT_ANY );
+
         bson_error_t error;
 
         bool result = mongoc_collection_drop_with_opts( collection, opts, &error );
@@ -129,12 +132,11 @@ HB_FUNC( MONGOC_COLLECTION_DROP_WITH_OPTS )
 
         hb_retl( result );
 
+        if ( opts && ! HB_ISPOINTER( 2 ) ) {
+            bson_destroy( opts );
+        }
     } else {
         HBMONGOC_ERR_ARGS();
-    }
-
-    if ( opts && ! HB_ISPOINTER( 2 ) ) {
-        bson_destroy( opts );
     }
 }
 #else
@@ -415,9 +417,10 @@ HB_FUNC( MONGOC_COLLECTION_WRITE_COMMAND_WITH_OPTS )
 {
     mongoc_collection_t * collection = mongoc_hbparam( 1, _hbmongoc_collection_t_ );
     bson_t * command = bson_hbparam( 2, HB_IT_ANY );
-    bson_t * opts = bson_hbparam( 3, HB_IT_ANY );
 
     if ( collection && command ) {
+        bson_t * opts = bson_hbparam( 3, HB_IT_ANY );
+
         bson_t reply;
         bson_error_t error;
 
@@ -429,16 +432,16 @@ HB_FUNC( MONGOC_COLLECTION_WRITE_COMMAND_WITH_OPTS )
 
         hb_retl( result );
 
+        if ( opts && ! HB_ISPOINTER( 3 ) ) {
+            bson_destroy( opts );
+        }
+
     } else {
         HBMONGOC_ERR_ARGS();
     }
 
     if ( command && ! HB_ISPOINTER( 2 ) ) {
         bson_destroy( command );
-    }
-
-    if ( opts && ! HB_ISPOINTER( 3 ) ) {
-        bson_destroy( opts );
     }
 }
 #else

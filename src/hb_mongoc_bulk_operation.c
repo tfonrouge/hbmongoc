@@ -63,9 +63,9 @@ HB_FUNC( MONGOC_BULK_OPERATION_INSERT_WITH_OPTS )
 {
     mongoc_bulk_operation_t * bulk = mongoc_hbparam( 1, _hbmongoc_bulk_operation_t_ );
     bson_t * document = bson_hbparam( 2, HB_IT_ANY );
-    bson_t * opts = bson_hbparam( 3, HB_IT_ANY );
 
-    if ( bulk && document && opts ) {
+    if ( bulk && document ) {
+        bson_t * opts = bson_hbparam( 3, HB_IT_ANY );
         bson_error_t error;
 
         HB_BOOL result = mongoc_bulk_operation_insert_with_opts( bulk, document, opts, &error );
@@ -74,16 +74,16 @@ HB_FUNC( MONGOC_BULK_OPERATION_INSERT_WITH_OPTS )
 
         hb_retl( result );
 
+        if ( opts && ! HB_ISPOINTER( 3 ) ) {
+            bson_destroy( opts );
+        }
+
     } else {
         HBMONGOC_ERR_ARGS();
     }
 
     if ( document && ! HB_ISPOINTER( 2 ) ) {
         bson_destroy( document );
-    }
-
-    if ( opts && ! HB_ISPOINTER( 3 ) ) {
-        bson_destroy( opts );
     }
 }
 #else

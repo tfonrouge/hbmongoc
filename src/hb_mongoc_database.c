@@ -67,9 +67,10 @@ HB_FUNC( MONGOC_DATABASE_GET_COLLECTION )
 HB_FUNC( MONGOC_DATABASE_GET_COLLECTION_NAMES_WITH_OPTS )
 {
     mongoc_database_t * database = mongoc_hbparam( 1, _hbmongoc_database_t_ );
-    bson_t * opts = bson_hbparam( 2, HB_IT_ANY );
 
     if ( database ) {
+        bson_t * opts = bson_hbparam( 2, HB_IT_ANY );
+
         bson_error_t error;
         bson_set_error( &error, 0, 0, "%s", "" );
 
@@ -95,12 +96,12 @@ HB_FUNC( MONGOC_DATABASE_GET_COLLECTION_NAMES_WITH_OPTS )
             hb_ret();
         }
 
+        if ( opts && ! HB_ISPOINTER( 2 ) ) {
+            bson_destroy( opts );
+        }
+
     } else {
         HBMONGOC_ERR_ARGS();
-    }
-
-    if ( opts && ! HB_ISPOINTER( 2 ) ) {
-        bson_destroy( opts );
     }
 }
 
@@ -109,9 +110,10 @@ HB_FUNC( MONGOC_DATABASE_WRITE_COMMAND_WITH_OPTS )
 {
     mongoc_database_t * database = mongoc_hbparam( 1, _hbmongoc_database_t_ );
     bson_t * command = bson_hbparam( 2, HB_IT_ANY );
-    bson_t * opts = bson_hbparam( 3, HB_IT_ANY );
 
     if ( database && command ) {
+        bson_t * opts = bson_hbparam( 3, HB_IT_ANY );
+
         bson_t reply;
         bson_error_t error;
 
@@ -122,17 +124,17 @@ HB_FUNC( MONGOC_DATABASE_WRITE_COMMAND_WITH_OPTS )
         bson_hbstor_byref_error( 5, &error, result );
 
         hb_retl( result );
-        
+
+        if ( opts && ! HB_ISPOINTER( 3 ) ) {
+            bson_destroy( opts );
+        }
+
     } else {
         HBMONGOC_ERR_ARGS();
     }
 
     if ( command && ! HB_ISPOINTER( 2 ) ) {
         bson_destroy( command );
-    }
-
-    if ( opts && ! HB_ISPOINTER( 3 ) ) {
-        bson_destroy( opts );
     }
 }
 #else
