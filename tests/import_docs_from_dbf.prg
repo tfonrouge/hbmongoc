@@ -44,7 +44,7 @@ PROCEDURE main( uriString )
     collection := mongoc_database_get_collection( database, coll_name )
 
     /* drops collection (if exists) */
-    arrayCollections := mongoc_database_get_collection_names( database, @error )
+    arrayCollections := mongoc_database_get_collection_names_with_opts( database, nil, @error )
     IF error = nil
         IF aScan( arrayCollections, coll_name ) > 0
             ? "Drop existing collection", coll_name, ":", mongoc_collection_drop( collection, @error )

@@ -72,7 +72,7 @@ ENDTEXT
                 bson_iter_array( iter, @len, @array )
                 ? array
                 doc := bson_new()
-                ? "bson_init_static():", bson_init_static( @doc, array, len )
+                ? "bson_init_static():", bson_init( @doc, array )
                 ? array
                 ? "ARRAY:", hb_bson_as_json( doc )
                 WAIT

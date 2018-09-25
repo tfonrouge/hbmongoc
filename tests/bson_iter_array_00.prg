@@ -52,6 +52,7 @@ PROCEDURE main()
 }
 ENDTEXT
 
+    /* check for memory hogs */
     FOR i := 1 TO 1000000
 
         CLS
