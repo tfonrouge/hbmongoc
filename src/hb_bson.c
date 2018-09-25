@@ -645,6 +645,7 @@ HB_FUNC( BSON_NEW_FROM_JSON )
         hb_xfree( szJSON );
     } else {
         HBBSON_ERR_ARGS();
+        return;
     }
 
     bson_hbstor_byref_error( 3, &error, bson != NULL );
