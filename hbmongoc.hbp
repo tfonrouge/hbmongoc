@@ -23,7 +23,7 @@
 -depincpath=libbson:/usr/local/include/libbson-1.0
 -depincpath=libbson:/usr/include/libbson-1.0
 
--hbx=${hb_name}
+-hbx=${hb_name}.hbx
 
 src/*.prg
 src/*.c
